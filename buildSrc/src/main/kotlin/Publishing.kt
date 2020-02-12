@@ -28,7 +28,7 @@ object Maven {
     var gprRepoId = "saferme-api-client-android"
 
     var gprUser = if (System.getenv().containsKey("GPR_USER")) {
-        System.getenv("GPR_KEY")
+        System.getenv("GPR_USER")
     } else if (localProperties.containsKey("gpr.user")) {
         localProperties.getProperty("gpr.user").trim()
     } else {
