@@ -67,8 +67,6 @@ dependencies {
     // Dagger 2 Dependency injection
     implementation(Deps.dagger2)
     kapt(Deps.dagger2_annotation)
-
-    // implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.5")
 }
 
 // Test Dependencies
@@ -95,7 +93,7 @@ dependencies {
         testImplementation(TestingDeps.assertj)
 }
 
-// apply jacoco config (For test Coverage Reports)
+// Apply jacoco config (For test Coverage Reports)
 apply {
     from("jacoco.gradle")
 }
