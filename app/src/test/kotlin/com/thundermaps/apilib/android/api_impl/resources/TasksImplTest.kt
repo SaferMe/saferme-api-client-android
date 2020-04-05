@@ -1,5 +1,7 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import com.thundermaps.apilib.android.api.SaferMeCredentials
+import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api_impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
@@ -82,8 +84,18 @@ class TasksImplTest {
     @Test
     fun testReadSuccess() {
         val uuid = "test-uuid"
-        val returnObject = "{\"uuid\":\"$uuid\"}"
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val returnObject = "{\n" +
+            "    \"uuid\": \"$uuid\",\n" +
+            "    \"assignee_id\": 12345,\n" +
+            "    \"client_created_at\": \"2019-08-15T15:37:38.250+12:00\",\n" +
+            "    \"completed_at\": \"2019-08-15T15:37:43.812+12:00\",\n" +
+            "    \"completed_by_id\": 12345,\n" +
+            "    \"creator_id\": 12345,\n" +
+            "    \"description\": \"Hsdfdf ashad ashasd shd jsh\",\n" +
+            "    \"report_id\": 187714,\n" +
+            "    \"title\": \"Jjsas a ashhshs\"\n" +
+            "}"
+        val responseHeaders = headersOf( "Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks/$uuid"
@@ -212,4 +224,28 @@ class TasksImplTest {
         assertEquals(1, count)
         assertTrue(inspectCalled)
     }
+
+    /**
+     * Test read against an actual server
+     */
+    @KtorExperimentalAPI
+    @Test
+    fun integrationReadTest() {
+        val client = AndroidClient()
+        runBlocking {
+            client.Tasks.read(
+                client.defaultParams().copy(
+                    credentials =SaferMeCredentials(
+                    //TODO read in from env?
+                )),
+                Task(uuid = ""), //TODO read in from env?
+                {result ->
+                    assertEquals(result.data.uuid, "1b15a902-9f8b-40d7-a51c-2bfff682b114")
+                    assertEquals(result.serverStatus, SaferMeApiStatus.OK)
+                },
+                {exception -> assertTrue(false)}
+            )
+         }
+    }
+
 }
