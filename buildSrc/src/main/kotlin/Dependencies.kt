@@ -18,11 +18,12 @@ object Versions {
     val min_sdk = 26
 }
 
+
 object Deps {
     data class Versions(val arch_comp: String = "2.0.0",
                         val design: String = "1.0.0",
                         val gson: String = "2.8.5",
-                        val dagger2: String = "2.17",
+                        val dagger2: String = "2.25.2",
                         val junit5: String = "5.2.0",
                         val crayon: String = "0.1.0",
                         val ktor: String = "1.2.5",
@@ -32,10 +33,6 @@ object Deps {
 
     val kotlin_stdlib_jdk8 =
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${GradlePlugins.versions.kotlin}"
-    val arch_comp = "androidx.lifecycle:lifecycle-extensions:${versions.arch_comp}"
-    val material_design = "com.google.android.material:material:${versions.design}"
-    val vector_drawable = "androidx.vectordrawable:vectordrawable:${versions.design}"
-    val recycler_view = "androidx.recyclerview:recyclerview:${versions.design}"
     val gson = "com.google.code.gson:gson:${versions.gson}"
     val dagger2 = "com.google.dagger:dagger:${versions.dagger2}"
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
@@ -60,8 +57,6 @@ object TestingDeps {
     val junit5_vintage = "org.junit.vintage:junit-vintage-engine:${versions.junit5}"
     val assertj = "org.assertj:assertj-core:${versions.assertj}"
     val mockk = "io.mockk:mockk:${versions.mockk}"
-    val roboelectric = "org.robolectric:robolectric:${versions.roboelectric}"
-    val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
     val ktor_base = "io.ktor:ktor-client-mock:${versions.ktor_version}"
     val ktor_jvm = "io.ktor:ktor-client-mock-jvm:${versions.ktor_version}"
     val ktor_native = "io.ktor:ktor-client-mock-native:${versions.ktor_version}"
