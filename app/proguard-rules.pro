@@ -1,0 +1,1 @@
+-keep class com.thundermaps.apilib.android.api.** { *; }
