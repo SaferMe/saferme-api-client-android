@@ -58,5 +58,18 @@ class TasksImpl(val api: AndroidClient): TaskResource {
     }
 
 
+
+    override suspend fun delete(
+        parameters: RequestParameters,
+        identifier: Task,
+        success: (SaferMeApiResult<Task>) -> Unit,
+        failure: (Exception) -> Unit
+
+    ) {
+        StandardMethods.delete(
+            api = api, path=  "tasks", parameters  = parameters, success= success, failure =  failure, item = identifier
+        )
+    }
+
 }
 

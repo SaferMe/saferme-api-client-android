@@ -41,7 +41,7 @@ interface Deletable<T : SaferMeDatum> : SaferMeResource<T> {
     suspend fun delete(
         parameters: RequestParameters,
         identifier: T,
-        success: (SaferMeApiResult<List<T>>) -> Unit,
+        success: (SaferMeApiResult<T>) -> Unit,
         failure: (Exception) -> Unit
     )
 }

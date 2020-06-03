@@ -57,5 +57,4 @@ data class Task(
 }
 
 interface TaskResource : SaferMeResource<Task>,
-    Creatable<Task>, Readable<Task>, Indexable<Task>, Updatable<Task>
-    // TODO , Deletable<Task>
+    Creatable<Task>, Readable<Task>, Indexable<Task>, Updatable<Task>, Deletable<Task>
