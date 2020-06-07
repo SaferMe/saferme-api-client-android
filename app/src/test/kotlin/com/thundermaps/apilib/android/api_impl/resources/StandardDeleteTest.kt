@@ -5,6 +5,7 @@ import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api_impl.AndroidClient
 import com.thundermaps.apilib.android.api_impl.resources.TestHelpers.Companion.testClient
 import com.thundermaps.apilib.android.api_impl.resources.TestHelpers.Companion.testCreateRequest
+import com.thundermaps.apilib.android.api_impl.resources.TestHelpers.Companion.testDeleteRequest
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -44,7 +45,7 @@ class StandardDeleteTest {
     @Test
     fun testDeleteHTTPMethod() {
         var called = false
-        testCreateRequest(api = defaultAPI, client = testClient(requestInspector = {
+        testDeleteRequest(api = defaultAPI, client = testClient(requestInspector = {
             assertEquals(it.method, HttpMethod.Post)
             called = true
         }))
@@ -82,7 +83,7 @@ class StandardDeleteTest {
         val version = Random().nextInt(999)
         val params = TestHelpers.defaultParams.copy(api_version = version)
         val expectedPath = "/api/v$version/$testPath" // '/api/v' prefix automatically applied
-        testCreateRequest(
+        testDeleteRequest(
             api = defaultAPI,
             path = testPath,
             params = params,
@@ -103,7 +104,7 @@ class StandardDeleteTest {
         var called = false
         val testPort = Random().nextInt(65535)
         val params = TestHelpers.defaultParams.copy(port = testPort)
-        testCreateRequest(
+        testDeleteRequest(
             api = defaultAPI,
             params = params,
             client = testClient(requestInspector = {
@@ -127,7 +128,7 @@ class StandardDeleteTest {
             headers.append(name, value)
         }
 
-        testCreateRequest(
+        testDeleteRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
             client = testClient(requestInspector = {
@@ -142,7 +143,7 @@ class StandardDeleteTest {
 
     /**
      * CREATE Functional Tests
-     * These tests check that the StandardMethods 'Create' will construct the right
+     * These tests check that the StandardMethods 'Delete' will construct the right
      * kind of object(s) for different responses, and will call the right callbacks.
      */
 
@@ -159,21 +160,19 @@ class StandardDeleteTest {
 
         val client = testClient(
             content = returnObject,
-            status = HttpStatusCode.Created,
+            status = HttpStatusCode.OK,
             headers = responseHeaders
         )
 
-        testCreateRequest(
+        testDeleteRequest(
             api = defaultAPI,
             client = client,
             success = {
             synchronized(successLambdaCalls) {
                 successLambdaCalls++
             }
-
-
             // Correct status type
-            assertEquals(it.serverStatus, SaferMeApiStatus.CREATED)
+            assertEquals(it.serverStatus, SaferMeApiStatus.OK)
 
             // Response object captures all the headers in the response
             assertEquals(it.responseHeaders, responseHeaders.toMap())
@@ -193,7 +192,7 @@ class StandardDeleteTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testCreateNonExceptionFailure() {
+    fun testDeleteNonExceptionFailure() {
         // Client response data:
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         val returnObject = GenericTestObject.random()
@@ -209,7 +208,7 @@ class StandardDeleteTest {
             status = status
         )
 
-        testCreateRequest(
+        testDeleteRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
@@ -232,14 +231,14 @@ class StandardDeleteTest {
         assertEquals(failLambdaCalls, 1)
     }
 
-        // Call the Create method and test the result is correct
+        // Call the delete method and test the result is correct
 
     /**
      * Test that a thrown exception will call the failure callback and provide the exception
      */
     @KtorExperimentalAPI
     @Test
-    fun testCreateExceptionFailure() {
+    fun testDeleteExceptionFailure() {
         // Keep a count of how many times the success and fail handlers are called
 
         var successLambdaCalls = 0
@@ -249,7 +248,7 @@ class StandardDeleteTest {
 
         val client = testClient(requestInspector = { throw Exception(errorMessage) })
 
-        testCreateRequest(
+        testDeleteRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },

@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.api.resources
 import com.google.gson.annotations.Expose
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 data class Task(
 
@@ -36,7 +37,7 @@ data class Task(
 ) : SaferMeDatum {
     override fun toString(): String {
         val sb = StringBuilder()
-        val fmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+        val fmt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US)
         sb.append("------------------------------------------------------------------------------\n")
         sb.append("TASK: $uuid\n")
         sb.append("------------------------------------------------------------------------------\n")
