@@ -46,7 +46,7 @@ class StandardDeleteTest {
     fun testDeleteHTTPMethod() {
         var called = false
         testDeleteRequest(api = defaultAPI, client = testClient(requestInspector = {
-            assertEquals(it.method, HttpMethod.Post)
+            assertEquals(it.method, HttpMethod.Delete)
             called = true
         }))
         assertTrue(called)
@@ -160,7 +160,7 @@ class StandardDeleteTest {
 
         val client = testClient(
             content = returnObject,
-            status = HttpStatusCode.OK,
+            status = HttpStatusCode.Accepted,
             headers = responseHeaders
         )
 
@@ -172,8 +172,7 @@ class StandardDeleteTest {
                 successLambdaCalls++
             }
             // Correct status type
-            assertEquals(it.serverStatus, SaferMeApiStatus.OK)
-
+            assertEquals(it.serverStatus, SaferMeApiStatus.ACCEPTED)
             // Response object captures all the headers in the response
             assertEquals(it.responseHeaders, responseHeaders.toMap())
         }, failure = {
@@ -198,7 +197,6 @@ class StandardDeleteTest {
         val returnObject = GenericTestObject.random()
         val status = HttpStatusCode.UnprocessableEntity
 
-        // Keep a count of how many times the success and fail handlers are called
         var successLambdaCalls = 0
         var failLambdaCalls = 0
 
