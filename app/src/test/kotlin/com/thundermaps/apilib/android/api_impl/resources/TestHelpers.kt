@@ -26,7 +26,7 @@ class TestHelpers {
         // Generic parameters that can be used as a template
         val defaultParams = RequestParameters(
             emptyMap(),
-            SaferMeCredentials("", "", "", null),
+            SaferMeCredentials("", "", "", null, ""),
             "",
             null, 0)
 
