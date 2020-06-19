@@ -15,10 +15,10 @@ object GradlePlugins {
 object Versions {
     val compile_sdk = 28
     val target_sdk = 26
-    val min_sdk = 26
+    val min_sdk = 23
 }
 
-
+    
 object Deps {
     data class Versions(val arch_comp: String = "2.0.0",
                         val design: String = "1.0.0",

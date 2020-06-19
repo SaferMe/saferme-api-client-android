@@ -215,6 +215,51 @@ class StandardMethods {
             }
         }
 
+
+        /**
+         * Standardized RESTful update call. Uses PATCH, expects a valid item to send
+         * to the server.
+         *
+         * @param api Reference to client
+         * @param path The endpoint to send the request to
+         * @param parameters Request parameters to use
+         * @param item The resource data to create on the server
+         * @param success Invoked if the request was successful
+         * @param failure Invoked if the request failed
+         */
+        public suspend inline fun <reified Resource: SaferMeDatum> delete(
+            api: AndroidClient,
+            path: String,
+            parameters: RequestParameters,
+            item: Resource,
+            crossinline success:(SaferMeApiResult<Resource>) -> Unit,
+            crossinline failure:(Exception) -> Unit
+        ) {
+            try {
+                standardCall(api, HttpMethod.Delete, path, parameters, item) { call ->
+                    var status = SaferMeApiStatus.statusForCode(call.response.status.value)
+                    when (status) {
+                        SaferMeApiStatus.ACCEPTED -> {
+                            success(
+                                SaferMeApiResult(
+                                    data = item,
+                                    serverStatus = status,
+                                    requestHeaders = call.request.headers.toMap(),
+                                    responseHeaders = call.response.headers.toMap())
+                            ) }
+                        else -> failure(
+                            SaferMeApiError(
+                                serverStatus = status,
+                                requestHeaders = call.request.headers.toMap(),
+                                responseHeaders = call.response.headers.toMap()))
+                    }
+                }
+
+            } catch (ex: Exception) {
+                failure(ex)
+            }
+        }
+
         //Commonly pattern for HttpRequests
         suspend inline fun <T> standardCall(
             api: AndroidClient,

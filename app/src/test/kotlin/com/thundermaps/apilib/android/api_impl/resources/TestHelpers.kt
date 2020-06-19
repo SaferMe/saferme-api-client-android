@@ -26,7 +26,7 @@ class TestHelpers {
         // Generic parameters that can be used as a template
         val defaultParams = RequestParameters(
             emptyMap(),
-            SaferMeCredentials("", "", "", null),
+            SaferMeCredentials("", "", "", null, ""),
             "",
             null, 0)
 
@@ -91,6 +91,41 @@ class TestHelpers {
             // Call the Create method and test the result is correct
             runBlocking {
                 StandardMethods.create(api, path, paramsToSend, item, success, failure)
+            }
+        }
+
+        /**
+         * Helper method - will create a generic create request using the provided options.
+         * Default options will work, so you only need to override the options you want to test
+         */
+        @KtorExperimentalAPI
+        fun testDeleteRequest(
+            api: AndroidClient,
+            client: HttpClient = testClient(),
+            path: String = "test",
+            params: RequestParameters = defaultParams,
+            credentials: SaferMeCredentials? = defaultParams.credentials,
+            item: GenericTestObject = GenericTestObject.random(),
+            httpRequestBuilder: HttpRequestBuilder = HttpRequestBuilder(),
+            success: (SaferMeApiResult<GenericTestObject>) -> Unit = {},
+            failure: (Exception) -> Unit = {}
+        ) {
+
+            // Copy provided credentials if they differ
+            val paramsToSend = if (params.credentials != credentials) {
+                params.copy(credentials = credentials)
+            } else params
+
+            // Make sure the mock client is used
+            every {
+                api.client(any())
+            } answers {
+                Pair(client, httpRequestBuilder)
+            }
+
+            // Call the Create method and test the result is correct
+            runBlocking {
+                StandardMethods.delete(api, path, paramsToSend, item, success, failure)
             }
         }
 
