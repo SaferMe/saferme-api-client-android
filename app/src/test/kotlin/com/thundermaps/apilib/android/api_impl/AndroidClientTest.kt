@@ -43,7 +43,7 @@ class AndroidClientTest {
     @io.ktor.util.KtorExperimentalAPI
     @Test fun clientChangesWithCredentials() {
         val subject = AndroidClient()
-        val initialParams = subject.defaultParams().copy(credentials = SaferMeCredentials("key", "id", "app", null))
+        val initialParams = subject.defaultParams().copy(credentials = SaferMeCredentials("key", "id", "app", null, ""))
         val subsequentParams = initialParams.copy(credentials = initialParams.credentials!!.copy(ApiKey = "Another Key"))
 
         val client1 = subject.client(initialParams).first
@@ -67,12 +67,13 @@ class AndroidClientTest {
         val testInstall = "Test Install"
         val testApp = "Test App"
         val testTeam = "Test Team"
+        val testClientUuid = "client uuid"
 
         val paramsWithTeam = subject.defaultParams().copy(credentials =
-            SaferMeCredentials(testKey, testInstall, testApp, testTeam))
+            SaferMeCredentials(testKey, testInstall, testApp, testTeam, testClientUuid))
 
         val paramsWithoutTeam = subject.defaultParams().copy(credentials =
-        SaferMeCredentials(testKey, testInstall, testApp, null))
+        SaferMeCredentials(testKey, testInstall, testApp, null, testClientUuid))
 
         val builderWithTeam = AndroidClient().client(paramsWithTeam).second
         assertEquals(builderWithTeam.headers["Authorization"], "Token token=$testKey")
