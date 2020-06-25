@@ -6,20 +6,17 @@ import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api.resources.SaferMeDatum
-import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api_impl.AndroidClient
-import io.ktor.client.call.*
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.call.call
+import io.ktor.client.call.receive
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
 import io.ktor.client.request.url
-import io.ktor.client.response.readBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.util.toByteArray
 import io.ktor.util.toMap
-import java.util.*
-import kotlin.collections.ArrayList
 
 class StandardMethods {
     companion object {
@@ -35,19 +32,19 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        suspend inline fun <reified Resource: SaferMeDatum> create(
+        suspend inline fun <reified Resource : SaferMeDatum> create(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
             item: Resource,
-            crossinline success:(SaferMeApiResult<Resource>) -> Unit,
-            crossinline failure:(Exception) -> Unit
+            crossinline success: (SaferMeApiResult<Resource>) -> Unit,
+            crossinline failure: (Exception) -> Unit
         ) {
 
             try {
-                standardCall(api, HttpMethod.Post, path, parameters, item) { call->
+                standardCall(api, HttpMethod.Post, path, parameters, item) { call ->
 
-                var status = SaferMeApiStatus.statusForCode(call.response.status.value)
+                    var status = SaferMeApiStatus.statusForCode(call.response.status.value)
                     when (status) {
                         SaferMeApiStatus.CREATED -> success(
                             SaferMeApiResult(
@@ -55,7 +52,14 @@ class StandardMethods {
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap())
-                            )
+                        )
+                        SaferMeApiStatus.ACCEPTED -> success(
+                            SaferMeApiResult(
+                                data = item,
+                                serverStatus = status,
+                                requestHeaders = call.request.headers.toMap(),
+                                responseHeaders = call.response.headers.toMap())
+                        )
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,
@@ -63,7 +67,6 @@ class StandardMethods {
                                 responseHeaders = call.response.headers.toMap()))
                     }
                 }
-
             } catch (ex: Exception) {
                 failure(ex)
             }
@@ -80,12 +83,12 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        suspend inline fun <reified Resource: SaferMeDatum> read(
+        suspend inline fun <reified Resource : SaferMeDatum> read(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
-            crossinline success:(SaferMeApiResult<Resource>) -> Unit,
-            crossinline failure:(Exception) -> Unit
+            crossinline success: (SaferMeApiResult<Resource>) -> Unit,
+            crossinline failure: (Exception) -> Unit
         ) {
             try {
                 standardCall(api, HttpMethod.Get, path, parameters, null) { call ->
@@ -106,7 +109,6 @@ class StandardMethods {
                                 responseHeaders = call.response.headers.toMap()))
                     }
                 }
-
             } catch (ex: Exception) {
                 failure(ex)
             }
@@ -123,22 +125,22 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        suspend inline fun <reified Resource: SaferMeDatum> update(
+        suspend inline fun <reified Resource : SaferMeDatum> update(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
             item: Resource,
-            crossinline success:(SaferMeApiResult<Resource>) -> Unit,
-            crossinline failure:(Exception) -> Unit
+            crossinline success: (SaferMeApiResult<Resource>) -> Unit,
+            crossinline failure: (Exception) -> Unit
         ) {
             try {
-                standardCall(api, HttpMethod.Patch, path, parameters, item) { call->
+                standardCall(api, HttpMethod.Patch, path, parameters, item) { call ->
 
                     var status = SaferMeApiStatus.statusForCode(call.response.status.value)
                     when (status) {
                         SaferMeApiStatus.ACCEPTED -> {
                             /** Unlike create, we may receive an empty body **/
-                            //If this is the case, we need to set data to what was sent in the request
+                            // If this is the case, we need to set data to what was sent in the request
                             val json = String(call.response.content.toByteArray())
                             var data: Resource? =
                                 if (json == "" || json.trim() == "{}") null
@@ -150,7 +152,8 @@ class StandardMethods {
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
                                     responseHeaders = call.response.headers.toMap())
-                        )}
+                            )
+                        }
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,
@@ -158,7 +161,6 @@ class StandardMethods {
                                 responseHeaders = call.response.headers.toMap()))
                     }
                 }
-
             } catch (ex: Exception) {
                 failure(ex)
             }
@@ -181,16 +183,16 @@ class StandardMethods {
             path: String,
             parameters: RequestParameters,
             listType: TypeToken<List<T>>,
-            success:(SaferMeApiResult<List<T>>) -> Unit,
-            failure:(Exception) -> Unit
+            success: (SaferMeApiResult<List<T>>) -> Unit,
+            failure: (Exception) -> Unit
         ) {
             try {
-                standardCall(api, HttpMethod.Get, path, parameters, null) { call->
+                standardCall(api, HttpMethod.Get, path, parameters, null) { call ->
                     var status = SaferMeApiStatus.statusForCode(call.response.status.value)
                     when (status) {
                         SaferMeApiStatus.OK -> {
-                            //There seems to be an issue serializing to a list natively,
-                            //So we will be doing it manually
+                            // There seems to be an issue serializing to a list natively,
+                            // So we will be doing it manually
                             val json = String(call.response.content.toByteArray())
                             val result = AndroidClient.gsonSerializer.fromJson<List<T>>(json, listType.type)
                             success(
@@ -209,7 +211,6 @@ class StandardMethods {
                                 responseHeaders = call.response.headers.toMap()))
                     }
                 }
-
             } catch (ex: Exception) {
                 failure(ex)
             }
@@ -227,13 +228,13 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        public suspend inline fun <reified Resource: SaferMeDatum> delete(
+        public suspend inline fun <reified Resource : SaferMeDatum> delete(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
             item: Resource,
-            crossinline success:(SaferMeApiResult<Resource>) -> Unit,
-            crossinline failure:(Exception) -> Unit
+            crossinline success: (SaferMeApiResult<Resource>) -> Unit,
+            crossinline failure: (Exception) -> Unit
         ) {
             try {
                 standardCall(api, HttpMethod.Delete, path, parameters, item) { call ->
@@ -254,13 +255,12 @@ class StandardMethods {
                                 responseHeaders = call.response.headers.toMap()))
                     }
                 }
-
             } catch (ex: Exception) {
                 failure(ex)
             }
         }
 
-        //Commonly pattern for HttpRequests
+        // Commonly pattern for HttpRequests
         suspend inline fun <T> standardCall(
             api: AndroidClient,
             requestMethod: HttpMethod,
@@ -287,5 +287,3 @@ class StandardMethods {
         }
     }
 }
-
-
