@@ -19,7 +19,7 @@ data class TracedContact(
     val trace_type: String = "bluetooth",
 
     @Expose
-    val contact_uuids: String = "",
+    val contact_client_uuid: String = "",
 
     @Expose
     val meta: String = "",

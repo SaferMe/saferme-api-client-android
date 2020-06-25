@@ -15,7 +15,7 @@ class TracedContactsImpl(val api: AndroidClient) : TracedContactsResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.create(
-            api = api, path=  "traced_contacts", parameters  = parameters, item = item, success= success, failure =  failure
+            api = api, path =  "traced_contacts", parameters  = parameters, item = item, success= success, failure =  failure
         )
     }
 }
