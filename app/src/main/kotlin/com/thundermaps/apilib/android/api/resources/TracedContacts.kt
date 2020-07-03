@@ -26,6 +26,5 @@ data class TracedContact(
 
     @Expose
     val distance: Int = 0
-
 )
 interface TracedContactsResource : Creatable<TracedContacts>
