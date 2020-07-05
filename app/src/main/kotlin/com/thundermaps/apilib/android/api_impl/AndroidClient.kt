@@ -4,8 +4,10 @@ import com.google.gson.GsonBuilder
 import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
+import com.thundermaps.apilib.android.api_impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.api_impl.resources.TasksImpl
 import com.thundermaps.apilib.android.api_impl.resources.TracedContactsImpl
 import io.ktor.client.HttpClient
@@ -29,6 +31,8 @@ class AndroidClient : SaferMeClient() {
     override val Tasks: TaskResource = TasksImpl(this)
 
     override val TracedContacts: TracedContactsResource = TracedContactsImpl(this)
+
+    override val DeviceInfoLogs: DeviceInfoLogsResource = DeviceInfoLogsImpl(this)
 
     //Reusable / Shared Components (Singleton)
     private var currentClient: HttpClient? = null
