@@ -67,7 +67,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:${Deps.versions.ktor}")
     implementation("io.ktor:ktor-client-cio:${Deps.versions.ktor}")
     implementation("io.ktor:ktor-client-gson:${Deps.versions.ktor}")
-    implementation("io.ktor:ktor-client-logging-native:${Deps.versions.ktor}")
+    //  implementation("io.ktor:ktor-client-logging-native:${Deps.versions.ktor}")
 
     // Logging for HTTPClient
     implementation("org.slf4j:slf4j-simple:${Deps.versions.slf4j}")
