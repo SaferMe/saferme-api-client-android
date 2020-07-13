@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import android.util.Log
 import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
@@ -12,6 +13,7 @@ import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.url
+import io.ktor.client.response.readBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
@@ -60,6 +62,14 @@ class StandardMethods {
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap())
                         )
+                        SaferMeApiStatus.OTHER_400 -> {
+                            Log.e("sending error", call.response.readBytes().toString())
+                            failure(
+                                SaferMeApiError(
+                                    serverStatus = status,
+                                    requestHeaders = call.request.headers.toMap(),
+                                    responseHeaders = call.response.headers.toMap()))
+                        }
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,
@@ -248,6 +258,14 @@ class StandardMethods {
                                     requestHeaders = call.request.headers.toMap(),
                                     responseHeaders = call.response.headers.toMap())
                             ) }
+                        SaferMeApiStatus.OTHER_400 -> {
+                            Log.d("error", call.response.readBytes().toString())
+                            failure(
+                                SaferMeApiError(
+                                    serverStatus = status,
+                                    requestHeaders = call.request.headers.toMap(),
+                                    responseHeaders = call.response.headers.toMap()))
+                        }
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,

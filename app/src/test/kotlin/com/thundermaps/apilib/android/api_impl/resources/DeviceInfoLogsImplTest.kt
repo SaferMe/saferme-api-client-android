@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import com.thundermaps.apilib.android.api.resources.DeviceInfoLog
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogs
 import com.thundermaps.apilib.android.api_impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
@@ -37,6 +38,7 @@ class DeviceInfoLogsImplTest {
         scans.add("123")
         scans.add("1234")
         var deviceInfoLogs = DeviceInfoLogs("android 7", "samsung galaxy s3", scans)
+        val deviceInfoLog = DeviceInfoLog(deviceInfoLogs)
         val returnObject = "{\"message\":\"accepted\"}"
         val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
@@ -59,12 +61,11 @@ class DeviceInfoLogsImplTest {
         } answers {
             Pair(client, HttpRequestBuilder())
         }
-
         runBlocking {
-            DeviceInfoLogsImpl(defaultAPI).create(TestHelpers.defaultParams, deviceInfoLogs,
+            DeviceInfoLogsImpl(defaultAPI).create(TestHelpers.defaultParams, deviceInfoLog,
                 {
                     TestCase.assertNotNull(it.data)
-                    TestCase.assertNotNull(it.data.equals(deviceInfoLogs))
+                    TestCase.assertEquals(it.data, deviceInfoLog)
                     synchronized(count) { count++ }
                 }, {
                     TestCase.fail("Failure block should not be called")
