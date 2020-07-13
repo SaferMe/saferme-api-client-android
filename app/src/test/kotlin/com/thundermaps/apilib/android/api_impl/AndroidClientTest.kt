@@ -4,7 +4,6 @@ import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api_impl.resources.TestHelpers
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.logging.Logging
 import io.ktor.util.AttributeKey
 import io.ktor.util.Attributes
 import io.ktor.util.KtorExperimentalAPI
@@ -128,8 +127,5 @@ class AndroidClientTest {
 
         // It is correct type
         assertTrue(featureVal.serializer is GsonSerializer)
-
-        // Logging Installed
-        assertTrue(featureAttributes.contains(Logging.key))
     }
 }

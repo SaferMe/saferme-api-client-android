@@ -125,6 +125,7 @@ publishing {
         register("ProductionRelease", MavenPublication::class) {
             groupId = Maven.group
             artifactId = "${Maven.artifactId}-release"
+            Maven.build = -2
             version = "${Maven.version}.${Maven.build}"
             artifact("$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}-release.aar")
 
@@ -151,6 +152,7 @@ publishing {
         register("TestRelease", MavenPublication::class) {
             groupId = Maven.group
             artifactId = "${Maven.artifactId}-test"
+            Maven.build = -2
             version = "${Maven.version}.${Maven.build}"
             artifact("$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}-debug.aar")
 
