@@ -14,10 +14,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.logging.ANDROID
-import io.ktor.client.features.logging.LogLevel
-import io.ktor.client.features.logging.Logger
-import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
@@ -54,10 +50,6 @@ class AndroidClient : SaferMeClient() {
                 install(JsonFeature) {
                     serializer = GsonSerializer().apply { gsonBuilder }
 
-                }
-                install(Logging) {
-                    logger = Logger.ANDROID
-                    level = LogLevel.ALL
                 }
             }
             requestBuilderTemplate = HttpRequestBuilder().apply {
