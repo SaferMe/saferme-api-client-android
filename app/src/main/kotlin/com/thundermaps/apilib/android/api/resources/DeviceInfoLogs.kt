@@ -17,4 +17,9 @@ data class DeviceInfoLogs(
     }
 }
 
-interface DeviceInfoLogsResource : Creatable<DeviceInfoLogs>
+data class DeviceInfoLog(val device_info_log: DeviceInfoLogs) : SaferMeDatum {
+    override fun toString(): String {
+        return device_info_log.toString()
+    }
+}
+interface DeviceInfoLogsResource : Creatable<DeviceInfoLog>
