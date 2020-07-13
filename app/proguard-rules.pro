@@ -1,1 +1,2 @@
 -keep class com.thundermaps.apilib.android.api.** { *; }
+-keep class io.ktor.client.features.logging.** { *; }

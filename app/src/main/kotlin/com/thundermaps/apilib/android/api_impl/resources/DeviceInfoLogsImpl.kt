@@ -1,8 +1,9 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import android.util.Log
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
-import com.thundermaps.apilib.android.api.resources.DeviceInfoLogs
+import com.thundermaps.apilib.android.api.resources.DeviceInfoLog
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api_impl.AndroidClient
 
@@ -10,8 +11,8 @@ class DeviceInfoLogsImpl(val api: AndroidClient) : DeviceInfoLogsResource {
 
     override suspend fun create(
         parameters: RequestParameters,
-        item: DeviceInfoLogs,
-        success: (SaferMeApiResult<DeviceInfoLogs>) -> Unit,
+        item: DeviceInfoLog,
+        success: (SaferMeApiResult<DeviceInfoLog>) -> Unit,
         failure: (Exception) -> Unit
     ) {
         StandardMethods.create(
