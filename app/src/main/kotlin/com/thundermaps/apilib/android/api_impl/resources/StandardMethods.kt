@@ -76,6 +76,7 @@ class StandardMethods {
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()))
                     }
+                    call.response.close()
                 }
             } catch (ex: Exception) {
                 failure(ex)
@@ -118,6 +119,7 @@ class StandardMethods {
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()))
                     }
+                    call.response.close()
                 }
             } catch (ex: Exception) {
                 failure(ex)
@@ -170,6 +172,7 @@ class StandardMethods {
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()))
                     }
+                    call.response.close()
                 }
             } catch (ex: Exception) {
                 failure(ex)
@@ -220,6 +223,7 @@ class StandardMethods {
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()))
                     }
+                    call.response.close()
                 }
             } catch (ex: Exception) {
                 failure(ex)
@@ -272,6 +276,7 @@ class StandardMethods {
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()))
                     }
+                    call.response.close()
                 }
             } catch (ex: Exception) {
                 failure(ex)
