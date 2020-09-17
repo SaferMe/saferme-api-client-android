@@ -156,7 +156,6 @@ class StandardCreateTest {
         var failLambdaCalls = 0
         val returnObject = GenericTestObject.random().toJsonString()
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-
         val client = testClient(
             content = returnObject,
             status = HttpStatusCode.Created,
@@ -170,10 +169,8 @@ class StandardCreateTest {
             synchronized(successLambdaCalls) {
                 successLambdaCalls++
             }
-
             // Data Object returned should be equivalent to the one generated
             assertEquals(it.data.toJsonString(), returnObject)
-
             // Correct status type
             assertEquals(it.serverStatus, SaferMeApiStatus.CREATED)
 
@@ -182,6 +179,45 @@ class StandardCreateTest {
         }, failure = {
             synchronized(failLambdaCalls) { failLambdaCalls++ }
         })
+
+        // Ensure callbacks called the correct number of times
+        assertEquals(successLambdaCalls, 1)
+        assertEquals(failLambdaCalls, 0)
+    }
+
+    /**
+     * Test the the success callback is called with the correct data transformed from the HTTP Response
+     */
+    @KtorExperimentalAPI
+    @Test
+    fun testCreateSuccessOther200() {
+        var successLambdaCalls = 0
+        var failLambdaCalls = 0
+        val returnObject = GenericTestObject.random().toJsonString()
+        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val client = testClient(
+            content = returnObject,
+            status = HttpStatusCode.ResetContent,
+            headers = responseHeaders
+        )
+
+        testCreateRequest(
+            api = defaultAPI,
+            client = client,
+            success = {
+                synchronized(successLambdaCalls) {
+                    successLambdaCalls++
+                }
+                // Data Object returned should be equivalent to the one generated
+                assertEquals(it.data.toJsonString(), returnObject)
+                // Correct status type
+                assertEquals(it.serverStatus, SaferMeApiStatus.OTHER_200)
+
+                // Response object captures all the headers in the response
+                assertEquals(it.responseHeaders, responseHeaders.toMap())
+            }, failure = {
+                synchronized(failLambdaCalls) { failLambdaCalls++ }
+            })
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 1)

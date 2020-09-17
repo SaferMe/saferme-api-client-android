@@ -1,9 +1,17 @@
 package com.thundermaps.apilib.android.api.resources
 
+import com.google.gson.annotations.Expose
+
 data class DeviceInfoLogs(
+    @Expose
     val os_version: String = "",
+
+    @Expose
     val device_model: String = "",
+
+    @Expose
     val scan_timestamps: ArrayList<String> = ArrayList()
+
 ) : SaferMeDatum {
     override fun toString(): String {
         val sb = StringBuilder()
@@ -17,7 +25,10 @@ data class DeviceInfoLogs(
     }
 }
 
-data class DeviceInfoLog(val device_info_log: DeviceInfoLogs) : SaferMeDatum {
+data class DeviceInfoLog(
+    @Expose
+    val device_info_log: DeviceInfoLogs
+) : SaferMeDatum {
     override fun toString(): String {
         return device_info_log.toString()
     }
