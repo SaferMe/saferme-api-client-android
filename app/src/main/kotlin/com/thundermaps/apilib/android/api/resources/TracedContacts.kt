@@ -2,6 +2,7 @@ package com.thundermaps.apilib.android.api.resources
 
 import com.google.gson.annotations.Expose
 data class TracedContacts(
+    @Expose
     val traced_contacts: List<TracedContact> = ArrayList()
 ) : SaferMeDatum {
     override fun toString(): String {
