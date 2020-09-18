@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import android.util.Log
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api_impl.AndroidClient
@@ -13,7 +14,9 @@ import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.toMap
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
 import java.util.Random
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -193,10 +196,10 @@ class StandardCreateTest {
     fun testCreateSuccessOther200() {
         var successLambdaCalls = 0
         var failLambdaCalls = 0
-        val returnObject = GenericTestObject.random().toJsonString()
+        val returnObject = GenericTestObject.random()
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         val client = testClient(
-            content = returnObject,
+            content = returnObject.toJsonString(),
             status = HttpStatusCode.ResetContent,
             headers = responseHeaders
         )
@@ -215,9 +218,11 @@ class StandardCreateTest {
 
                 // Response object captures all the headers in the response
                 assertEquals(it.responseHeaders, responseHeaders.toMap())
-            }, failure = {
+            },
+            failure = {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
-            })
+            },
+            item = returnObject)
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 1)
@@ -232,6 +237,12 @@ class StandardCreateTest {
     @KtorExperimentalAPI
     @Test
     fun testCreateNonExceptionFailure() {
+        // mock android log
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
         // Client response data:
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         val returnObject = GenericTestObject.random()
