@@ -212,7 +212,7 @@ class StandardCreateTest {
                     successLambdaCalls++
                 }
                 // Data Object returned should be equivalent to the one generated
-                assertEquals(it.data.toJsonString(), returnObject)
+                assertEquals(it.data.toJsonString(), returnObject.toJsonString())
                 // Correct status type
                 assertEquals(it.serverStatus, SaferMeApiStatus.OTHER_200)
 
