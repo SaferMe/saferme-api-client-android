@@ -45,7 +45,6 @@ class StandardMethods {
 
             try {
                 standardCall(api, HttpMethod.Post, path, parameters, item) { call ->
-
                     var status = SaferMeApiStatus.statusForCode(call.response.status.value)
                     when (status) {
                         SaferMeApiStatus.CREATED -> success(
@@ -56,6 +55,13 @@ class StandardMethods {
                                 responseHeaders = call.response.headers.toMap())
                         )
                         SaferMeApiStatus.ACCEPTED -> success(
+                            SaferMeApiResult(
+                                data = item,
+                                serverStatus = status,
+                                requestHeaders = call.request.headers.toMap(),
+                                responseHeaders = call.response.headers.toMap())
+                        )
+                        SaferMeApiStatus.OTHER_200 -> success(
                             SaferMeApiResult(
                                 data = item,
                                 serverStatus = status,
@@ -292,6 +298,7 @@ class StandardMethods {
             payload: T?,
             result: (call: HttpClientCall) -> Unit
         ) {
+
 
             val (client, template) = api.client(params)
             val jsonBody =
