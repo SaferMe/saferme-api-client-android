@@ -6,6 +6,16 @@
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true">
-    </application>
 
+        <service android:name="com.raygun.raygun4android.services.CrashReportingPostService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:process=":crashreportingpostservice"/>
+
+        <service android:name="com.raygun.raygun4android.services.RUMPostService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:process=":rumpostservice" />
+
+    </application>
 </manifest>
