@@ -11,7 +11,7 @@ import com.thundermaps.apilib.android.api_impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.api_impl.resources.TasksImpl
 import com.thundermaps.apilib.android.api_impl.resources.TracedContactsImpl
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
@@ -46,7 +46,7 @@ class AndroidClient : SaferMeClient() {
     fun client(params: RequestParameters): Pair<HttpClient, HttpRequestBuilder> {
         //Reinitialize if users credentials have changed
         if (currentClient == null || currentCredentials != params.credentials) {
-            currentClient = HttpClient(CIO) {
+            currentClient = HttpClient(Android) {
                 install(JsonFeature) {
                     serializer = GsonSerializer().apply { gsonBuilder }
 

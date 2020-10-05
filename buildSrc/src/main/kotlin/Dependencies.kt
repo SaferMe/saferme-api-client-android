@@ -36,7 +36,6 @@ object Deps {
     val gson = "com.google.code.gson:gson:${versions.gson}"
     val dagger2 = "com.google.dagger:dagger:${versions.dagger2}"
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
-
 }
 
 object TestingDeps {
