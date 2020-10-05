@@ -2,6 +2,8 @@ package com.thundermaps.apilib.android.api_impl.resources
 
 import android.util.Log
 import com.google.gson.reflect.TypeToken
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.SafermeException
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
@@ -85,6 +87,11 @@ class StandardMethods {
                     call.response.close()
                 }
             } catch (ex: Exception) {
+                if (ex.message != null) {
+                    ELog.e(SafermeException.Builder(th = ex, message = ex.message!!).build())
+                } else {
+                    ELog.e(SafermeException.Builder(th = ex).build())
+                }
                 failure(ex)
             }
         }
@@ -128,6 +135,11 @@ class StandardMethods {
                     call.response.close()
                 }
             } catch (ex: Exception) {
+                if (ex.message != null) {
+                    ELog.e(SafermeException.Builder(th = ex, message = ex.message!!).build())
+                } else {
+                    ELog.e(SafermeException.Builder(th = ex).build())
+                }
                 failure(ex)
             }
         }
@@ -181,6 +193,11 @@ class StandardMethods {
                     call.response.close()
                 }
             } catch (ex: Exception) {
+                if (ex.message != null) {
+                    ELog.e(SafermeException.Builder(th = ex, message = ex.message!!).build())
+                } else {
+                    ELog.e(SafermeException.Builder(th = ex).build())
+                }
                 failure(ex)
             }
         }
@@ -232,6 +249,11 @@ class StandardMethods {
                     call.response.close()
                 }
             } catch (ex: Exception) {
+                if (ex.message != null) {
+                    ELog.e(SafermeException.Builder(th = ex, message = ex.message!!).build())
+                } else {
+                    ELog.e(SafermeException.Builder(th = ex).build())
+                }
                 failure(ex)
             }
         }
@@ -285,6 +307,11 @@ class StandardMethods {
                     call.response.close()
                 }
             } catch (ex: Exception) {
+                if (ex.message != null) {
+                    ELog.e(SafermeException.Builder(th = ex, message = ex.message!!).build())
+                } else {
+                    ELog.e(SafermeException.Builder(th = ex).build())
+                }
                 failure(ex)
             }
         }
@@ -298,8 +325,6 @@ class StandardMethods {
             payload: T?,
             result: (call: HttpClientCall) -> Unit
         ) {
-
-
             val (client, template) = api.client(params)
             val jsonBody =
                 if (payload != null) AndroidClient.gsonSerializer.toJsonTree(payload) else null

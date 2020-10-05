@@ -66,12 +66,14 @@ dependencies {
     // KTOR
     implementation("io.ktor:ktor-client-core:${Deps.versions.ktor}")
     implementation("io.ktor:ktor-client-cio:${Deps.versions.ktor}")
+    implementation("io.ktor:ktor-client-android:${Deps.versions.ktor}")
+
     implementation("io.ktor:ktor-client-gson:${Deps.versions.ktor}")
     //  implementation("io.ktor:ktor-client-logging-native:${Deps.versions.ktor}")
 
     // Logging for HTTPClient
     implementation("org.slf4j:slf4j-simple:${Deps.versions.slf4j}")
-
+    implementation("com.raygun:raygun4android:4.0.0")
     // Gson Serialisation
     implementation(Deps.gson)
 
