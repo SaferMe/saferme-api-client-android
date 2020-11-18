@@ -168,7 +168,7 @@ class StandardMethods {
 
                     var status = SaferMeApiStatus.statusForCode(call.response.status.value)
                     when (status) {
-                        SaferMeApiStatus.ACCEPTED -> {
+                        SaferMeApiStatus.ACCEPTED, SaferMeApiStatus.OTHER_200, SaferMeApiStatus.NO_CONTENT -> {
                             /** Unlike create, we may receive an empty body **/
                             // If this is the case, we need to set data to what was sent in the request
                             val json = String(call.response.content.toByteArray())
@@ -282,14 +282,15 @@ class StandardMethods {
                 standardCall(api, HttpMethod.Delete, path, parameters, item) { call ->
                     var status = SaferMeApiStatus.statusForCode(call.response.status.value)
                     when (status) {
-                        SaferMeApiStatus.ACCEPTED -> {
+                        SaferMeApiStatus.ACCEPTED, SaferMeApiStatus.OTHER_200, SaferMeApiStatus.NO_CONTENT -> {
                             success(
                                 SaferMeApiResult(
                                     data = item,
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
                                     responseHeaders = call.response.headers.toMap())
-                            ) }
+                            )
+                        }
                         SaferMeApiStatus.OTHER_400 -> {
                             Log.d("error", call.response.readBytes().toString())
                             failure(

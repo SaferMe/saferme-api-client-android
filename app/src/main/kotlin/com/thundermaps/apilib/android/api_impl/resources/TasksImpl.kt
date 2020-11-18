@@ -38,7 +38,6 @@ class TasksImpl(val api: AndroidClient): TaskResource {
         success: (SaferMeApiResult<Task>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-
         val uuid = item.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         StandardMethods.update(
             api = api, path=  "tasks/$uuid", parameters  = parameters, item = item, success= success, failure =  failure

@@ -1,6 +1,6 @@
 object GradlePlugins {
     data class Versions(val gradle: String = "3.3.0",
-                        val kotlin: String = "1.3.20",
+                        val kotlin: String = "1.3.61",
                         val junit5: String = "1.2.0.0")
 
     val versions = Versions()
