@@ -17,6 +17,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
+import java.text.DateFormat
 import javax.inject.Singleton
 
 
@@ -82,6 +83,7 @@ class AndroidClient : SaferMeClient() {
             disableHtmlEscaping()
             excludeFieldsWithoutExposeAnnotation()
             serializeNulls()
+            setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
         }
 
         //Reusable serializer configured with default options
