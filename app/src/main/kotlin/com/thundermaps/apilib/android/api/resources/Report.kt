@@ -68,7 +68,10 @@ data class Report(
     val viewer_count: Int? = 0,
 
     @Expose
-    val hidden_fields: JsonArray? = null // todo: what data comes inside the array
+    val form_fields: JsonArray? = null,
+
+    @Expose
+    val hidden_fields: JsonArray? = null
 ) : SaferMeDatum {
     override fun toString(): String {
         return super.toString()
