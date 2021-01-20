@@ -22,7 +22,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.create(
-            api = api, path=  "reports", parameters  = parameters, item = item, success= success, failure =  failure
+            api = api, path =  "reports", parameters = parameters, item = item, success = success, failure = failure
         )
     }
     override suspend fun read(
@@ -32,7 +32,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.read(
-            api = api, path = "reports/${item.id}", parameters = parameters, success = success, failure =  failure
+            api = api, path = "reports/${item.id}", parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -43,7 +43,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.update(
-            api = api, path=  "reports/${item.id}", parameters  = parameters, item = item, success= success, failure =  failure
+            api = api, path=  "reports/${item.id}", parameters = parameters, item = item, success = success, failure = failure
         )
     }
 
@@ -55,7 +55,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
     ) {
         class TaskListToken : TypeToken<List<Report>>()
         StandardMethods.index(
-            api = api, path=  "reports", listType = TaskListToken(), parameters  = parameters, success= success, failure =  failure
+            api = api, path=  "reports", listType = TaskListToken(), parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -69,7 +69,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
 
     ) {
         StandardMethods.delete(
-            api = api, path=  "reports/${identifier.id}", parameters  = parameters, success= success, failure =  failure, item = identifier
+            api = api, path = "reports/${identifier.id}", parameters = parameters, success = success, failure = failure, item = identifier
         )
     }
 

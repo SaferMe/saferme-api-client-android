@@ -18,13 +18,6 @@ class TasksImpl(val api: AndroidClient): TaskResource {
         success: (SaferMeApiResult<Task>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        try {
-            val jsonBody =
-                if (item != null) AndroidClient.gsonSerializer.toJsonTree(item) else JsonObject()
-            if (jsonBody != null) Log.e("send-body update:", jsonBody.toString()) else Log.e("triste", "triste")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         StandardMethods.create(
             api = api, path=  "tasks", parameters  = parameters, item = item, success= success, failure =  failure
         )

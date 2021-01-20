@@ -41,7 +41,6 @@ class ReportImplTest {
     @Test
     fun testCreateSuccess() {
         val id = 204202330
-        // val returnObject = "{\"id\":$id}"
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
