@@ -175,7 +175,6 @@ class StandardMethods {
                             var data: Resource? =
                                 if (json == "" || json.trim() == "{}") null
                                 else AndroidClient.gsonSerializer.fromJson(json, Resource::class.java)
-
                             success(
                                 SaferMeApiResult(
                                     data = data ?: item,

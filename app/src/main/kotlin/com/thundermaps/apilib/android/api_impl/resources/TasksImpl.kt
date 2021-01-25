@@ -1,5 +1,7 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import android.util.Log
+import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
@@ -39,6 +41,13 @@ class TasksImpl(val api: AndroidClient): TaskResource {
         failure: (Exception) -> Unit
     ) {
         val uuid = item.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
+        try {
+            val jsonBody =
+                if (item != null) AndroidClient.gsonSerializer.toJsonTree(item) else null
+            if (jsonBody != null) Log.e("send-body update:", jsonBody.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         StandardMethods.update(
             api = api, path=  "tasks/$uuid", parameters  = parameters, item = item, success= success, failure =  failure
         )

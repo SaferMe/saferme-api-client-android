@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import android.util.Log
 import com.thundermaps.apilib.android.api.resources.TracedContact
 import com.thundermaps.apilib.android.api.resources.TracedContacts
 import com.thundermaps.apilib.android.api_impl.AndroidClient
@@ -11,6 +12,7 @@ import io.ktor.util.KtorExperimentalAPI
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockkStatic
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -24,6 +26,11 @@ class TracedContactsTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
     }
 
     /**
