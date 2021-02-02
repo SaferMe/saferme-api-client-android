@@ -26,10 +26,10 @@ data class Report(
     val description: String? = null,
 
     @Expose
-    val is_anonymous: Boolean = false,
+    val is_anonymous: Boolean? = false,
 
     @Expose
-    val is_hazard: Boolean = false,
+    val is_hazard: Boolean? = false,
 
     @Expose
     val iso_created_at: String? = null,
