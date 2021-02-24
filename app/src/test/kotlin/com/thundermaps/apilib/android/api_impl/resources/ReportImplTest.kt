@@ -1,7 +1,6 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
 import android.util.Log
-import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.resources.Report
 import com.thundermaps.apilib.android.api_impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
