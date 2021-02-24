@@ -85,15 +85,15 @@ class ReportImplTest {
     @KtorExperimentalAPI
     @Test
     fun testReadSuccess() {
-        val id = 1
+        val id = 204202330
         val returnObject = "{\"id\":$id}"
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
-        val expectedPath = "/api/v0/reports/$id"
+        val expectedPath = "/api/v0/reports/$id?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by"
 
         val client = TestHelpers.testClient(
-            content = returnObject,
+            content = reportTestpayload,
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
@@ -112,6 +112,7 @@ class ReportImplTest {
             ReportImpl(defaultAPI).read(TestHelpers.defaultParams, Report(id = id),
                 {
                     TestCase.assertEquals(it.data.id, id)
+
                     synchronized(count) { count++ }
                 }, {
                     TestCase.fail("Failure block should not be called")
@@ -135,7 +136,7 @@ class ReportImplTest {
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
-        val expectedPath = "/api/v0/reports/${requestItem.id}"
+        val expectedPath = "/api/v0/reports/${requestItem.id}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by"
 
         val client = TestHelpers.testClient(
             content = returnContent,
@@ -181,7 +182,7 @@ class ReportImplTest {
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
-        val expectedPath = "/api/v0/reports"
+        val expectedPath = "/api/v0/reports?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by"
 
         val client = TestHelpers.testClient(
             content = returnJson,
