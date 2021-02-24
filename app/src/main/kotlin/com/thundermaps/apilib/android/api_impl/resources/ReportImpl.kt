@@ -32,7 +32,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.read(
-            api = api, path = "reports/${item.id}", parameters = parameters, success = success, failure = failure
+            api = api, path = "reports/${item.id}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -43,7 +43,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.update(
-            api = api, path=  "reports/${item.id}", parameters = parameters, item = item, success = success, failure = failure
+            api = api, path=  "reports/${item.id}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, item = item, success = success, failure = failure
         )
     }
 
@@ -55,7 +55,7 @@ class ReportImpl( val api: AndroidClient): ReportResource {
     ) {
         class TaskListToken : TypeToken<List<Report>>()
         StandardMethods.index(
-            api = api, path=  "reports", listType = TaskListToken(), parameters = parameters, success = success, failure = failure
+            api = api, path=  "reports?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", listType = TaskListToken(), parameters = parameters, success = success, failure = failure
         )
     }
 
