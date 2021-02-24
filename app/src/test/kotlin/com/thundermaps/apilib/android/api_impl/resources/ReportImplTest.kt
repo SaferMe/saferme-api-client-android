@@ -32,7 +32,7 @@ class ReportImplTest {
         every { Log.i(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
     }
-    
+
     /**
      * Test that calling this method will cause a valid call to StandardMethods.create
      * The tests in [StandardCreateTest] cover nearly all functionality - we only need to consider
