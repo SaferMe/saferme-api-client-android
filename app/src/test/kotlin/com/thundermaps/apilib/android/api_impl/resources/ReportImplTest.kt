@@ -109,7 +109,7 @@ class ReportImplTest {
         }
 
         runBlocking {
-            ReportImpl(defaultAPI).read(TestHelpers.defaultParams, Report(id = id, uuid =  id.toString()),
+            ReportImpl(defaultAPI).read(TestHelpers.defaultParams, Report(id = id, uuid = id.toString()),
                 {
                     TestCase.assertEquals(it.data.uuid, id.toString())
 
