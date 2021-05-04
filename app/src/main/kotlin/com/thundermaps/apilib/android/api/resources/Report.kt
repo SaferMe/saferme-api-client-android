@@ -8,6 +8,9 @@ data class Report(
     val id: Int = 0,
 
     @Expose
+    val uuid: String = "",
+
+    @Expose
     val title: String? = null,
 
     @Expose
