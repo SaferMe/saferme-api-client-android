@@ -5,10 +5,10 @@ import com.google.gson.annotations.Expose
 
 data class Report(
     @Expose
-    val id: Int = 0,
+    val uuid: String = "",
 
     @Expose
-    val uuid: String = "",
+    val id: Int? = 0,
 
     @Expose
     val title: String? = null,
