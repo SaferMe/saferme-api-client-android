@@ -8,7 +8,7 @@ import java.util.Locale
 data class Task(
 
     @Expose
-    val report_id: Int? = null,
+    val report_uuid: String? = null,
 
     @Expose
     val uuid: String? = null,
@@ -43,7 +43,7 @@ data class Task(
         sb.append("------------------------------------------------------------------------------\n")
         sb.append("Title:\t\t$title\n")
         sb.append("Description:\t\t $description\n")
-        sb.append("Report:\t\t$report_id\n")
+        sb.append("Report:\t\t$report_uuid\n")
         sb.append("Creator:\t\t$creator_id\n")
         sb.append("Created At:\t\t${fmt.format(client_created_at)}\n")
         if (assignee_id != null)
