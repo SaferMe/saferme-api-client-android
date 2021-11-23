@@ -1,7 +1,7 @@
 object GradlePlugins {
-    data class Versions(val gradle: String = "3.3.0",
-                        val kotlin: String = "1.3.61",
-                        val junit5: String = "1.2.0.0")
+    data class Versions(val gradle: String = "7.0.3",
+                        val kotlin: String = "1.5.31",
+                        val junit5: String = "1.8.0.0")
 
     val versions = Versions()
 
@@ -13,8 +13,8 @@ object GradlePlugins {
 }
 
 object Versions {
-    val compile_sdk = 28
-    val target_sdk = 26
+    val compile_sdk = 30
+    val target_sdk = 30
     val min_sdk = 23
 }
 

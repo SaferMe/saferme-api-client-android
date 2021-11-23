@@ -10,12 +10,9 @@ import io.ktor.util.KtorExperimentalAPI
 import java.util.Random
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
-import kotlin.collections.HashMap
-import org.hamcrest.CoreMatchers.not
 import org.junit.After
-import org.junit.Assert.assertThat
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -29,15 +26,7 @@ class AndroidClientTest {
     fun tearDown() {
     }
 
-    @Test
-    fun defaultParams() {
-        val params = AndroidClient().defaultParams()
-        assertEquals(0, params.customRequestHeaders.size)
-        assertNull(params.credentials)
-        assertEquals("public-api.thundermaps.com", params.host)
-        assertNull(params.port)
-        assertEquals(4, params.api_version)
-    }
+    private fun AndroidClient.defaultParams() = SaferMeClientImpl(this).defaultParams()
 
     @io.ktor.util.KtorExperimentalAPI
     @Test fun clientChangesWithCredentials() {
@@ -45,15 +34,17 @@ class AndroidClientTest {
         val initialParams = subject.defaultParams().copy(credentials = SaferMeCredentials("key", "id", "app", null, ""))
         val subsequentParams = initialParams.copy(credentials = initialParams.credentials!!.copy(ApiKey = "Another Key"))
 
-        val client1 = subject.client(initialParams).first
+        val (client1, request1) = subject.client(initialParams)
 
         // Calls to client with the same credentials should return the same object
-        val client2 = subject.client(initialParams).first
+        val (client2, request2) = subject.client(initialParams)
         assertEquals(client1, client2)
+        assertEquals(request1, request2)
 
         // Calls to client with different credentials should return a different object
-        val client3 = subject.client(subsequentParams).first
-        assertThat(client3, not(client2))
+        val (client3, request3) = subject.client(subsequentParams)
+        assertEquals(client1, client3)
+        assertNotEquals(request1, request3)
     }
 
     /**
@@ -100,7 +91,10 @@ class AndroidClientTest {
         }
 
         val subject = AndroidClient()
-        val paramsWithCustomHeaders = subject.defaultParams().copy(customRequestHeaders = testHeaders)
+        val paramsWithCustomHeaders = subject.defaultParams().copy(
+            customRequestHeaders = testHeaders,
+            credentials = SaferMeCredentials("testKey", "testInstall", "testApp", "testTeam", "testClientUuid")
+        )
         val builder = subject.client(paramsWithCustomHeaders).second
 
         for (entry in testHeaders.entries) {

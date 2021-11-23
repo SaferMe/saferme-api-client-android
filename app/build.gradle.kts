@@ -7,12 +7,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Versions.compile_sdk)
+    compileSdk = Versions.compile_sdk
     defaultConfig {
-        minSdkVersion(Versions.min_sdk)
-        targetSdkVersion(Versions.target_sdk)
-        versionCode = Maven.build
-        versionName = "${Maven.version}.${Maven.build}"
+        minSdk = Versions.min_sdk
+        targetSdk = Versions.target_sdk
     }
 
     compileOptions {

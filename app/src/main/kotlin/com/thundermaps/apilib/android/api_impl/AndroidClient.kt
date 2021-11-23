@@ -1,17 +1,8 @@
 package com.thundermaps.apilib.android.api_impl
 
 import com.google.gson.GsonBuilder
-import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
-import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
-import com.thundermaps.apilib.android.api.resources.ReportResource
-import com.thundermaps.apilib.android.api.resources.TaskResource
-import com.thundermaps.apilib.android.api.resources.TracedContactsResource
-import com.thundermaps.apilib.android.api_impl.resources.DeviceInfoLogsImpl
-import com.thundermaps.apilib.android.api_impl.resources.ReportImpl
-import com.thundermaps.apilib.android.api_impl.resources.TasksImpl
-import com.thundermaps.apilib.android.api_impl.resources.TracedContactsImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.GsonSerializer
@@ -19,46 +10,30 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
-import java.text.DateFormat
+import javax.inject.Inject
 import javax.inject.Singleton
 
-
-@Singleton
-class AndroidClient : SaferMeClient() {
-
-    //Supported API Endpoints
-    override val Tasks: TaskResource = TasksImpl(this)
-
-    override val Reports: ReportResource = ReportImpl(this)
-
-    override val TracedContacts: TracedContactsResource = TracedContactsImpl(this)
-
-    override val DeviceInfoLogs: DeviceInfoLogsResource = DeviceInfoLogsImpl(this)
-
+class AndroidClient @Inject constructor() {
     //Reusable / Shared Components (Singleton)
-    private var currentClient: HttpClient? = null
+    val currentClient: HttpClient by lazy {
+        HttpClient(Android) {
+            install(JsonFeature) {
+                serializer = GsonSerializer().apply { gsonBuilder }
+            }
+        }
+    }
+    
     private var requestBuilderTemplate = HttpRequestBuilder()
-
+    
     //Store the most recently used credentials
     private var currentCredentials: SaferMeCredentials? = null
-
-    //Default Request Options
-    override fun defaultParams(): RequestParameters {
-        return defaultOptions
-    }
-
+    
     @io.ktor.util.KtorExperimentalAPI
     fun client(params: RequestParameters): Pair<HttpClient, HttpRequestBuilder> {
         //Reinitialize if users credentials have changed
-        if (currentClient == null || currentCredentials != params.credentials) {
-            currentClient = HttpClient(Android) {
-                install(JsonFeature) {
-                    serializer = GsonSerializer().apply { gsonBuilder }
-
-                }
-            }
+        if (currentCredentials != params.credentials) {
             requestBuilderTemplate = HttpRequestBuilder().apply {
-                val creds  = params.credentials
+                val creds = params.credentials
                 currentCredentials = creds
                 if (creds != null) {
                     headers.append("X-InstallationID", creds.InstallationId)
@@ -68,20 +43,17 @@ class AndroidClient : SaferMeClient() {
                         headers.append("X-TeamID", creds.TeamId)
                 }
                 headers.append("Accept", "application/json, text/plain, */*")
-                params.customRequestHeaders.forEach {(k,v) -> headers.append(k, v)}
+                params.customRequestHeaders.forEach { (k, v) -> headers.append(k, v) }
             }
-
+            
         }
-
-        return Pair(currentClient!!,requestBuilderTemplate)
+        
+        return Pair(currentClient, requestBuilderTemplate)
     }
-
+    
     //Widely used static builders/configuration (Assists with DRY code)
     companion object {
-
-        //Constants
-        private const val DEFAULT_API_ENDPOINT = "public-api.thundermaps.com"
-
+        
         //Default GSON Configuration
         val gsonBuilder = GsonBuilder().apply {
             disableHtmlEscaping()
@@ -89,21 +61,10 @@ class AndroidClient : SaferMeClient() {
             serializeNulls()
             setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
         }
-
+        
         //Reusable serializer configured with default options
         val gsonSerializer = gsonBuilder.create()!!
-
-        //Default resource options
-        val defaultOptions =
-            RequestParameters(
-                customRequestHeaders = HashMap(),
-                credentials = null,
-                host = DEFAULT_API_ENDPOINT,
-                port = null,
-                api_version = 4
-            )
-
-
+        
         //Reusable URL Builder
         fun baseUrlBuilder(params: RequestParameters): URLBuilder {
             return URLBuilder().apply {
