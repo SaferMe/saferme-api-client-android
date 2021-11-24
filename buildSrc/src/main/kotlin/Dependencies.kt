@@ -13,9 +13,10 @@ object GradlePlugins {
 }
 
 object Versions {
-    val compile_sdk = 30
-    val target_sdk = 30
-    val min_sdk = 23
+    const val compileSdk = 30
+    const val targetSdk = 30
+    const val minSdk = 23
+    const val jacoco = "0.8.7"
 }
 
     

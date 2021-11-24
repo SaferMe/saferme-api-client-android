@@ -7,10 +7,10 @@ plugins {
 }
 
 android {
-    compileSdk = Versions.compile_sdk
+    compileSdk = Versions.compileSdk
     defaultConfig {
-        minSdk = Versions.min_sdk
-        targetSdk = Versions.target_sdk
+        minSdk = Versions.minSdk
+        targetSdk = Versions.targetSdk
     }
 
     compileOptions {
@@ -45,14 +45,14 @@ android {
     }
 
     packagingOptions {
-        exclude("META-INF/ktor-http.kotlin_module")
-        exclude("META-INF/kotlinx-io.kotlin_module")
-        exclude("META-INF/atomicfu.kotlin_module")
-        exclude("META-INF/ktor-utils.kotlin_module")
-        exclude("META-INF/kotlinx-coroutines-io.kotlin_module")
-        exclude("META-INF/kotlinx-coroutines-core.kotlin_module")
-        exclude("META-INF/ktor-http-cio.kotlin_module")
-        exclude("META-INF/ktor-client-core.kotlin_module")
+        resources.excludes.add("META-INF/ktor-http.kotlin_module")
+        resources.excludes.add("META-INF/kotlinx-io.kotlin_module")
+        resources.excludes.add("META-INF/atomicfu.kotlin_module")
+        resources.excludes.add("META-INF/ktor-utils.kotlin_module")
+        resources.excludes.add("META-INF/kotlinx-coroutines-io.kotlin_module")
+        resources.excludes.add("META-INF/kotlinx-coroutines-core.kotlin_module")
+        resources.excludes.add("META-INF/ktor-http-cio.kotlin_module")
+        resources.excludes.add("META-INF/ktor-client-core.kotlin_module")
     }
 }
 

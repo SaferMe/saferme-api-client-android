@@ -3,7 +3,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        mavenCentral()
         maven("https://plugins.gradle.org/m2/")
     }
     // More info on buildscript vs allprojects: https://stackoverflow.com/a/30159149/2085356
@@ -28,4 +27,16 @@ allprojects {
 
 task("clean") {
     delete(rootProject.buildDir)
+}
+
+subprojects {
+    configurations.all {
+        resolutionStrategy {
+            eachDependency {
+                if ("org.jacoco" == requested.group) {
+                    useVersion(Versions.jacoco)
+                }
+            }
+        }
+    }
 }
