@@ -1,11 +1,12 @@
 package com.thundermaps.apilib.android.api_impl.resources
 
+import com.thundermaps.apilib.android.api.com.thundermaps.env.Environment
+import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api.requests.models.SessionBody
-import com.thundermaps.apilib.android.api.resources.SaferMeDatum
 import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.ResponseError
 import com.thundermaps.apilib.android.api.responses.models.Sessions
@@ -24,13 +25,21 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.util.toMap
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class SessionsImpl @Inject constructor(private val androidClient: AndroidClient) : SessionsResource {
+@Singleton
+class SessionsImpl @Inject constructor(
+    private val androidClient: AndroidClient,
+    private val environmentManager: EnvironmentManager
+) : SessionsResource {
     private var client = HttpClient(Android) {
         install(JsonFeature) {
             serializer = GsonSerializer().apply { AndroidClient.gsonBuilder }
-            
         }
+    }
+    
+    override fun updateEnvironment(environment: Environment) {
+        environmentManager.updateEnvironment(environment)
     }
     
     private fun createLoginParameters(host: String): RequestParameters {
@@ -56,21 +65,25 @@ class SessionsImpl @Inject constructor(private val androidClient: AndroidClient)
             val responseString = call.response.readBytes().toString()
             when (status) {
                 SaferMeApiStatus.OTHER_200 -> {
-                    success(AndroidClient.gsonSerializer.fromJson(
-                        responseString,
-                        Sessions::class.java
-                    ))
+                    success(
+                        AndroidClient.gsonSerializer.fromJson(
+                            responseString,
+                            Sessions::class.java
+                        )
+                    )
                 }
                 else -> {
-                    error(SaferMeApiResult(
-                        data = AndroidClient.gsonSerializer.fromJson(
-                            responseString,
-                            ResponseError::class.java
-                        ),
-                        serverStatus = status,
-                        requestHeaders = call.request.headers.toMap(),
-                        responseHeaders = call.response.headers.toMap()
-                    ))
+                    error(
+                        SaferMeApiResult(
+                            data = AndroidClient.gsonSerializer.fromJson(
+                                responseString,
+                                ResponseError::class.java
+                            ),
+                            serverStatus = status,
+                            requestHeaders = call.request.headers.toMap(),
+                            responseHeaders = call.response.headers.toMap()
+                        )
+                    )
                 }
             }
         }
@@ -85,7 +98,7 @@ class SessionsImpl @Inject constructor(private val androidClient: AndroidClient)
         val client = androidClient.currentClient
         val call = client.call(HttpRequestBuilder().apply {
             method = HttpMethod.Post
-            url(AndroidClient.baseUrlBuilder(createLoginParameters(Staging.servers.first())).apply {
+            url(AndroidClient.baseUrlBuilder(createLoginParameters(environmentManager.environment.servers.first())).apply {
                 encodedPath = "${this.encodedPath}${"sessions"}"
             }.build())
             if (jsonBody != null) {

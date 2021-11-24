@@ -1,11 +1,12 @@
 package com.thundermaps.apilib.android.api_impl
 
+import io.mockk.mockk
 import junit.framework.TestCase
 import org.junit.Test
 
 internal class SaferMeClientTest {
     private val androidClient = AndroidClient()
-    private val saferMeClient = SaferMeClientImpl(androidClient)
+    private val saferMeClient = SaferMeClientImpl(androidClient, mockk(), mockk())
 
     @Test
     fun defaultParams() {

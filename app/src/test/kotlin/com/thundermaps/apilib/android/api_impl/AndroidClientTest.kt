@@ -7,6 +7,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.util.AttributeKey
 import io.ktor.util.Attributes
 import io.ktor.util.KtorExperimentalAPI
+import io.mockk.mockk
 import java.util.Random
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -26,7 +27,7 @@ class AndroidClientTest {
     fun tearDown() {
     }
 
-    private fun AndroidClient.defaultParams() = SaferMeClientImpl(this).defaultParams()
+    private fun AndroidClient.defaultParams() = SaferMeClientImpl(this, mockk(), mockk()).defaultParams()
 
     @io.ktor.util.KtorExperimentalAPI
     @Test fun clientChangesWithCredentials() {
