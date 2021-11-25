@@ -13,7 +13,9 @@ class EnvironmentManager @Inject constructor() {
     }
         private set
 
-    fun updateEnvironment(env: Environment) {
+    internal fun updateEnvironment(env: Environment) {
         environment = env
     }
+
+    fun isStaging() = environment == Staging
 }
