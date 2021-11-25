@@ -1,16 +1,15 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
-import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api.resources.TaskResource
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
 import java.lang.IllegalArgumentException
 
-class TasksImpl(val api: AndroidClient): TaskResource {
+class TasksImpl(val api: AndroidClient) : TaskResource {
 
     override suspend fun create(
         parameters: RequestParameters,
@@ -19,7 +18,7 @@ class TasksImpl(val api: AndroidClient): TaskResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.create(
-            api = api, path=  "tasks", parameters  = parameters, item = item, success= success, failure =  failure
+            api = api, path = "tasks", parameters = parameters, item = item, success = success, failure = failure
         )
     }
     override suspend fun read(
@@ -30,7 +29,7 @@ class TasksImpl(val api: AndroidClient): TaskResource {
     ) {
         val uuid = item.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         StandardMethods.read(
-            api = api, path = "tasks/$uuid", parameters = parameters, success = success, failure =  failure
+            api = api, path = "tasks/$uuid", parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -49,10 +48,9 @@ class TasksImpl(val api: AndroidClient): TaskResource {
             e.printStackTrace()
         }
         StandardMethods.update(
-            api = api, path=  "tasks/$uuid", parameters  = parameters, item = item, success= success, failure =  failure
+            api = api, path = "tasks/$uuid", parameters = parameters, item = item, success = success, failure = failure
         )
     }
-
 
     override suspend fun index(
         parameters: RequestParameters,
@@ -61,11 +59,9 @@ class TasksImpl(val api: AndroidClient): TaskResource {
     ) {
         class TaskListToken : TypeToken<List<Task>>()
         StandardMethods.index(
-            api = api, path=  "tasks", listType = TaskListToken(), parameters  = parameters, success= success, failure =  failure
+            api = api, path = "tasks", listType = TaskListToken(), parameters = parameters, success = success, failure = failure
         )
     }
-
-
 
     override suspend fun delete(
         parameters: RequestParameters,
@@ -75,9 +71,7 @@ class TasksImpl(val api: AndroidClient): TaskResource {
 
     ) {
         StandardMethods.delete(
-            api = api, path=  "tasks", parameters  = parameters, success= success, failure =  failure, item = identifier
+            api = api, path = "tasks", parameters = parameters, success = success, failure = failure, item = identifier
         )
     }
-
 }
-

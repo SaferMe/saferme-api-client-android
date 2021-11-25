@@ -1,9 +1,12 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
+import com.thundermaps.apilib.android.impl.resources.TestHelpers.Companion.testClient
+import com.thundermaps.apilib.android.impl.resources.TestHelpers.Companion.testCreateRequest
+import com.thundermaps.apilib.android.impl.resources.TestHelpers.Companion.testDeleteRequest
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -16,13 +19,16 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import java.util.Random
-import junit.framework.Assert.assertEquals
-import junit.framework.TestCase
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class StandardIndexTest {
+/**
+ * Tests for the StandardMethod.create Method
+ */
+class StandardDeleteTest {
+
     @MockK
     lateinit var defaultAPI: AndroidClient
 
@@ -38,22 +44,19 @@ class StandardIndexTest {
 
     /**
      * GENERAL HTTP TESTS
-     * These test check that the StandardMethods 'Index' will construct the right
+     * These test check that the StandardMethods 'Create' will construct the right
      * request when given various options
      */
 
     /** Test for correct HTTP Method Call **/
     @KtorExperimentalAPI
     @Test
-    fun testIndexHTTPMethod() {
+    fun testDeleteHTTPMethod() {
         var called = false
-        TestHelpers.testIndexRequest(
-            api = defaultAPI,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.method, HttpMethod.Get)
-                called = true
-            })
-        )
+        testDeleteRequest(api = defaultAPI, client = testClient(requestInspector = {
+            assertEquals(it.method, HttpMethod.Delete)
+            called = true
+        }))
         assertTrue(called)
     }
 
@@ -62,14 +65,14 @@ class StandardIndexTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testIndexHost() {
+    fun testDeleteHost() {
         var called = false
         val testHost = "TestHostString"
         val params = TestHelpers.defaultParams.copy(host = testHost)
-        TestHelpers.testIndexRequest(
+        testCreateRequest(
             api = defaultAPI,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.host, testHost)
+            client = testClient(requestInspector = {
+                assertEquals(it.url.host, testHost)
                 called = true
             }),
             params = params
@@ -82,21 +85,21 @@ class StandardIndexTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testIndexPath() {
+    fun testDeletePath() {
         var called = false
         val testPath = "Some/Test/Path"
         val version = Random().nextInt(999)
         val params = TestHelpers.defaultParams.copy(api_version = version)
         val expectedPath = "/api/v$version/$testPath" // '/api/v' prefix automatically applied
-        TestHelpers.testIndexRequest(
+        testDeleteRequest(
             api = defaultAPI,
             path = testPath,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.encodedPath, expectedPath)
+            client = testClient(requestInspector = {
+                assertEquals(it.url.encodedPath, expectedPath)
                 called = true
             }
-            ))
+        ))
         assertTrue(called)
     }
 
@@ -105,18 +108,18 @@ class StandardIndexTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testIndexPort() {
+    fun testDeletePort() {
         var called = false
         val testPort = Random().nextInt(65535)
         val params = TestHelpers.defaultParams.copy(port = testPort)
-        TestHelpers.testIndexRequest(
+        testDeleteRequest(
             api = defaultAPI,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.port, testPort)
+            client = testClient(requestInspector = {
+                assertEquals(it.url.port, testPort)
                 called = true
             }
-            ))
+        ))
         assertTrue(called)
     }
 
@@ -133,21 +136,22 @@ class StandardIndexTest {
             headers.append(name, value)
         }
 
-        TestHelpers.testIndexRequest(
+        testDeleteRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
-            client = TestHelpers.testClient(requestInspector = {
+            client = testClient(requestInspector = {
                 assertTrue(it.headers.contains(name))
                 assertEquals(it.headers[name], value)
                 called = true
             }
-            ))
+        ))
+
         assertTrue(called)
     }
 
     /**
      * CREATE Functional Tests
-     * These tests check that the StandardMethods 'Index' will construct the right
+     * These tests check that the StandardMethods 'Delete' will construct the right
      * kind of object(s) for different responses, and will call the right callbacks.
      */
 
@@ -156,44 +160,36 @@ class StandardIndexTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testIndexSuccess() {
+    fun testDeleteSuccess() {
         var successLambdaCalls = 0
         var failLambdaCalls = 0
-        val returnList = GenericTestObject.randomList()
-        val returnJson = GenericTestObject.listToJson(returnList)
+        val returnObject = GenericTestObject.random().toJsonString()
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
 
-        val client = TestHelpers.testClient(
-            content = returnJson,
-            status = HttpStatusCode.OK,
+        val client = testClient(
+            content = returnObject,
+            status = HttpStatusCode.Accepted,
             headers = responseHeaders
         )
 
-        TestHelpers.testIndexRequest(
+        testDeleteRequest(
             api = defaultAPI,
-            client = client, success = {
-                synchronized(successLambdaCalls) {
-                    successLambdaCalls++
-                }
-
-                // List returned should contain the same elements as the return list
-                val actualList = it.data
-                actualList.mapIndexed { i, v -> TestCase.assertEquals(returnList[i], v) }
-
-                assertEquals(returnList.size, actualList.size)
-
-                // Correct status type
-                TestCase.assertEquals(it.serverStatus, SaferMeApiStatus.OK)
-
-                // Response object captures all the headers in the response
-                TestCase.assertEquals(it.responseHeaders, responseHeaders.toMap())
-            }, failure = {
-                synchronized(failLambdaCalls) { failLambdaCalls++ }
-            })
+            client = client,
+            success = {
+            synchronized(successLambdaCalls) {
+                successLambdaCalls++
+            }
+            // Correct status type
+            assertEquals(it.serverStatus, SaferMeApiStatus.ACCEPTED)
+            // Response object captures all the headers in the response
+            assertEquals(it.responseHeaders, responseHeaders.toMap())
+        }, failure = {
+            synchronized(failLambdaCalls) { failLambdaCalls++ }
+        })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 1)
-        TestCase.assertEquals(failLambdaCalls, 0)
+        assertEquals(successLambdaCalls, 1)
+        assertEquals(failLambdaCalls, 0)
     }
 
     /**
@@ -203,53 +199,52 @@ class StandardIndexTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testIndexNonExceptionFailure() {
+    fun testDeleteNonExceptionFailure() {
         // Client response data:
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-        val status = HttpStatusCode.BadRequest
+        val returnObject = GenericTestObject.random()
+        val status = HttpStatusCode.UnprocessableEntity
 
-        // Keep a count of how many times the success and fail handlers are called
         var successLambdaCalls = 0
         var failLambdaCalls = 0
 
-        val client = TestHelpers.testClient(
+        val client = testClient(
             headers = responseHeaders,
-            content = "",
+            content = returnObject.toJsonString(),
             status = status
         )
 
-        TestHelpers.testIndexRequest(
+        testDeleteRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
             failure = {
-                synchronized(failLambdaCalls) { failLambdaCalls++ }
+                    synchronized(failLambdaCalls) { failLambdaCalls++ }
 
-                // We should get a SaferMeApiError Class
-                TestCase.assertEquals(it::class, SaferMeApiError::class)
-                val error = it as SaferMeApiError
+                    // We should get a SaferMeApiError Class
+                    assertEquals(it::class, SaferMeApiError::class)
+                    val error = it as SaferMeApiError
 
-                // Correct status code
-                TestCase.assertEquals(
-                    error.serverStatus,
-                    SaferMeApiStatus.statusForCode(HttpStatusCode.BadRequest.value)
-                )
+                    // Correct status code
+                    assertEquals(error.serverStatus, SaferMeApiStatus.statusForCode(HttpStatusCode.UnprocessableEntity.value))
 
-                // Correct response headers
-                TestCase.assertEquals(error.responseHeaders, responseHeaders.toMap())
-            })
+                    // Correct response headers
+                    assertEquals(error.responseHeaders, responseHeaders.toMap())
+        })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 0)
-        TestCase.assertEquals(failLambdaCalls, 1)
+        assertEquals(successLambdaCalls, 0)
+        assertEquals(failLambdaCalls, 1)
     }
+
+        // Call the delete method and test the result is correct
 
     /**
      * Test that a thrown exception will call the failure callback and provide the exception
      */
     @KtorExperimentalAPI
     @Test
-    fun testIndexExceptionFailure() {
+    fun testDeleteExceptionFailure() {
         // Keep a count of how many times the success and fail handlers are called
 
         var successLambdaCalls = 0
@@ -257,9 +252,9 @@ class StandardIndexTest {
 
         val errorMessage = "A Test Error Message"
 
-        val client = TestHelpers.testClient(requestInspector = { throw Exception(errorMessage) })
+        val client = testClient(requestInspector = { throw Exception(errorMessage) })
 
-        TestHelpers.testIndexRequest(
+        testDeleteRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
@@ -267,11 +262,11 @@ class StandardIndexTest {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
 
                 // We should get a SaferMeApiError Class
-                TestCase.assertEquals(it.message, errorMessage)
+                assertEquals(it.message, errorMessage)
             })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 0)
-        TestCase.assertEquals(failLambdaCalls, 1)
+        assertEquals(successLambdaCalls, 0)
+        assertEquals(failLambdaCalls, 1)
     }
 }

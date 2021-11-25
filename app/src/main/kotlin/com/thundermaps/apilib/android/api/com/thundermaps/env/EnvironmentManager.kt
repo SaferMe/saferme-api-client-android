@@ -1,6 +1,6 @@
 package com.thundermaps.apilib.android.api.com.thundermaps.env
 
-import com.thundermaps.apilib.android.api_impl.BuildConfig
+import com.thundermaps.apilib.android.impl.BuildConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 

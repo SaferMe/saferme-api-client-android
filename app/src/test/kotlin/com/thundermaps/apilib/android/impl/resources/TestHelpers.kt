@@ -1,9 +1,9 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

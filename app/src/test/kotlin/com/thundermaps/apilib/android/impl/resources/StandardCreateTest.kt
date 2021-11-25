@@ -1,9 +1,11 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
+import com.thundermaps.apilib.android.impl.resources.TestHelpers.Companion.testClient
+import com.thundermaps.apilib.android.impl.resources.TestHelpers.Companion.testCreateRequest
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -16,11 +18,15 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import java.util.Random
-import junit.framework.TestCase
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class StandardUpdateTest {
+/**
+ * Tests for the StandardMethod.create Method
+ */
+class StandardCreateTest {
 
     @MockK
     lateinit var defaultAPI: AndroidClient
@@ -37,23 +43,20 @@ class StandardUpdateTest {
 
     /**
      * GENERAL HTTP TESTS
-     * These test check that the StandardMethods 'Update' will construct the right
+     * These test check that the StandardMethods 'Create' will construct the right
      * request when given various options
      */
 
     /** Test for correct HTTP Method Call **/
     @KtorExperimentalAPI
     @Test
-    fun testUpdateHTTPMethod() {
+    fun testCreateHTTPMethod() {
         var called = false
-        TestHelpers.testUpdateRequest(
-            api = defaultAPI,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.method, HttpMethod.Patch)
-                called = true
-            })
-        )
-        TestCase.assertTrue(called)
+        testCreateRequest(api = defaultAPI, client = testClient(requestInspector = {
+            assertEquals(it.method, HttpMethod.Post)
+            called = true
+        }))
+        assertTrue(called)
     }
 
     /**
@@ -61,19 +64,19 @@ class StandardUpdateTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testUpdateHost() {
+    fun testCreateHost() {
         var called = false
         val testHost = "TestHostString"
         val params = TestHelpers.defaultParams.copy(host = testHost)
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.host, testHost)
+            client = testClient(requestInspector = {
+                assertEquals(it.url.host, testHost)
                 called = true
             }),
             params = params
         )
-        TestCase.assertTrue(called)
+        assertTrue(called)
     }
 
     /**
@@ -81,22 +84,22 @@ class StandardUpdateTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testUpdatePath() {
+    fun testCreatePath() {
         var called = false
         val testPath = "Some/Test/Path"
         val version = Random().nextInt(999)
         val params = TestHelpers.defaultParams.copy(api_version = version)
         val expectedPath = "/api/v$version/$testPath" // '/api/v' prefix automatically applied
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
             path = testPath,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.encodedPath, expectedPath)
+            client = testClient(requestInspector = {
+                assertEquals(it.url.encodedPath, expectedPath)
                 called = true
             }
-            ))
-        TestCase.assertTrue(called)
+        ))
+        assertTrue(called)
     }
 
     /**
@@ -104,19 +107,19 @@ class StandardUpdateTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testUpdatePort() {
+    fun testCreatePort() {
         var called = false
         val testPort = Random().nextInt(65535)
         val params = TestHelpers.defaultParams.copy(port = testPort)
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.port, testPort)
+            client = testClient(requestInspector = {
+                assertEquals(it.url.port, testPort)
                 called = true
             }
-            ))
-        TestCase.assertTrue(called)
+        ))
+        assertTrue(called)
     }
 
     /**
@@ -132,112 +135,103 @@ class StandardUpdateTest {
             headers.append(name, value)
         }
 
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertTrue(it.headers.contains(name))
-                TestCase.assertEquals(it.headers[name], value)
+            client = testClient(requestInspector = {
+                assertTrue(it.headers.contains(name))
+                assertEquals(it.headers[name], value)
                 called = true
             }
-            ))
+        ))
 
-        TestCase.assertTrue(called)
+        assertTrue(called)
     }
 
     /**
-     * UPDATE Functional Tests
-     * These tests check that the StandardMethods 'Update' will construct the right
+     * CREATE Functional Tests
+     * These tests check that the StandardMethods 'Create' will construct the right
      * kind of object(s) for different responses, and will call the right callbacks.
      */
 
     /**
      * Test the the success callback is called with the correct data transformed from the HTTP Response
-     * WHEN the server responds with an object
      */
     @KtorExperimentalAPI
     @Test
-    fun testUpdateSuccessWithReturnedObject() {
+    fun testCreateSuccess() {
         var successLambdaCalls = 0
         var failLambdaCalls = 0
         val returnObject = GenericTestObject.random().toJsonString()
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-
-        val client = TestHelpers.testClient(
+        val client = testClient(
             content = returnObject,
-            status = HttpStatusCode.Accepted,
+            status = HttpStatusCode.Created,
             headers = responseHeaders
         )
 
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
             client = client,
             success = {
-                synchronized(successLambdaCalls) {
-                    successLambdaCalls++
-                }
+            synchronized(successLambdaCalls) {
+                successLambdaCalls++
+            }
+            // Data Object returned should be equivalent to the one generated
+            assertEquals(it.data.toJsonString(), returnObject)
+            // Correct status type
+            assertEquals(it.serverStatus, SaferMeApiStatus.CREATED)
 
-                // Data Object returned should be equivalent to the one generated
-                TestCase.assertEquals(it.data.toJsonString(), returnObject)
-
-                // Correct status type
-                TestCase.assertEquals(it.serverStatus, SaferMeApiStatus.ACCEPTED)
-
-                // Response object captures all the headers in the response
-                TestCase.assertEquals(it.responseHeaders, responseHeaders.toMap())
-            }, failure = {
-                synchronized(failLambdaCalls) { failLambdaCalls++ }
-            })
+            // Response object captures all the headers in the response
+            assertEquals(it.responseHeaders, responseHeaders.toMap())
+        }, failure = {
+            synchronized(failLambdaCalls) { failLambdaCalls++ }
+        })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 1)
-        TestCase.assertEquals(failLambdaCalls, 0)
+        assertEquals(successLambdaCalls, 1)
+        assertEquals(failLambdaCalls, 0)
     }
 
     /**
      * Test the the success callback is called with the correct data transformed from the HTTP Response
-     * WHEN the server responds with AN EMPTY response
      */
     @KtorExperimentalAPI
     @Test
-    fun testUpdateSuccessWithEmptyResponse() {
+    fun testCreateSuccessOther200() {
         var successLambdaCalls = 0
         var failLambdaCalls = 0
-        val returnBody = "{}"
-        val requestItem = GenericTestObject.random()
+        val returnObject = GenericTestObject.random()
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-
-        val client = TestHelpers.testClient(
-            content = returnBody,
-            status = HttpStatusCode.Accepted,
+        val client = testClient(
+            content = returnObject.toJsonString(),
+            status = HttpStatusCode.ResetContent,
             headers = responseHeaders
         )
 
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
             client = client,
-            item = requestItem,
             success = {
                 synchronized(successLambdaCalls) {
                     successLambdaCalls++
                 }
-
-                // When the server returns an empty body
-                // returned object should be be the actual request object (referential!)
-                TestCase.assertTrue(it.data === requestItem)
-
+                // Data Object returned should be equivalent to the one generated
+                assertEquals(it.data.toJsonString(), returnObject.toJsonString())
                 // Correct status type
-                TestCase.assertEquals(it.serverStatus, SaferMeApiStatus.ACCEPTED)
+                assertEquals(it.serverStatus, SaferMeApiStatus.OTHER_200)
 
                 // Response object captures all the headers in the response
-                TestCase.assertEquals(it.responseHeaders, responseHeaders.toMap())
-            }, failure = {
+                assertEquals(it.responseHeaders, responseHeaders.toMap())
+            },
+            failure = {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
-            })
+            },
+            item = returnObject)
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 1)
-        TestCase.assertEquals(failLambdaCalls, 0)
+        assertEquals(successLambdaCalls, 1)
+        assertEquals(failLambdaCalls, 0)
     }
 
     /**
@@ -247,7 +241,13 @@ class StandardUpdateTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testUpdaeNonExceptionFailure() {
+    fun testCreateNonExceptionFailure() {
+        // mock android log
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
         // Client response data:
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         val returnObject = GenericTestObject.random()
@@ -257,46 +257,43 @@ class StandardUpdateTest {
         var successLambdaCalls = 0
         var failLambdaCalls = 0
 
-        val client = TestHelpers.testClient(
+        val client = testClient(
             headers = responseHeaders,
             content = returnObject.toJsonString(),
             status = status
         )
 
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
             failure = {
-                synchronized(failLambdaCalls) { failLambdaCalls++ }
+                    synchronized(failLambdaCalls) { failLambdaCalls++ }
 
-                // We should get a SaferMeApiError Class
-                TestCase.assertEquals(it::class, SaferMeApiError::class)
-                val error = it as SaferMeApiError
+                    // We should get a SaferMeApiError Class
+                    assertEquals(it::class, SaferMeApiError::class)
+                    val error = it as SaferMeApiError
 
-                // Correct status code
-                TestCase.assertEquals(
-                    error.serverStatus,
-                    SaferMeApiStatus.statusForCode(HttpStatusCode.UnprocessableEntity.value)
-                )
+                    // Correct status code
+                    assertEquals(error.serverStatus, SaferMeApiStatus.statusForCode(HttpStatusCode.UnprocessableEntity.value))
 
-                // Correct response headers
-                TestCase.assertEquals(error.responseHeaders, responseHeaders.toMap())
-            })
+                    // Correct response headers
+                    assertEquals(error.responseHeaders, responseHeaders.toMap())
+        })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 0)
-        TestCase.assertEquals(failLambdaCalls, 1)
+        assertEquals(successLambdaCalls, 0)
+        assertEquals(failLambdaCalls, 1)
     }
 
-    // Call the Create method and test the result is correct
+        // Call the Create method and test the result is correct
 
     /**
      * Test that a thrown exception will call the failure callback and provide the exception
      */
     @KtorExperimentalAPI
     @Test
-    fun testUpdateExceptionFailure() {
+    fun testCreateExceptionFailure() {
         // Keep a count of how many times the success and fail handlers are called
 
         var successLambdaCalls = 0
@@ -304,9 +301,9 @@ class StandardUpdateTest {
 
         val errorMessage = "A Test Error Message"
 
-        val client = TestHelpers.testClient(requestInspector = { throw Exception(errorMessage) })
+        val client = testClient(requestInspector = { throw Exception(errorMessage) })
 
-        TestHelpers.testUpdateRequest(
+        testCreateRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
@@ -314,11 +311,11 @@ class StandardUpdateTest {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
 
                 // We should get a SaferMeApiError Class
-                TestCase.assertEquals(it.message, errorMessage)
+                assertEquals(it.message, errorMessage)
             })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 0)
-        TestCase.assertEquals(failLambdaCalls, 1)
+        assertEquals(successLambdaCalls, 0)
+        assertEquals(failLambdaCalls, 1)
     }
 }

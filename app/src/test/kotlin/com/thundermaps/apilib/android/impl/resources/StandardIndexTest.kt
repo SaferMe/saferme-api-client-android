@@ -1,9 +1,9 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -16,13 +16,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import java.util.Random
-import junit.framework.Assert.assertTrue
+import junit.framework.Assert.assertEquals
 import junit.framework.TestCase
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class StandardReadTest {
-
+class StandardIndexTest {
     @MockK
     lateinit var defaultAPI: AndroidClient
 
@@ -38,16 +38,16 @@ class StandardReadTest {
 
     /**
      * GENERAL HTTP TESTS
-     * These test check that the StandardMethods 'Read' will construct the right
+     * These test check that the StandardMethods 'Index' will construct the right
      * request when given various options
      */
 
     /** Test for correct HTTP Method Call **/
     @KtorExperimentalAPI
     @Test
-    fun testReadHTTPMethod() {
+    fun testIndexHTTPMethod() {
         var called = false
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
             client = TestHelpers.testClient(requestInspector = {
                 TestCase.assertEquals(it.method, HttpMethod.Get)
@@ -62,11 +62,11 @@ class StandardReadTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testReadHost() {
+    fun testIndexHost() {
         var called = false
         val testHost = "TestHostString"
         val params = TestHelpers.defaultParams.copy(host = testHost)
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
             client = TestHelpers.testClient(requestInspector = {
                 TestCase.assertEquals(it.url.host, testHost)
@@ -82,19 +82,22 @@ class StandardReadTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testReadPath() {
+    fun testIndexPath() {
+        var called = false
         val testPath = "Some/Test/Path"
         val version = Random().nextInt(999)
         val params = TestHelpers.defaultParams.copy(api_version = version)
         val expectedPath = "/api/v$version/$testPath" // '/api/v' prefix automatically applied
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
             path = testPath,
             params = params,
             client = TestHelpers.testClient(requestInspector = {
                 TestCase.assertEquals(it.url.encodedPath, expectedPath)
+                called = true
             }
             ))
+        assertTrue(called)
     }
 
     /**
@@ -102,11 +105,11 @@ class StandardReadTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testReadPort() {
+    fun testIndexPort() {
         var called = false
         val testPort = Random().nextInt(65535)
         val params = TestHelpers.defaultParams.copy(port = testPort)
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
             params = params,
             client = TestHelpers.testClient(requestInspector = {
@@ -130,12 +133,12 @@ class StandardReadTest {
             headers.append(name, value)
         }
 
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
             client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertTrue(it.headers.contains(name))
-                TestCase.assertEquals(it.headers[name], value)
+                assertTrue(it.headers.contains(name))
+                assertEquals(it.headers[name], value)
                 called = true
             }
             ))
@@ -143,8 +146,8 @@ class StandardReadTest {
     }
 
     /**
-     * READ Functional Tests
-     * These tests check that the StandardMethods 'Read' will construct the right
+     * CREATE Functional Tests
+     * These tests check that the StandardMethods 'Index' will construct the right
      * kind of object(s) for different responses, and will call the right callbacks.
      */
 
@@ -153,28 +156,31 @@ class StandardReadTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testReadSuccess() {
+    fun testIndexSuccess() {
         var successLambdaCalls = 0
         var failLambdaCalls = 0
-        val returnObject = GenericTestObject.random().toJsonString()
+        val returnList = GenericTestObject.randomList()
+        val returnJson = GenericTestObject.listToJson(returnList)
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
 
         val client = TestHelpers.testClient(
-            content = returnObject,
+            content = returnJson,
             status = HttpStatusCode.OK,
             headers = responseHeaders
         )
 
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
-            client = client,
-            success = {
+            client = client, success = {
                 synchronized(successLambdaCalls) {
                     successLambdaCalls++
                 }
 
-                // Data Object returned should be equivalent to the one generated
-                TestCase.assertEquals(it.data.toJsonString(), returnObject)
+                // List returned should contain the same elements as the return list
+                val actualList = it.data
+                actualList.mapIndexed { i, v -> TestCase.assertEquals(returnList[i], v) }
+
+                assertEquals(returnList.size, actualList.size)
 
                 // Correct status type
                 TestCase.assertEquals(it.serverStatus, SaferMeApiStatus.OK)
@@ -197,11 +203,10 @@ class StandardReadTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testNonExceptionFailure() {
+    fun testIndexNonExceptionFailure() {
         // Client response data:
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-        val returnObject = GenericTestObject.random()
-        val status = HttpStatusCode.NotFound
+        val status = HttpStatusCode.BadRequest
 
         // Keep a count of how many times the success and fail handlers are called
         var successLambdaCalls = 0
@@ -209,11 +214,11 @@ class StandardReadTest {
 
         val client = TestHelpers.testClient(
             headers = responseHeaders,
-            content = returnObject.toJsonString(),
+            content = "",
             status = status
         )
 
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
@@ -227,7 +232,7 @@ class StandardReadTest {
                 // Correct status code
                 TestCase.assertEquals(
                     error.serverStatus,
-                    SaferMeApiStatus.statusForCode(HttpStatusCode.NotFound.value)
+                    SaferMeApiStatus.statusForCode(HttpStatusCode.BadRequest.value)
                 )
 
                 // Correct response headers
@@ -244,7 +249,7 @@ class StandardReadTest {
      */
     @KtorExperimentalAPI
     @Test
-    fun testExceptionFailure() {
+    fun testIndexExceptionFailure() {
         // Keep a count of how many times the success and fail handlers are called
 
         var successLambdaCalls = 0
@@ -254,7 +259,7 @@ class StandardReadTest {
 
         val client = TestHelpers.testClient(requestInspector = { throw Exception(errorMessage) })
 
-        TestHelpers.testReadRequest(
+        TestHelpers.testIndexRequest(
             api = defaultAPI,
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },

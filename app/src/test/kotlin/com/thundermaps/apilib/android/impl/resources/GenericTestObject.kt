@@ -1,4 +1,4 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject

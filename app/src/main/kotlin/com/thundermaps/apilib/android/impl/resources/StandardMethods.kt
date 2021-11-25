@@ -1,4 +1,4 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.google.gson.reflect.TypeToken
@@ -9,7 +9,7 @@ import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api.resources.SaferMeDatum
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
 import io.ktor.client.call.receive
@@ -213,7 +213,7 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        suspend fun <T: SaferMeDatum>index(
+        suspend fun <T : SaferMeDatum> index(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
@@ -256,7 +256,6 @@ class StandardMethods {
                 failure(ex)
             }
         }
-
 
         /**
          * Standardized RESTful update call. Uses PATCH, expects a valid item to send
@@ -331,7 +330,7 @@ class StandardMethods {
             val call = client.call(HttpRequestBuilder().takeFrom(template).apply {
                 method = requestMethod
                 url(AndroidClient.baseUrlBuilder(params).apply {
-                    encodedPath = "${this.encodedPath}${path}"
+                    encodedPath = "${this.encodedPath}$path"
                 }.build())
                 if (jsonBody != null) {
                     contentType(ContentType.Application.Json)

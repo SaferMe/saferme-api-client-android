@@ -1,7 +1,7 @@
-package com.thundermaps.apilib.android.api_impl
+package com.thundermaps.apilib.android.impl
 
 import com.thundermaps.apilib.android.api.SaferMeCredentials
-import com.thundermaps.apilib.android.api_impl.resources.TestHelpers
+import com.thundermaps.apilib.android.impl.resources.TestHelpers
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.util.AttributeKey

@@ -7,7 +7,7 @@ import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
-import com.thundermaps.apilib.android.api.responses.models.ResponseError
+import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.Sessions
 
 interface SaferMeClient {
@@ -18,8 +18,6 @@ interface SaferMeClient {
     val deviceInfoLogs: DeviceInfoLogsResource
     fun updateEnvironment(environment: Environment)
     suspend fun login(
-        sessionBody: SessionBody,
-        success: (data: Sessions) -> Unit,
-        error: (data: ResponseError) -> Unit
-    )
+        sessionBody: SessionBody
+    ): Result<Sessions>
 }

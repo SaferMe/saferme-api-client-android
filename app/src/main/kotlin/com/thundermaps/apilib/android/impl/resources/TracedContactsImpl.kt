@@ -1,10 +1,10 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.TracedContacts
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
 
 class TracedContactsImpl(val api: AndroidClient) : TracedContactsResource {
 
@@ -15,7 +15,12 @@ class TracedContactsImpl(val api: AndroidClient) : TracedContactsResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.create(
-            api = api, path = "traced_contacts", parameters  = parameters, item = item, success = success, failure = failure
-         )
+            api = api,
+            path = "traced_contacts",
+            parameters = parameters,
+            item = item,
+            success = success,
+            failure = failure
+        )
     }
 }

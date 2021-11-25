@@ -1,4 +1,4 @@
-package com.thundermaps.apilib.android.api_impl
+package com.thundermaps.apilib.android.impl
 
 import io.mockk.mockk
 import junit.framework.TestCase

@@ -1,11 +1,10 @@
-package com.thundermaps.apilib.android.api_impl.resources
+package com.thundermaps.apilib.android.impl.resources
 
-import android.util.Log
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLog
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
-import com.thundermaps.apilib.android.api_impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient
 
 class DeviceInfoLogsImpl(val api: AndroidClient) : DeviceInfoLogsResource {
 
