@@ -7,17 +7,8 @@ import org.junit.Test
 
 internal class EnvironmentManagerTest {
     @Test
-    fun verifyStagingBuildDefaultEnvironment() {
-        val environmentManager = EnvironmentManager()
-        assertEquals(Staging, environmentManager.environment)
-        assertTrue(environmentManager.isStaging())
-    }
-
-    @Test
     fun verifyUpdateToLiveEnvironment() {
         val environmentManager = EnvironmentManager()
-        assertEquals(Staging, environmentManager.environment)
-        assertTrue(environmentManager.isStaging())
 
         environmentManager.updateEnvironment(Live)
         assertEquals(Live, environmentManager.environment)
@@ -27,8 +18,6 @@ internal class EnvironmentManagerTest {
     @Test
     fun verifyUpdateToLiveThenToStagingEnvironment() {
         val environmentManager = EnvironmentManager()
-        assertEquals(Staging, environmentManager.environment)
-        assertTrue(environmentManager.isStaging())
 
         environmentManager.updateEnvironment(Live)
         assertEquals(Live, environmentManager.environment)

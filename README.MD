@@ -130,9 +130,9 @@ Artifact will be generated in `app/build/output/aar`
 ##### Publish artifact to local Maven repository
 	$ ./gradlew publishToMavenLocal
 
-##### Publish (test) artificat to GitHub
+##### Publish (test) artifact to GitHub
 	$ ./gradlew publishTestReleasePublicationToGitHubRepository
-##### Publish (production) artificat to GitHub
+##### Publish (production) artifact to GitHub
 	$ ./gradlew publishProductionReleasePublicationToGitHubRepository
 
 ## Licence & Contributing

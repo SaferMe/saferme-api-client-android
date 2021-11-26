@@ -27,7 +27,7 @@ class AndroidClientTest {
     fun tearDown() {
     }
 
-    private fun AndroidClient.defaultParams() = SaferMeClientImpl(this, mockk()).defaultParams()
+    private fun AndroidClient.defaultParams() = SaferMeClientImpl(this, mockk(), mockk()).defaultParams()
 
     @io.ktor.util.KtorExperimentalAPI
     @Test

@@ -13,7 +13,7 @@ class EnvironmentManager @Inject constructor() {
     }
         private set
 
-    internal fun updateEnvironment(env: Environment) {
+    fun updateEnvironment(env: Environment) {
         environment = env
     }
 
