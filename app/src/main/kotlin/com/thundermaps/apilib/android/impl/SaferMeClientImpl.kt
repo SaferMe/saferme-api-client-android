@@ -4,11 +4,13 @@ import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
+import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
+import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.TasksImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
@@ -18,9 +20,10 @@ import javax.inject.Inject
 class SaferMeClientImpl @Inject constructor(
     private val androidClient: AndroidClient,
     override val environmentManager: EnvironmentManager,
-    private val teamResourceImpl: TeamResourceImpl
+    private val teamResourceImpl: TeamResourceImpl,
+    private val meResourceImpl: MeResourceImpl
 ) : SaferMeClient {
-    override val taskResource: TaskResource = TasksImpl(androidClient)
+    override val taskResource: TaskResource get() = TasksImpl(androidClient)
 
     override val reportResource: ReportResource = ReportImpl(androidClient)
 
@@ -28,7 +31,11 @@ class SaferMeClientImpl @Inject constructor(
 
     override val deviceInfoLogs: DeviceInfoLogsResource = DeviceInfoLogsImpl(androidClient)
 
-    override val teamResource: TeamResource = teamResourceImpl
+    override val teamResource: TeamResource
+        get() = teamResourceImpl
+
+    override val meResource: MeResource
+        get() = meResourceImpl
 
     override fun defaultParams(): RequestParameters = RequestParameters(
         customRequestHeaders = HashMap(),
