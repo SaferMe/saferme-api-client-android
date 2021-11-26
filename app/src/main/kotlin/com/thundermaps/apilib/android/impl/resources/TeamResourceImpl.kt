@@ -1,7 +1,6 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.responses.models.Result
@@ -24,8 +23,8 @@ class TeamResourceImpl @Inject constructor(
 ) : TeamResource {
     override suspend fun getTeams(parameters: RequestParameters): Result<List<Team>> {
         val call = getTeamsCall(parameters)
-        val typeToken: Class<List<Team>> = object : TypeToken<List<Team>>() {}.rawType as Class<List<Team>>
-        return resultHandler.processResult(call, gson, typeToken)
+
+        return resultHandler.processResult(call, gson)
     }
 
     private suspend inline fun getTeamsCall(

@@ -30,7 +30,7 @@ class MeResourceImpl @Inject constructor(
 ) : MeResource {
     override suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails> {
         val call = processCall(parameters, HttpMethod.Get, "?fields=personal_account_option")
-        return resultHandler.processResult(call, gson, UserDetails::class.java)
+        return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateAddress(
@@ -38,7 +38,7 @@ class MeResourceImpl @Inject constructor(
         addressBody: UpdateAddressBody
     ): Result<Unit> {
         val call = processCall(parameters = parameters, bodyString = gson.toJson(addressBody))
-        return resultHandler.processResult(call, gson, Unit::class.java)
+        return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updatePassword(
@@ -47,7 +47,7 @@ class MeResourceImpl @Inject constructor(
     ): Result<Unit> {
         val call =
             processCall(parameters = parameters, bodyString = gson.toJson(updatePasswordBody))
-        return resultHandler.processResult(call, gson, Unit::class.java)
+        return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateContactNumber(
@@ -56,7 +56,7 @@ class MeResourceImpl @Inject constructor(
     ): Result<Unit> {
         val call =
             processCall(parameters = parameters, bodyString = gson.toJson(updateContactNumberBody))
-        return resultHandler.processResult(call, gson, Unit::class.java)
+        return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateEmail(
@@ -64,7 +64,7 @@ class MeResourceImpl @Inject constructor(
         updateEmailBody: UpdateEmailBody
     ): Result<Unit> {
         val call = processCall(parameters = parameters, bodyString = gson.toJson(updateEmailBody))
-        return resultHandler.processResult(call, gson, Unit::class.java)
+        return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateName(
@@ -72,7 +72,7 @@ class MeResourceImpl @Inject constructor(
         updateNameBody: UpdateNameBody
     ): Result<Unit> {
         val call = processCall(parameters = parameters, bodyString = gson.toJson(updateNameBody))
-        return resultHandler.processResult(call, gson, Unit::class.java)
+        return resultHandler.processResult(call, gson)
     }
 
     private suspend inline fun processCall(

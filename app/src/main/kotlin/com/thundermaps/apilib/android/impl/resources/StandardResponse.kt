@@ -2,6 +2,7 @@ package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api.responses.models.ResponseError
 import com.thundermaps.apilib.android.api.responses.models.ResponseException
@@ -10,15 +11,16 @@ import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import io.ktor.client.call.HttpClientCall
 import io.ktor.util.toByteArray
 
-suspend fun <T : Any> ResultHandler.processResult(call: HttpClientCall, gson: Gson, clazz: Class<T>): Result<T> {
+suspend inline fun <reified T : Any> ResultHandler.processResult(call: HttpClientCall, gson: Gson): Result<T> {
     val status = SaferMeApiStatus.statusForCode(call.response.status.value)
+    val type = object : TypeToken<T>() {}.type
     val responseString = String(call.response.content.toByteArray())
     return when (status) {
         SaferMeApiStatus.OK, SaferMeApiStatus.OTHER_200 -> {
             try {
-                val response = gson.fromJson(
+                val response = gson.fromJson<T>(
                     responseString,
-                    clazz
+                    type
                 )
                 Log.e("processResult", "result: $response")
                 handleSuccess(response)

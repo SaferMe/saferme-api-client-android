@@ -45,7 +45,7 @@ class SessionsImpl @Inject constructor(
         body: SessionBody
     ): Result<Sessions> {
         val call = loginHandler(body)
-        return resultHandler.processResult(call, gson, Sessions::class.java)
+        return resultHandler.processResult(call, gson)
     }
 
     private suspend inline fun loginHandler(
