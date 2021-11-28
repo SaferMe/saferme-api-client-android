@@ -5,6 +5,7 @@ import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
+import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
@@ -17,6 +18,7 @@ interface SaferMeClient {
     val deviceInfoLogs: DeviceInfoLogsResource
     val environmentManager: EnvironmentManager
 
+    val sessionsResource: SessionsResource
     val teamResource: TeamResource
     val meResource: MeResource
 }

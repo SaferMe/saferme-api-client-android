@@ -6,7 +6,7 @@ import org.junit.Test
 
 internal class SaferMeClientTest {
     private val androidClient = AndroidClient()
-    private val saferMeClient = SaferMeClientImpl(androidClient, mockk(), mockk(), mockk())
+    private val saferMeClient = SaferMeClientImpl(androidClient, mockk(), mockk(), mockk(), mockk())
 
     @Test
     fun defaultParams() {
