@@ -38,7 +38,7 @@ class SessionsImpl @Inject constructor(
         host = host,
         api_version = 4
     )
-    
+
     override suspend fun login(
         body: SessionBody,
         applicationId: String
@@ -46,12 +46,12 @@ class SessionsImpl @Inject constructor(
         val call = requestHandler(gson.toJson(body), applicationId, LOGIN_PATH)
         return resultHandler.processResult(call, gson)
     }
-    
+
     override suspend fun requestPassword(body: EmailBody, applicationId: String): Result<String> {
         val call = requestHandler(gson.toJson(body), applicationId, RESET_PASSWORD_PATH)
         return resultHandler.processResult<EmailBody>(call, gson).convert { it.email }
     }
-    
+
     private suspend inline fun requestHandler(
         bodyParameters: String,
         applicationId: String,
@@ -70,7 +70,7 @@ class SessionsImpl @Inject constructor(
         })
         return call
     }
-    
+
     companion object {
         private const val APPLICATION_JSON = "application/json"
         private const val LOGIN_PATH = "sessions"
