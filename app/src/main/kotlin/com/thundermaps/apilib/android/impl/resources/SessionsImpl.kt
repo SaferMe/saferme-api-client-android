@@ -27,7 +27,7 @@ class SessionsImpl @Inject constructor(
     private val gson: Gson
 ) : SessionsResource {
     override fun isStaging(): Boolean = environmentManager.isStaging()
-    
+
     private fun createLoginParameters(host: String, applicationId: String) = RequestParameters(
         customRequestHeaders = hashMapOf(
             "X-AppID" to applicationId,
@@ -38,7 +38,7 @@ class SessionsImpl @Inject constructor(
         host = host,
         api_version = 4
     )
-    
+
     override suspend fun login(
         body: SessionBody,
         applicationId: String
@@ -46,7 +46,7 @@ class SessionsImpl @Inject constructor(
         val call = loginHandler(body, applicationId)
         return resultHandler.processResult(call, gson)
     }
-    
+
     private suspend inline fun loginHandler(
         sessionBody: SessionBody,
         applicationId: String
@@ -64,7 +64,7 @@ class SessionsImpl @Inject constructor(
         })
         return call
     }
-    
+
     companion object {
         private const val APPLICATION_JSON = "application/json"
     }
