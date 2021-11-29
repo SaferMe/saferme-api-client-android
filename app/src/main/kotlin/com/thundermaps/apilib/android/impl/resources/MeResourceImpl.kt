@@ -2,9 +2,9 @@ package com.thundermaps.apilib.android.impl.resources
 
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
-import com.thundermaps.apilib.android.api.requests.models.UpdateEmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
@@ -61,9 +61,9 @@ class MeResourceImpl @Inject constructor(
 
     override suspend fun updateEmail(
         parameters: RequestParameters,
-        updateEmailBody: UpdateEmailBody
+        emailBody: EmailBody
     ): Result<Unit> {
-        val call = processCall(parameters = parameters, bodyString = gson.toJson(updateEmailBody))
+        val call = processCall(parameters = parameters, bodyString = gson.toJson(emailBody))
         return resultHandler.processResult(call, gson)
     }
 
@@ -85,7 +85,7 @@ class MeResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = methodType
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${this.encodedPath}${"users/me"}$query"
+                encodedPath = "${encodedPath}users/me$query"
             }.build())
             bodyString?.let {
                 contentType(ContentType.Application.Json)

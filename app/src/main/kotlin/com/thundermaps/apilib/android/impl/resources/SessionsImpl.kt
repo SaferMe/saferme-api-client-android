@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.impl.resources
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.SessionBody
 import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.Result
@@ -27,8 +28,7 @@ class SessionsImpl @Inject constructor(
     private val gson: Gson
 ) : SessionsResource {
     override fun isStaging(): Boolean = environmentManager.isStaging()
-
-    private fun createLoginParameters(host: String, applicationId: String) = RequestParameters(
+    private fun createParameters(host: String, applicationId: String) = RequestParameters(
         customRequestHeaders = hashMapOf(
             "X-AppID" to applicationId,
             "Accept" to APPLICATION_JSON,
@@ -38,34 +38,42 @@ class SessionsImpl @Inject constructor(
         host = host,
         api_version = 4
     )
-
+    
     override suspend fun login(
         body: SessionBody,
         applicationId: String
     ): Result<Sessions> {
-        val call = loginHandler(body, applicationId)
+        val call = requestHandler(gson.toJson(body), applicationId, LOGIN_PATH)
         return resultHandler.processResult(call, gson)
     }
-
-    private suspend inline fun loginHandler(
-        sessionBody: SessionBody,
-        applicationId: String
+    
+    override suspend fun requestPassword(body: EmailBody, applicationId: String): Result<String> {
+        val call = requestHandler(gson.toJson(body), applicationId, RESET_PASSWORD_PATH)
+        return resultHandler.processResult<EmailBody>(call, gson).convert { it.email }
+    }
+    
+    private suspend inline fun requestHandler(
+        bodyParameters: String,
+        applicationId: String,
+        path: String
     ): HttpClientCall {
         val parameters =
-            createLoginParameters(environmentManager.environment.servers.first(), applicationId)
+            createParameters(environmentManager.environment.servers.first(), applicationId)
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Post
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}sessions"
+                encodedPath = "$encodedPath$path"
             }.build())
             contentType(ContentType.Application.Json)
-            body = sessionBody
+            body = bodyParameters
         })
         return call
     }
-
+    
     companion object {
         private const val APPLICATION_JSON = "application/json"
+        private const val LOGIN_PATH = "sessions"
+        private const val RESET_PASSWORD_PATH = "reset_passwords/request_token"
     }
 }

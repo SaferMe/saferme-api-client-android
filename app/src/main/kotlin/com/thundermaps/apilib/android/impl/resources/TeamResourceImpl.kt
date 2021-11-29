@@ -34,7 +34,7 @@ class TeamResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${this.encodedPath}${"teams"}"
+                encodedPath = "${encodedPath}teams"
             }.build())
         })
         return call

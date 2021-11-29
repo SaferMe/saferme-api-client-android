@@ -1,6 +1,5 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
@@ -22,7 +21,7 @@ suspend inline fun <reified T : Any> ResultHandler.processResult(call: HttpClien
                     responseString,
                     type
                 )
-                Log.e("processResult", "result: $response")
+
                 handleSuccess(response)
             } catch (exception: Exception) {
                 handleException(exception)
