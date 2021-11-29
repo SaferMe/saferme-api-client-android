@@ -6,5 +6,5 @@ import com.thundermaps.apilib.android.api.responses.models.Sessions
 
 interface SessionsResource {
     fun isStaging(): Boolean
-    suspend fun login(body: SessionBody): Result<Sessions>
+    suspend fun login(body: SessionBody, applicationId: String): Result<Sessions>
 }

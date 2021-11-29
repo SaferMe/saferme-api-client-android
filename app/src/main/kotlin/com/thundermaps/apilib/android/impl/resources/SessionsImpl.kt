@@ -27,40 +27,45 @@ class SessionsImpl @Inject constructor(
     private val gson: Gson
 ) : SessionsResource {
     override fun isStaging(): Boolean = environmentManager.isStaging()
-
-    private fun createLoginParameters(host: String): RequestParameters {
-        return RequestParameters(
-            customRequestHeaders = hashMapOf(
-                "X-AppID" to "com.thundermaps.saferme",
-                "Accept" to "application/json",
-                "Content-Type" to "application/json"
-            ),
-            credentials = null,
-            host = host,
-            api_version = 3
-        )
-    }
-
+    
+    private fun createLoginParameters(host: String, applicationId: String) = RequestParameters(
+        customRequestHeaders = hashMapOf(
+            "X-AppID" to applicationId,
+            "Accept" to APPLICATION_JSON,
+            "Content-Type" to APPLICATION_JSON
+        ),
+        credentials = null,
+        host = host,
+        api_version = 4
+    )
+    
     override suspend fun login(
-        body: SessionBody
+        body: SessionBody,
+        applicationId: String
     ): Result<Sessions> {
-        val call = loginHandler(body)
+        val call = loginHandler(body, applicationId)
         return resultHandler.processResult(call, gson)
     }
-
+    
     private suspend inline fun loginHandler(
-        sessionBody: SessionBody
+        sessionBody: SessionBody,
+        applicationId: String
     ): HttpClientCall {
-        val parameters = createLoginParameters(environmentManager.environment.servers.first())
+        val parameters =
+            createLoginParameters(environmentManager.environment.servers.first(), applicationId)
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Post
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${this.encodedPath}${"sessions"}"
+                encodedPath = "${encodedPath}sessions"
             }.build())
             contentType(ContentType.Application.Json)
             body = sessionBody
         })
         return call
+    }
+    
+    companion object {
+        private const val APPLICATION_JSON = "application/json"
     }
 }
