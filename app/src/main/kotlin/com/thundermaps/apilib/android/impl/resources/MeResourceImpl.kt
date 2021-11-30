@@ -29,7 +29,11 @@ class MeResourceImpl @Inject constructor(
     private val gson: Gson
 ) : MeResource {
     override suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails> {
-        val call = processCall(parameters, HttpMethod.Get, "?fields=personal_account_option")
+        val call = processCall<Unit>(
+            parameters = parameters,
+            methodType = HttpMethod.Get,
+            "?fields=personal_account_option"
+        )
         return resultHandler.processResult(call, gson)
     }
 
@@ -37,7 +41,7 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         addressBody: UpdateAddressBody
     ): Result<Unit> {
-        val call = processCall(parameters = parameters, bodyString = gson.toJson(addressBody))
+        val call = processCall(parameters = parameters, bodyRequest = addressBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -46,7 +50,7 @@ class MeResourceImpl @Inject constructor(
         updatePasswordBody: UpdatePasswordBody
     ): Result<Unit> {
         val call =
-            processCall(parameters = parameters, bodyString = gson.toJson(updatePasswordBody))
+            processCall(parameters = parameters, bodyRequest = updatePasswordBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -55,7 +59,7 @@ class MeResourceImpl @Inject constructor(
         updateContactNumberBody: UpdateContactNumberBody
     ): Result<Unit> {
         val call =
-            processCall(parameters = parameters, bodyString = gson.toJson(updateContactNumberBody))
+            processCall(parameters = parameters, bodyRequest = updateContactNumberBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -63,7 +67,7 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         emailBody: EmailBody
     ): Result<Unit> {
-        val call = processCall(parameters = parameters, bodyString = gson.toJson(emailBody))
+        val call = processCall(parameters = parameters, bodyRequest = emailBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -71,15 +75,15 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         updateNameBody: UpdateNameBody
     ): Result<Unit> {
-        val call = processCall(parameters = parameters, bodyString = gson.toJson(updateNameBody))
+        val call = processCall(parameters = parameters, bodyRequest = updateNameBody)
         return resultHandler.processResult(call, gson)
     }
 
-    private suspend inline fun processCall(
+    private suspend inline fun <T : Any> processCall(
         parameters: RequestParameters,
         methodType: HttpMethod = HttpMethod.Patch,
         query: String = "",
-        bodyString: String? = null
+        bodyRequest: T? = null
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
@@ -87,7 +91,7 @@ class MeResourceImpl @Inject constructor(
             url(AndroidClient.baseUrlBuilder(parameters).apply {
                 encodedPath = "${encodedPath}users/me$query"
             }.build())
-            bodyString?.let {
+            bodyRequest?.let {
                 contentType(ContentType.Application.Json)
                 body = it
             }

@@ -36,24 +36,24 @@ class SessionsImpl @Inject constructor(
         ),
         credentials = null,
         host = host,
-        api_version = 4
+        api_version = 3
     )
 
     override suspend fun login(
         body: SessionBody,
         applicationId: String
     ): Result<Sessions> {
-        val call = requestHandler(gson.toJson(body), applicationId, LOGIN_PATH)
+        val call = requestHandler(body, applicationId, LOGIN_PATH)
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun requestPassword(body: EmailBody, applicationId: String): Result<String> {
-        val call = requestHandler(gson.toJson(body), applicationId, RESET_PASSWORD_PATH)
+        val call = requestHandler(body, applicationId, RESET_PASSWORD_PATH)
         return resultHandler.processResult<EmailBody>(call, gson).convert { it.email }
     }
 
-    private suspend inline fun requestHandler(
-        bodyParameters: String,
+    private suspend inline fun <reified T : Any> requestHandler(
+        bodyParameters: T,
         applicationId: String,
         path: String
     ): HttpClientCall {
