@@ -10,6 +10,7 @@ import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Sessions
 import com.thundermaps.apilib.android.impl.AndroidClient
+import com.thundermaps.apilib.android.impl.Provider
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
@@ -28,16 +29,18 @@ class SessionsImpl @Inject constructor(
     private val gson: Gson
 ) : SessionsResource {
     override fun isStaging(): Boolean = environmentManager.isStaging()
-    private fun createParameters(host: String, applicationId: String) = RequestParameters(
-        customRequestHeaders = hashMapOf(
-            "X-AppID" to applicationId,
-            "Accept" to APPLICATION_JSON,
-            "Content-Type" to APPLICATION_JSON
-        ),
-        credentials = null,
-        host = host,
-        api_version = 3
-    )
+    private fun createParameters(host: String, applicationId: String, apiVersion: Int) =
+        RequestParameters(
+            customRequestHeaders = hashMapOf(
+                "X-AppID" to applicationId,
+                "Accept" to APPLICATION_JSON,
+                "Content-Type" to APPLICATION_JSON,
+                "X-Installationid" to Provider.xInstallId
+            ),
+            credentials = null,
+            host = host,
+            api_version = apiVersion
+        )
 
     override suspend fun login(
         body: SessionBody,
@@ -57,8 +60,11 @@ class SessionsImpl @Inject constructor(
         applicationId: String,
         path: String
     ): HttpClientCall {
-        val parameters =
-            createParameters(environmentManager.environment.servers.first(), applicationId)
+        val parameters = createParameters(
+                environmentManager.environment.servers.first(),
+                applicationId,
+                path.getApiVersion()
+            )
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Post
@@ -69,6 +75,10 @@ class SessionsImpl @Inject constructor(
             body = bodyParameters
         })
         return call
+    }
+
+    private fun String.getApiVersion(): Int {
+        return if (LOGIN_PATH == this) 3 else 4
     }
 
     companion object {

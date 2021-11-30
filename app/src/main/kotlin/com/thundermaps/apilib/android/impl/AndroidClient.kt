@@ -42,7 +42,15 @@ class AndroidClient @Inject constructor() {
                         headers.append("X-TeamID", creds.TeamId)
                 }
                 headers.append("Accept", "application/json, text/plain, */*")
-                params.customRequestHeaders.forEach { (k, v) -> headers.append(k, v) }
+                params.customRequestHeaders.forEach { (key, value) ->
+                    headers[key] = value
+                }
+            }
+        } else if (currentCredentials == null) {
+            requestBuilderTemplate.apply {
+                params.customRequestHeaders.forEach { (key, value) ->
+                    headers[key] = value
+                }
             }
         }
 
