@@ -7,12 +7,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Versions.compile_sdk)
+    compileSdk = Versions.compileSdk
     defaultConfig {
-        minSdkVersion(Versions.min_sdk)
-        targetSdkVersion(Versions.target_sdk)
-        versionCode = Maven.build
-        versionName = "${Maven.version}.${Maven.build}"
+        minSdk = Versions.minSdk
+        targetSdk = Versions.targetSdk
     }
 
     compileOptions {
@@ -21,8 +19,14 @@ android {
     }
 
     // For Kotlin sources.
-    tasks.withType < org.jetbrains.kotlin.gradle.tasks.KotlinCompile > {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnit()
+        }
     }
 
     lintOptions.isAbortOnError = true
@@ -34,27 +38,33 @@ android {
 
     buildTypes {
         getByName("release") {
-            setProperty("archivesBaseName", "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}")
+            setProperty(
+                "archivesBaseName",
+                "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}"
+            )
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             println("##teamcity[setParameter name='target_release_version' value='${Maven.version}.${Maven.build}']")
         }
         getByName("debug") {
-            setProperty("archivesBaseName", "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}")
+            setProperty(
+                "archivesBaseName",
+                "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}"
+            )
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
 
     packagingOptions {
-        exclude("META-INF/ktor-http.kotlin_module")
-        exclude("META-INF/kotlinx-io.kotlin_module")
-        exclude("META-INF/atomicfu.kotlin_module")
-        exclude("META-INF/ktor-utils.kotlin_module")
-        exclude("META-INF/kotlinx-coroutines-io.kotlin_module")
-        exclude("META-INF/kotlinx-coroutines-core.kotlin_module")
-        exclude("META-INF/ktor-http-cio.kotlin_module")
-        exclude("META-INF/ktor-client-core.kotlin_module")
+        resources.excludes.add("META-INF/ktor-http.kotlin_module")
+        resources.excludes.add("META-INF/kotlinx-io.kotlin_module")
+        resources.excludes.add("META-INF/atomicfu.kotlin_module")
+        resources.excludes.add("META-INF/ktor-utils.kotlin_module")
+        resources.excludes.add("META-INF/kotlinx-coroutines-io.kotlin_module")
+        resources.excludes.add("META-INF/kotlinx-coroutines-core.kotlin_module")
+        resources.excludes.add("META-INF/ktor-http-cio.kotlin_module")
+        resources.excludes.add("META-INF/ktor-client-core.kotlin_module")
     }
 }
 
@@ -85,25 +95,26 @@ dependencies {
 // Test Dependencies
 dependencies {
 
-        // Add MockK dependencies.
-        testImplementation(TestingDeps.mockk)
+    // Add MockK dependencies.
+    testImplementation(TestingDeps.mockk)
 
-        // ktor mocking libs
-        testImplementation(TestingDeps.ktor_base)
-        testImplementation(TestingDeps.ktor_jvm)
-        testImplementation(TestingDeps.ktor_native)
+    // ktor mocking libs
+    testImplementation(TestingDeps.ktor_base)
+    testImplementation(TestingDeps.ktor_jvm)
+    testImplementation(TestingDeps.ktor_native)
 
-        // Add JUnit5 dependencies.
-        testImplementation(TestingDeps.junit5_jupiter)
-        testRuntimeOnly(TestingDeps.junit5_jupiter_runtime)
-        testImplementation(TestingDeps.junit5_jupiter_params)
+    // Add JUnit5 dependencies.
+    testImplementation(TestingDeps.junit5_jupiter)
+    testImplementation(TestingDeps.junit5_jupiter_api)
+    testImplementation(TestingDeps.junit5_jupiter_params)
+    testRuntimeOnly(TestingDeps.junit5_jupiter_runtime)
 
-        // Add JUnit4 legacy dependencies.
-        testImplementation(TestingDeps.junit4_legacy)
-        testRuntimeOnly(TestingDeps.junit5_vintage)
+    // Add JUnit4 legacy dependencies.
+    testImplementation(TestingDeps.junit4_legacy)
+    testRuntimeOnly(TestingDeps.junit5_vintage)
 
-        // Add AssertJ dependencies.
-        testImplementation(TestingDeps.assertj)
+    // Add AssertJ dependencies.
+    testImplementation(TestingDeps.assertj)
 }
 
 // Apply jacoco config (For test Coverage Reports)

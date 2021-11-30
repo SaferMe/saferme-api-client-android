@@ -1,21 +1,19 @@
 object GradlePlugins {
-    data class Versions(val gradle: String = "3.3.0",
-                        val kotlin: String = "1.3.61",
-                        val junit5: String = "1.2.0.0")
+    data class Versions(val gradle: String = "7.0.3",
+                        val kotlin: String = "1.5.31",
+                        val junit5: String = "1.8.0.0")
 
     val versions = Versions()
-
     val gradle = "com.android.tools.build:gradle:${versions.gradle}"
-
     val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-
     val junit5 = "de.mannodermaus.gradle.plugins:android-junit5:${versions.junit5}"
 }
 
 object Versions {
-    val compile_sdk = 28
-    val target_sdk = 26
-    val min_sdk = 23
+    const val compileSdk = 30
+    const val targetSdk = 30
+    const val minSdk = 23
+    const val jacoco = "0.8.7"
 }
 
     
@@ -40,7 +38,7 @@ object Deps {
 
 object TestingDeps {
     data class Versions(val assertj: String = "3.11.1",
-                        val junit5: String = "5.2.0",
+                        val junit5: String = "5.8.1",
                         val mockk: String = "1.9.3",
                         val roboelectric: String = "3.8",
                         val junit4: String = "4.12",
@@ -48,8 +46,9 @@ object TestingDeps {
                         val ktor_version: String = "1.2.5")
 
     val versions = Versions()
-
-    val junit5_jupiter = "org.junit.jupiter:junit-jupiter-api:${versions.junit5}"
+    
+    val junit5_jupiter = "org.junit.jupiter:junit-jupiter:${versions.junit5}"
+    val junit5_jupiter_api = "org.junit.jupiter:junit-jupiter-api:${versions.junit5}"
     val junit5_jupiter_runtime = "org.junit.jupiter:junit-jupiter-engine:${versions.junit5}"
     val junit5_jupiter_params = "org.junit.jupiter:junit-jupiter-params:${versions.junit5}"
     val junit4_legacy = "junit:junit:${versions.junit4}"

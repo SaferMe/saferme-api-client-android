@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thundermaps.apilib.android.api_impl">
+    package="com.thundermaps.apilib.android.impl">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"

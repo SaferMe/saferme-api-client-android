@@ -58,7 +58,7 @@ Call the create method on the Task Resource supplying the approproiate success a
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            client.Tasks.create(
+            client.tasks.create(
                 params,
                 task,
                 { result ->
@@ -95,14 +95,14 @@ We use Gitflow and Test Driven development.
 2. Write failing unit tests in the tests folder
 3. Write code
 4. Run tests and linter
-5. Commit and push to Gihub
+5. Commit and push to Github
 6. Raise a PR if you want your code merged into the master branch
 
-### Code Stlye
-This project is using the ktlin gradle plugin (see: https://github.com/jlleitschuh/ktlint-gradle)
+### Code Style
+This project is using the ktlint gradle plugin (see: https://github.com/jlleitschuh/ktlint-gradle)
 
 To auto correct/format all kotling files run: 
-`./gradlew kilintFormat`
+`./gradlew ktlintFormat`
 
 To check for formatting errors run
 `./gradlew ktlintCheck`
@@ -130,9 +130,9 @@ Artifact will be generated in `app/build/output/aar`
 ##### Publish artifact to local Maven repository
 	$ ./gradlew publishToMavenLocal
 
-##### Publish (test) artificat to GitHub
+##### Publish (test) artifact to GitHub
 	$ ./gradlew publishTestReleasePublicationToGitHubRepository
-##### Publish (production) artificat to GitHub
+##### Publish (production) artifact to GitHub
 	$ ./gradlew publishProductionReleasePublicationToGitHubRepository
 
 ## Licence & Contributing
