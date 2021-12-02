@@ -1,3 +1,9 @@
 package com.thundermaps.apilib.android.impl
 
-internal object Provider
+import java.util.UUID
+
+internal object Provider {
+    val xInstallId by lazy {
+        UUID.randomUUID().toString()
+    }
+}

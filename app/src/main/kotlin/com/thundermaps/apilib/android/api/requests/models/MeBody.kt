@@ -12,7 +12,7 @@ data class UpdateNameBody(
     @SerializedName("last_name") val lastName: String
 )
 
-data class UpdateEmailBody(val email: String)
+data class EmailBody(val email: String)
 
 data class UpdateContactNumberBody(@SerializedName("contact_number") val contactNumber: String)
 

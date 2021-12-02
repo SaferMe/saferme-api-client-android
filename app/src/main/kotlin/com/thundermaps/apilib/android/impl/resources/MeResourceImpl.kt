@@ -2,9 +2,9 @@ package com.thundermaps.apilib.android.impl.resources
 
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
-import com.thundermaps.apilib.android.api.requests.models.UpdateEmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
@@ -29,7 +29,11 @@ class MeResourceImpl @Inject constructor(
     private val gson: Gson
 ) : MeResource {
     override suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails> {
-        val call = processCall(parameters, HttpMethod.Get, "?fields=personal_account_option")
+        val call = processCall<Unit>(
+            parameters = parameters,
+            methodType = HttpMethod.Get,
+            "?fields=personal_account_option"
+        )
         return resultHandler.processResult(call, gson)
     }
 
@@ -37,7 +41,7 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         addressBody: UpdateAddressBody
     ): Result<Unit> {
-        val call = processCall(parameters = parameters, bodyString = gson.toJson(addressBody))
+        val call = processCall(parameters = parameters, bodyRequest = addressBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -46,7 +50,7 @@ class MeResourceImpl @Inject constructor(
         updatePasswordBody: UpdatePasswordBody
     ): Result<Unit> {
         val call =
-            processCall(parameters = parameters, bodyString = gson.toJson(updatePasswordBody))
+            processCall(parameters = parameters, bodyRequest = updatePasswordBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -55,15 +59,15 @@ class MeResourceImpl @Inject constructor(
         updateContactNumberBody: UpdateContactNumberBody
     ): Result<Unit> {
         val call =
-            processCall(parameters = parameters, bodyString = gson.toJson(updateContactNumberBody))
+            processCall(parameters = parameters, bodyRequest = updateContactNumberBody)
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateEmail(
         parameters: RequestParameters,
-        updateEmailBody: UpdateEmailBody
+        emailBody: EmailBody
     ): Result<Unit> {
-        val call = processCall(parameters = parameters, bodyString = gson.toJson(updateEmailBody))
+        val call = processCall(parameters = parameters, bodyRequest = emailBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -71,23 +75,23 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         updateNameBody: UpdateNameBody
     ): Result<Unit> {
-        val call = processCall(parameters = parameters, bodyString = gson.toJson(updateNameBody))
+        val call = processCall(parameters = parameters, bodyRequest = updateNameBody)
         return resultHandler.processResult(call, gson)
     }
 
-    private suspend inline fun processCall(
+    private suspend inline fun <T : Any> processCall(
         parameters: RequestParameters,
         methodType: HttpMethod = HttpMethod.Patch,
         query: String = "",
-        bodyString: String? = null
+        bodyRequest: T? = null
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = methodType
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${this.encodedPath}${"users/me"}$query"
+                encodedPath = "${encodedPath}users/me$query"
             }.build())
-            bodyString?.let {
+            bodyRequest?.let {
                 contentType(ContentType.Application.Json)
                 body = it
             }
