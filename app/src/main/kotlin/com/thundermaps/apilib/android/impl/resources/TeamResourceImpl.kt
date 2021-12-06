@@ -29,7 +29,7 @@ class TeamResourceImpl @Inject constructor(
         return resultHandler.processResult(call, gson)
     }
 
-    private suspend inline fun getTeamsCall(
+    private suspend fun getTeamsCall(
         parameters: RequestParameters
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)

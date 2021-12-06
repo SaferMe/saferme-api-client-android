@@ -57,16 +57,16 @@ class SessionsImpl @Inject constructor(
         return resultHandler.processResult<EmailBody>(call, gson).convert { it.email }
     }
 
-    private suspend inline fun <reified T : Any> requestHandler(
+    private suspend fun <T : Any> requestHandler(
         bodyParameters: T,
         applicationId: String,
         path: String
     ): HttpClientCall {
         val parameters = createParameters(
-                environmentManager.environment.servers.first(),
-                applicationId,
-                path.getApiVersion()
-            )
+            environmentManager.environment.servers.first(),
+            applicationId,
+            path.getApiVersion()
+        )
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Post
