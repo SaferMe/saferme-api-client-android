@@ -1,52 +1,47 @@
 package com.thundermaps.apilib.android.impl
 
 import com.thundermaps.apilib.android.api.SaferMeCredentials
+import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.impl.resources.TestHelpers
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.util.AttributeKey
 import io.ktor.util.Attributes
 import io.ktor.util.KtorExperimentalAPI
-import io.mockk.mockk
 import java.util.Random
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import org.junit.After
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 
+@KtorExperimentalAPI
 class AndroidClientTest {
-
+    private lateinit var androidClient: AndroidClient
     @Before
     fun setUp() {
+        androidClient = AndroidClient()
     }
-
-    @After
-    fun tearDown() {
-    }
-
-    private fun AndroidClient.defaultParams() = SaferMeClientImpl(this, mockk(), mockk(), mockk(), mockk()).defaultParams()
-
-    @io.ktor.util.KtorExperimentalAPI
     @Test
     fun clientChangesWithCredentials() {
-        val subject = AndroidClient()
-        val initialParams = subject.defaultParams()
-            .copy(credentials = SaferMeCredentials("key", "id", "app", null, ""))
-        val subsequentParams =
-            initialParams.copy(credentials = initialParams.credentials!!.copy(ApiKey = "Another Key"))
+        val initialParams = defaultParameters.copy(
+            credentials = saferMeCredentials
+        )
+        val subsequentParams = initialParams.copy(
+            credentials = saferMeCredentials.copy(ApiKey = "Another Key")
+        )
 
-        val (client1, request1) = subject.client(initialParams)
+        val (client1, request1) = androidClient.client(initialParams)
 
         // Calls to client with the same credentials should return the same object
-        val (client2, request2) = subject.client(initialParams)
+        val (client2, request2) = androidClient.client(initialParams)
         assertEquals(client1, client2)
         assertEquals(request1, request2)
 
         // Calls to client with different credentials should return a different object
-        val (client3, request3) = subject.client(subsequentParams)
+        val (client3, request3) = androidClient.client(subsequentParams)
         assertEquals(client1, client3)
         assertNotEquals(request1, request3)
     }
@@ -57,39 +52,41 @@ class AndroidClientTest {
     @KtorExperimentalAPI
     @Test
     fun clientTemplateHeaders() {
-        val subject = AndroidClient()
-        val testKey = "Test Key"
-        val testInstall = "Test Install"
-        val testApp = "Test App"
-        val testTeam = "Test Team"
-        val testClientUuid = "client uuid"
-
-        val paramsWithTeam = subject.defaultParams().copy(
-            credentials =
-            SaferMeCredentials(testKey, testInstall, testApp, testTeam, testClientUuid)
+        val paramsWithTeam = defaultParameters.copy(
+            credentials = saferMeCredentials
         )
 
-        val paramsWithoutTeam = subject.defaultParams().copy(
-            credentials =
-            SaferMeCredentials(testKey, testInstall, testApp, null, testClientUuid)
+        val paramsWithoutTeam = defaultParameters.copy(
+            credentials = saferMeCredentials.copy(TeamId = null)
         )
 
-        val builderWithTeam = AndroidClient().client(paramsWithTeam).second
-        assertEquals(builderWithTeam.headers["Authorization"], "Token token=$testKey")
-        assertEquals(builderWithTeam.headers["X-InstallationID"], testInstall)
-        assertEquals(builderWithTeam.headers["X-AppID"], testApp)
-        assertEquals(builderWithTeam.headers["X-TeamID"], testTeam)
+        val builderWithTeam = androidClient.client(paramsWithTeam).second
+        builderWithTeam.verifyRequestBuilderWithCredentialHavingTeam(saferMeCredentials)
+        builderWithTeam.verifyAcceptType()
 
-        val builderWithoutTeam = AndroidClient().client(paramsWithoutTeam).second
+        val builderWithoutTeam = androidClient.client(paramsWithoutTeam).second
+        builderWithoutTeam.verifyAcceptType()
         assertFalse(builderWithoutTeam.headers.contains("X-TeamID"))
+    }
+
+    private fun HttpRequestBuilder.verifyAcceptType() {
+        assertEquals(headers["Accept"], "application/json, text/plain, */*")
+    }
+
+    private fun HttpRequestBuilder.verifyRequestBuilderWithCredentialHavingTeam(
+        saferMeCredentials: SaferMeCredentials
+    ) {
+        assertEquals(headers["Authorization"], "Token token=${saferMeCredentials.ApiKey}")
+        assertEquals(headers["X-InstallationID"], saferMeCredentials.InstallationId)
+        assertEquals(headers["X-AppID"], saferMeCredentials.AppId)
+        assertEquals(headers["X-TeamID"], saferMeCredentials.TeamId)
     }
 
     /**
      * Test that custom headers are correctly applied
      */
-    @KtorExperimentalAPI
     @Test
-    fun clientTemplateCustomHeaders() {
+    fun clientTemplateCustomHeadersWithCredential() {
         val testHeaders = HashMap<String, String>()
         val random = Random()
 
@@ -101,37 +98,54 @@ class AndroidClientTest {
             testHeaders[nextString()] = nextString()
         }
 
-        val subject = AndroidClient()
-        val paramsWithCustomHeaders = subject.defaultParams().copy(
+        val paramsWithCustomHeaders = defaultParameters.copy(
             customRequestHeaders = testHeaders,
-            credentials = SaferMeCredentials(
-                "testKey",
-                "testInstall",
-                "testApp",
-                "testTeam",
-                "testClientUuid"
-            )
+            credentials = saferMeCredentials
         )
-        val builder = subject.client(paramsWithCustomHeaders).second
+        val builder = androidClient.client(paramsWithCustomHeaders).second
+        builder.verifyRequestBuilderWithCredentialHavingTeam(
+            saferMeCredentials
+        )
+        builder.verifyAcceptType()
+        for (entry in testHeaders.entries) {
+            assertEquals(entry.value, builder.headers[entry.key])
+        }
+    }
+
+    @Test
+    fun clientTemplateCustomHeadersWithNullCredential() {
+        val testHeaders = HashMap<String, String>()
+        val random = Random()
+
+        // Nice little random string generator
+        val nextString: () -> String =
+            { TestHelpers.randomString((random.nextInt(20) + 1).toLong()) }
+
+        for (i in 1..5) {
+            testHeaders[nextString()] = nextString()
+        }
+
+        val paramsWithCustomHeaders = defaultParameters.copy(
+            customRequestHeaders = testHeaders
+        )
+        val builder = androidClient.client(paramsWithCustomHeaders).second
 
         for (entry in testHeaders.entries) {
             assertEquals(entry.value, builder.headers[entry.key])
         }
     }
 
-    @io.ktor.util.KtorExperimentalAPI
     @Test
     fun clientFeatures() {
-        val subject = AndroidClient()
-        val client = subject.client(subject.defaultParams()).first
+        val client = androidClient.client(defaultParameters).first
 
         // The key to the feature list is internal, so we are going to have to break the rules a
         // little and assume some implementation details...
         val topAttributes = client.attributes
 
         // Assumes features are the first element of the config attributes
-        @Suppress("UNCHECKED_CAST") val featureKey =
-            topAttributes.allKeys[0] as AttributeKey<Attributes>
+        @Suppress("UNCHECKED_CAST")
+        val featureKey = topAttributes.allKeys[0] as AttributeKey<Attributes>
         val featureAttributes = topAttributes[featureKey]
 
         // Json serializer installed
@@ -140,5 +154,23 @@ class AndroidClientTest {
 
         // It is correct type
         assertTrue(featureVal.serializer is GsonSerializer)
+    }
+
+    companion object {
+        private const val DEFAULT_API_ENDPOINT = "public-api.thundermaps.com"
+
+        private const val TEST_KEY = "Test Key"
+        private const val TEST_INSTALL = "Test Install"
+        private const val TEST_APP = "Test App"
+        private const val TEST_TEAM = "Test Team"
+        private const val TEST_CLIENT_UUID = "client uuid"
+        private val saferMeCredentials = SaferMeCredentials(TEST_KEY, TEST_INSTALL, TEST_APP, TEST_TEAM, TEST_CLIENT_UUID)
+        private val defaultParameters = RequestParameters(
+            customRequestHeaders = HashMap(),
+            credentials = null,
+            host = DEFAULT_API_ENDPOINT,
+            port = null,
+            api_version = 4
+        )
     }
 }
