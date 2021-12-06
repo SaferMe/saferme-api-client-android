@@ -54,8 +54,8 @@ class TeamResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                Assert.assertEquals(TEAMS_PATH, it.url.encodedPath)
-                Assert.assertEquals(HttpMethod.Get, it.method)
+                assertEquals(TEAMS_PATH, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
@@ -83,8 +83,8 @@ class TeamResourceImplTest {
             status = HttpStatusCode.Unauthorized,
             headers = responseHeaders,
             requestInspector = {
-                Assert.assertEquals(TEAMS_PATH, it.url.encodedPath)
-                Assert.assertEquals(HttpMethod.Get, it.method)
+                assertEquals(TEAMS_PATH, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
