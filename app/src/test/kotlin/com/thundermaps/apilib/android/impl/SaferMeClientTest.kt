@@ -1,20 +1,111 @@
 package com.thundermaps.apilib.android.impl
 
-import io.mockk.mockk
-import junit.framework.TestCase
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
+import com.thundermaps.apilib.android.api.SaferMeClient
+import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
+import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
+import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
+import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
+import com.thundermaps.apilib.android.impl.resources.ReportImpl
+import com.thundermaps.apilib.android.impl.resources.SessionsImpl
+import com.thundermaps.apilib.android.impl.resources.TasksImpl
+import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
+import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 internal class SaferMeClientTest {
     private val androidClient = AndroidClient()
-    private val saferMeClient = SaferMeClientImpl(androidClient, mockk(), mockk(), mockk(), mockk())
+    private val environmentManager: EnvironmentManager = mock {
+        on { environment } doReturn Staging
+    }
+    private val teamResourceImpl = mock<TeamResourceImpl>()
+    private val meResourceImpl = mock<MeResourceImpl>()
+    private val sessionsImpl = mock<SessionsImpl>()
+    private lateinit var saferMeClient: SaferMeClient
+
+    @Before
+    fun setUp() {
+        saferMeClient = SaferMeClientImpl(androidClient, environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl)
+    }
+
+    @After
+    fun tearDown() {
+        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl)
+    }
 
     @Test
-    fun defaultParams() {
+    fun verifyDefaultParams() {
         val params = saferMeClient.defaultParams()
-        TestCase.assertEquals(0, params.customRequestHeaders.size)
-        TestCase.assertNull(params.credentials)
-        TestCase.assertEquals("public-api.thundermaps.com", params.host)
-        TestCase.assertNull(params.port)
-        TestCase.assertEquals(4, params.api_version)
+        assertEquals(0, params.customRequestHeaders.size)
+        assertNull(params.credentials)
+        assertEquals("public-api.thundermaps.com", params.host)
+        assertNull(params.port)
+        assertEquals(4, params.api_version)
+    }
+
+    @Test
+    fun verifyTaskResource() {
+        val taskResource = saferMeClient.taskResource
+        assertNotNull(taskResource)
+        assertTrue(taskResource is TasksImpl)
+        assertEquals(androidClient, (taskResource as TasksImpl).api)
+    }
+
+    @Test
+    fun verifyReportResource() {
+        val reportResource = saferMeClient.reportResource
+        assertNotNull(reportResource)
+        assertTrue(reportResource is ReportImpl)
+        assertEquals(androidClient, (reportResource as ReportImpl).api)
+    }
+
+    @Test
+    fun verifyTracedContacts() {
+        val tracedContacts = saferMeClient.tracedContacts
+        assertNotNull(tracedContacts)
+        assertTrue(tracedContacts is TracedContactsImpl)
+        assertEquals(androidClient, (tracedContacts as TracedContactsImpl).api)
+    }
+
+    @Test
+    fun verifyDeviceInfoLogs() {
+        val deviceInfoLogs = saferMeClient.deviceInfoLogs
+        assertNotNull(deviceInfoLogs)
+        assertTrue(deviceInfoLogs is DeviceInfoLogsImpl)
+        assertEquals(androidClient, (deviceInfoLogs as DeviceInfoLogsImpl).api)
+    }
+
+    @Test
+    fun verifySessionsResource() {
+        val sessionsResource = saferMeClient.sessionsResource
+        assertNotNull(sessionsResource)
+        assertEquals(sessionsImpl, sessionsResource)
+    }
+
+    @Test
+    fun verifyTeamResource() {
+        val teamResource = saferMeClient.teamResource
+        assertNotNull(teamResource)
+        assertEquals(teamResourceImpl, teamResource)
+    }
+
+    @Test
+    fun verifyMeResource() {
+        val meResource = saferMeClient.meResource
+        assertNotNull(meResource)
+        assertEquals(meResourceImpl, meResource)
+    }
+
+    @Test
+    fun verifyEnviromentManager() {
+        assertEquals(environmentManager, saferMeClient.environmentManager)
     }
 }

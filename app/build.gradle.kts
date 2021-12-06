@@ -115,6 +115,9 @@ dependencies {
 
     // Add AssertJ dependencies.
     testImplementation(TestingDeps.assertj)
+
+    testImplementation(TestingDeps.mockitoKotlin2)
+    testImplementation(TestingDeps.kotlinCoroutineTest)
 }
 
 // Apply jacoco config (For test Coverage Reports)

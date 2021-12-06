@@ -39,11 +39,13 @@ object Deps {
 object TestingDeps {
     data class Versions(val assertj: String = "3.11.1",
                         val junit5: String = "5.8.1",
-                        val mockk: String = "1.9.3",
+                        val mockk: String = "1.12.1",
                         val roboelectric: String = "3.8",
                         val junit4: String = "4.12",
                         val coroutines: String = "1.3.2",
-                        val ktor_version: String = "1.2.5")
+                        val ktor: String = "1.2.5",
+                        val mockitoKotlin2: String = "2.2.0",
+                        val kotlinCoroutine: String = "1.3.9")
 
     val versions = Versions()
     
@@ -55,7 +57,9 @@ object TestingDeps {
     val junit5_vintage = "org.junit.vintage:junit-vintage-engine:${versions.junit5}"
     val assertj = "org.assertj:assertj-core:${versions.assertj}"
     val mockk = "io.mockk:mockk:${versions.mockk}"
-    val ktor_base = "io.ktor:ktor-client-mock:${versions.ktor_version}"
-    val ktor_jvm = "io.ktor:ktor-client-mock-jvm:${versions.ktor_version}"
-    val ktor_native = "io.ktor:ktor-client-mock-native:${versions.ktor_version}"
+    val ktor_base = "io.ktor:ktor-client-mock:${versions.ktor}"
+    val ktor_jvm = "io.ktor:ktor-client-mock-jvm:${versions.ktor}"
+    val ktor_native = "io.ktor:ktor-client-mock-native:${versions.ktor}"
+    val mockitoKotlin2 = "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin2}"
+    val kotlinCoroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutine}"
 }
