@@ -18,9 +18,11 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
+import io.ktor.util.KtorExperimentalAPI
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@KtorExperimentalAPI
 @Singleton
 class SessionsImpl @Inject constructor(
     private val androidClient: AndroidClient,
