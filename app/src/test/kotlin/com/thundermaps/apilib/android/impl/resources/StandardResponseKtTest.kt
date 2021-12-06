@@ -1,6 +1,5 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import android.se.omapi.Session
 import com.google.gson.Gson
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -54,7 +53,7 @@ class StandardResponseKtTest {
     fun verifyProcessResultStatusOKSuccess() = runBlockingTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.OK.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel(LOGIN_SUCCESS_RESPONSE))
-        val result: Result<Session> = resultHandler.processResult(client, gson)
+        val result: Result<Sessions> = resultHandler.processResult(client, gson)
 
         assertTrue(result.isSuccess)
         val sessions = result.getNullableData()
@@ -69,7 +68,7 @@ class StandardResponseKtTest {
     fun verifyProcessResultStatusOKError() = runBlockingTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.OK.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel(""))
-        val result: Result<Session> = resultHandler.processResult(client, gson)
+        val result: Result<Sessions> = resultHandler.processResult(client, gson)
 
         assertTrue(result.isError)
 

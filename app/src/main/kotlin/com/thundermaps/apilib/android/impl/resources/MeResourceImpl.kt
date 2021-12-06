@@ -49,8 +49,7 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         updatePasswordBody: UpdatePasswordBody
     ): Result<Unit> {
-        val call =
-            processCall(parameters = parameters, bodyRequest = updatePasswordBody)
+        val call = processCall(parameters = parameters, bodyRequest = updatePasswordBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -79,7 +78,7 @@ class MeResourceImpl @Inject constructor(
         return resultHandler.processResult(call, gson)
     }
 
-    private suspend inline fun <T : Any> processCall(
+    private suspend fun <T : Any> processCall(
         parameters: RequestParameters,
         methodType: HttpMethod = HttpMethod.Patch,
         query: String = "",
