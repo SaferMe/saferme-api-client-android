@@ -17,13 +17,15 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBod
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Result
+import com.thundermaps.apilib.android.api.responses.models.ResultHandler
+import com.thundermaps.apilib.android.api.responses.models.UserDetails
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,75 +57,129 @@ class MeResourceImplTest {
 
     @Test
     fun verifyUpdateAddressSuccess() {
-        verifyUpdatedType(true) {
-            meResource.updateAddress(defaultParameters, UpdateAddressBody("New address"))
+        val addressBody = UpdateAddressBody("New address")
+        verifyUpdatedType(true, verifyBody = {
+            assertEquals(gson.toJson(addressBody), it)
+            assertTrue(it.contains(addressBody.address))
+        }) {
+            meResource.updateAddress(defaultParameters, addressBody)
         }
     }
 
     @Test
     fun verifyUpdateAddressError() {
-        verifyUpdatedType(false) {
-            meResource.updateAddress(defaultParameters, UpdateAddressBody("New address"))
+        val addressBody = UpdateAddressBody("New address")
+        verifyUpdatedType(false, {
+            assertEquals(gson.toJson(addressBody), it)
+            assertTrue(it.contains(addressBody.address))
+        }) {
+            meResource.updateAddress(defaultParameters, addressBody)
         }
     }
 
     @Test
     fun verifyUpdatePasswordSuccess() {
-        verifyUpdatedType(true) {
-            meResource.updatePassword(defaultParameters, UpdatePasswordBody(currentPassword = "49304390934", newPassword = "439f09t34909"))
+        val passwordBody = UpdatePasswordBody("49304390934", "439f09t34909")
+        verifyUpdatedType(true, {
+            assertEquals(gson.toJson(passwordBody), it)
+            assertTrue(it.contains(passwordBody.currentPassword))
+            assertTrue(it.contains(passwordBody.newPassword))
+        }) {
+            meResource.updatePassword(defaultParameters, passwordBody)
         }
     }
 
     @Test
     fun verifyUpdatePasswordError() {
-        verifyUpdatedType(false) {
-            meResource.updatePassword(defaultParameters, UpdatePasswordBody(currentPassword = "49304390934", newPassword = "439f09t34909"))
+        val passwordBody = UpdatePasswordBody("49304390934", "439f09t34909")
+        verifyUpdatedType(false, {
+            assertEquals(gson.toJson(passwordBody), it)
+            assertTrue(it.contains(passwordBody.currentPassword))
+            assertTrue(it.contains(passwordBody.newPassword))
+        }) {
+            meResource.updatePassword(defaultParameters, passwordBody)
         }
     }
 
     @Test
     fun verifyUpdateContactNumberSuccess() {
-        verifyUpdatedType(true) {
-            meResource.updateContactNumber(defaultParameters, UpdateContactNumberBody("49304390934"))
+        val body = UpdateContactNumberBody("49304390934")
+        verifyUpdatedType(true, {
+            assertEquals(gson.toJson(body), it)
+            assertTrue(it.contains(body.contactNumber))
+        }) {
+            meResource.updateContactNumber(
+                defaultParameters,
+                body
+            )
         }
     }
 
     @Test
     fun verifyUpdateContactNumberError() {
-        verifyUpdatedType(false) {
-            meResource.updateContactNumber(defaultParameters, UpdateContactNumberBody("49304390934"))
+        val body = UpdateContactNumberBody("49304390934")
+        verifyUpdatedType(false, {
+            assertEquals(gson.toJson(body), it)
+            assertTrue(it.contains(body.contactNumber))
+        }) {
+            meResource.updateContactNumber(
+                defaultParameters,
+                body
+            )
         }
     }
 
     @Test
     fun verifyUpdateEmailSuccess() {
-        verifyUpdatedType(true) {
-            meResource.updateEmail(defaultParameters, EmailBody("test@gmail.com"))
+        val body = EmailBody("test@gmail.com")
+        verifyUpdatedType(true, {
+            assertEquals(gson.toJson(body), it)
+            assertTrue(it.contains(body.email))
+        }) {
+            meResource.updateEmail(defaultParameters, body)
         }
     }
 
     @Test
     fun verifyUpdateEmailError() {
-        verifyUpdatedType(false) {
-            meResource.updateEmail(defaultParameters, EmailBody("test@gmail.com"))
+        val body = EmailBody("test@gmail.com")
+        verifyUpdatedType(false, {
+            assertEquals(gson.toJson(body), it)
+            assertTrue(it.contains(body.email))
+        }) {
+            meResource.updateEmail(defaultParameters, body)
         }
     }
 
     @Test
     fun verifyUpdateNameSuccess() {
-        verifyUpdatedType(true) {
-            meResource.updateName(defaultParameters, UpdateNameBody("First name", "last name"))
+        val body = UpdateNameBody("First name", "last name")
+        verifyUpdatedType(true, {
+            assertEquals(gson.toJson(body), it)
+            assertTrue(it.contains(body.firstName))
+            assertTrue(it.contains(body.lastName))
+        }) {
+            meResource.updateName(defaultParameters, body)
         }
     }
 
     @Test
     fun verifyUpdateNameError() {
-        verifyUpdatedType(false) {
-            meResource.updateName(defaultParameters, UpdateNameBody("First name", "last name"))
+        val body = UpdateNameBody("First name", "last name")
+        verifyUpdatedType(false, {
+            assertEquals(gson.toJson(body), it)
+            assertTrue(it.contains(body.firstName))
+            assertTrue(it.contains(body.lastName))
+        }) {
+            meResource.updateName(defaultParameters, body)
         }
     }
 
-    private fun verifyUpdatedType(isSuccess: Boolean, invoke: suspend () -> Result<Unit>) = runBlockingTest {
+    private fun verifyUpdatedType(
+        isSuccess: Boolean,
+        verifyBody: (body: String) -> Unit,
+        invoke: suspend () -> Result<Unit>
+    ) = runBlockingTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = "",
@@ -132,6 +188,7 @@ class MeResourceImplTest {
             requestInspector = {
                 assertEquals(PATH, it.url.encodedPath)
                 assertEquals(HttpMethod.Patch, it.method)
+                verifyBody((it.body as TextContent).text)
                 inspectCalled = true
             }
         )
@@ -141,13 +198,11 @@ class MeResourceImplTest {
         val result = invoke()
 
         verifyAndroidClient()
-
         if (isSuccess) {
             assertTrue(result.isSuccess)
         } else {
             assertTrue(result.isError)
         }
-
         assertTrue(inspectCalled)
     }
 
@@ -159,7 +214,7 @@ class MeResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("${PATH}?fields=personal_account_option", it.url.encodedPath)
+                assertEquals("$PATH?fields=personal_account_option", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
@@ -173,9 +228,16 @@ class MeResourceImplTest {
 
         assertTrue(userDetailsResult.isSuccess)
         assertNotNull(userDetailsResult.getNullableData())
-        val userDetails = userDetailsResult.getNullableData()
-        assertEquals("liem.vo+user2@safer.me", userDetails?.email)
-        assertEquals("Liem", userDetails?.firstName)
+        val userDetails = userDetailsResult.getNullableData()!!
+        assertEquals(mockUserDetails.firstName, userDetails.firstName)
+        assertEquals(mockUserDetails.lastName, userDetails.lastName)
+        assertEquals(mockUserDetails.email, userDetails.email)
+        assertEquals(mockUserDetails.address, userDetails.address)
+        assertEquals(mockUserDetails.id, userDetails.id)
+        assertEquals(mockUserDetails.emailNotificationEnabled, userDetails.emailNotificationEnabled)
+        assertEquals(mockUserDetails.personalAccountOption, userDetails.personalAccountOption)
+        assertEquals(mockUserDetails.acceptedTermsVersion, userDetails.acceptedTermsVersion)
+        assertEquals(mockUserDetails.contactNumber, userDetails.contactNumber)
 
         assertTrue(inspectCalled)
     }
@@ -188,7 +250,7 @@ class MeResourceImplTest {
             status = HttpStatusCode.BadGateway,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("${PATH}?fields=personal_account_option", it.url.encodedPath)
+                assertEquals("$PATH?fields=personal_account_option", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
@@ -199,9 +261,7 @@ class MeResourceImplTest {
         val userDetailsResult = meResource.getUserDetails(defaultParameters)
 
         verifyAndroidClient()
-
         assertTrue(userDetailsResult.isError)
-
         assertTrue(inspectCalled)
     }
 
@@ -232,12 +292,23 @@ class MeResourceImplTest {
             port = null,
             api_version = 4
         )
+        private val mockUserDetails = UserDetails(
+            id = 85459L,
+            acceptedTermsVersion = 4,
+            address = null,
+            contactNumber = "32903290592",
+            email = "abc@gmail.com",
+            firstName = "John",
+            lastName = "User2",
+            emailNotificationEnabled = false,
+            personalAccountOption = false
+        )
         private val USER_DETAIL_RESPONSE = """
             {
               "id": 85459,
-              "first_name": "Liem",
+              "first_name": "John",
               "last_name": "User2",
-              "email": "liem.vo+user2@safer.me",
+              "email": "abc@gmail.com",
               "avatar": {
                 "mini": "missing/avatars/mini.png",
                 "small": "missing/avatars/small.png",
@@ -245,6 +316,7 @@ class MeResourceImplTest {
                 "large": "missing/avatars/large.png",
                 "huge": "missing/avatars/huge.png"
               },
+              "contact_number": "32903290592",
               "accepted_terms_version": 4
             }
         """.trimIndent()

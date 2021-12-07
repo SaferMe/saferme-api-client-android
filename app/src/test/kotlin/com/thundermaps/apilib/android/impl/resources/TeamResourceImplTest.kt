@@ -15,20 +15,27 @@ import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
+import com.thundermaps.apilib.android.api.responses.models.Team
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
+@KtorExperimentalAPI
+@ExperimentalCoroutinesApi
 class TeamResourceImplTest {
     private val androidClient: AndroidClient = mock()
     private val resultHandler: ResultHandler = ResultHandler()
@@ -71,7 +78,44 @@ class TeamResourceImplTest {
 
         assertNotNull(teams)
         assertEquals(2, teams?.size)
-        assertEquals(6141L, teams?.first()?.id)
+        val team = teams?.firstOrNull()
+        assertEquals(6141L, team!!.id)
+        assertEquals(6141L, team.uniqueId)
+        assertFalse(team.contactTracingEnabled)
+        assertFalse(team.formContactTracingEnabled)
+        assertTrue(team.featureTasksEnabled)
+        assertFalse(team.guestsEnabled)
+        assertEquals("Test second organisation", team.industry)
+        assertNull(team.location)
+        assertEquals("MT T32", team.name)
+        assertTrue(team.riskRegisterEnabled)
+        assertFalse(team.ssoRequired)
+        assertEquals("nb6g6xtcuia", team.ssoTeamId)
+        assertNull(team.userTimeout)
+        assertFalse(team.wearablesEnabled!!)
+        assertNull(team.isAdmin)
+        assertNull(team.isManager)
+        assertNull(team.isOwner)
+
+        val team2 = Team(
+            contactTracingEnabled = false,
+            featureTasksEnabled = true,
+            formContactTracingEnabled = false,
+            guestsEnabled = false,
+            id = 6129L,
+            industry = null,
+            location = null,
+            name = "MT Test2",
+            riskRegisterEnabled = true,
+            ssoRequired = false,
+            ssoTeamId = "en1owl6sq3c",
+            userTimeout = null,
+            wearablesEnabled = false,
+            isAdmin = null,
+            isManager = null,
+            isOwner = null
+        )
+        assertEquals(team2, teams.lastOrNull())
     }
 
     @Test
@@ -99,7 +143,7 @@ class TeamResourceImplTest {
         assertTrue(inspectCalled)
     }
 
-    private fun verifyAndroidClient(expectedVersion: Int = 3) {
+    private fun verifyAndroidClient(expectedVersion: Int) {
         val parameterCaptor = argumentCaptor<RequestParameters>()
         verify(androidClient).client(parameterCaptor.capture())
         val requestParameters = parameterCaptor.firstValue
