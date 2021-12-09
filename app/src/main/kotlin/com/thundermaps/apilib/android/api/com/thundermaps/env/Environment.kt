@@ -11,5 +11,5 @@ object Live : Environment(
 )
 
 object Staging : Environment(
-    listOf("api.staging.saferme.io")
+    listOf("api.staging.saferme.io", "api1.staging.saferme.io")
 )

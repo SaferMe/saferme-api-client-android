@@ -8,6 +8,7 @@ import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.http.HttpHeaders
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import javax.inject.Inject
@@ -35,13 +36,13 @@ class AndroidClient @Inject constructor() {
                 val creds = params.credentials
                 currentCredentials = creds
                 if (creds != null) {
-                    headers.append("X-InstallationID", creds.InstallationId)
-                    headers.append("Authorization", "Token token=${creds.ApiKey}")
-                    headers.append("X-AppID", creds.AppId)
+                    headers.append(HeaderType.xInstallationId, creds.InstallationId)
+                    headers.append(HttpHeaders.Authorization, "Token token=${creds.ApiKey}")
+                    headers.append(HeaderType.xAppId, creds.AppId)
                     if (creds.TeamId != null)
-                        headers.append("X-TeamID", creds.TeamId)
+                        headers.append(HeaderType.xTeamId, creds.TeamId)
                 }
-                headers.append("Accept", "application/json, text/plain, */*")
+                headers.append(HttpHeaders.Accept, "application/json, text/plain, */*")
                 params.customRequestHeaders.forEach { (key, value) ->
                     headers[key] = value
                 }
