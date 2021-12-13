@@ -6,6 +6,7 @@ import com.thundermaps.apilib.android.impl.resources.TestHelpers
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.http.HttpHeaders
 import io.ktor.util.AttributeKey
 import io.ktor.util.Attributes
 import io.ktor.util.KtorExperimentalAPI
@@ -76,10 +77,10 @@ class AndroidClientTest {
     private fun HttpRequestBuilder.verifyRequestBuilderWithCredentialHavingTeam(
         saferMeCredentials: SaferMeCredentials
     ) {
-        assertEquals(headers["Authorization"], "Token token=${saferMeCredentials.ApiKey}")
-        assertEquals(headers["X-InstallationID"], saferMeCredentials.InstallationId)
-        assertEquals(headers["X-AppID"], saferMeCredentials.AppId)
-        assertEquals(headers["X-TeamID"], saferMeCredentials.TeamId)
+        assertEquals(headers[HttpHeaders.Authorization], "Token token=${saferMeCredentials.ApiKey}")
+        assertEquals(headers[HeaderType.xInstallationId], saferMeCredentials.InstallationId)
+        assertEquals(headers[HeaderType.xAppId], saferMeCredentials.AppId)
+        assertEquals(headers[HeaderType.xTeamId], saferMeCredentials.TeamId)
     }
 
     /**

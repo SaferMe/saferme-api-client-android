@@ -10,5 +10,7 @@ data class Sessions(
     @SerializedName("user_id") @Expose val userId: Long,
     @SerializedName("personal_account_option") @Expose val personalAccountOption: Boolean,
     @SerializedName("profile_details_pending") @Expose val profileDetailsPending: Boolean,
-    @SerializedName("password_update_pending") @Expose val passwordUpdatePending: Boolean
+    @SerializedName("password_update_pending") @Expose val passwordUpdatePending: Boolean,
+    @SerializedName("client_uuid") @Expose val clientUuid: String? = null,
+    @SerializedName("installation_id") @Expose val installationId: String? = null
 )

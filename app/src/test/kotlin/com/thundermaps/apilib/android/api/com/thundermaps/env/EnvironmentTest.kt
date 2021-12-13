@@ -1,6 +1,6 @@
 package com.thundermaps.apilib.android.api.com.thundermaps.env
 
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class EnvironmentTest {
@@ -8,16 +8,17 @@ class EnvironmentTest {
     fun `verify Live environment`() {
         val live: Environment = Live
 
-        Assert.assertEquals(4, live.servers.size)
+        assertEquals(4, live.servers.size)
         live.servers.forEachIndexed { index, value ->
-            Assert.assertEquals("api${index + 1}.thundermaps.com", value)
+            assertEquals("api${index + 1}.thundermaps.com", value)
         }
     }
 
     @Test
     fun `verify Staging environment`() {
         val staging: Environment = Staging
-        Assert.assertEquals(1, staging.servers.size)
-        Assert.assertEquals("api.staging.saferme.io", staging.servers.firstOrNull())
+        assertEquals(2, staging.servers.size)
+        assertEquals("api.staging.saferme.io", staging.servers.firstOrNull())
+        assertEquals("api1.staging.saferme.io", staging.servers.lastOrNull())
     }
 }
