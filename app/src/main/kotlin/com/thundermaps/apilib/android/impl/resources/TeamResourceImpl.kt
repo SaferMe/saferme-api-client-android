@@ -12,9 +12,11 @@ import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.url
 import io.ktor.http.HttpMethod
+import io.ktor.util.KtorExperimentalAPI
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@KtorExperimentalAPI
 @Singleton
 class TeamResourceImpl @Inject constructor(
     private val androidClient: AndroidClient,
@@ -27,7 +29,7 @@ class TeamResourceImpl @Inject constructor(
         return resultHandler.processResult(call, gson)
     }
 
-    private suspend inline fun getTeamsCall(
+    private suspend fun getTeamsCall(
         parameters: RequestParameters
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)

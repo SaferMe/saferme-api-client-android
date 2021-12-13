@@ -8,8 +8,10 @@ import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import io.ktor.client.call.HttpClientCall
+import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.toByteArray
 
+@KtorExperimentalAPI
 suspend inline fun <reified T : Any> ResultHandler.processResult(call: HttpClientCall, gson: Gson): Result<T> {
     val status = SaferMeApiStatus.statusForCode(call.response.status.value)
     val type = object : TypeToken<T>() {}.type

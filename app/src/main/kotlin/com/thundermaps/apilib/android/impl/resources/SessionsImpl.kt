@@ -18,9 +18,11 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
+import io.ktor.util.KtorExperimentalAPI
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@KtorExperimentalAPI
 @Singleton
 class SessionsImpl @Inject constructor(
     private val androidClient: AndroidClient,
@@ -55,16 +57,16 @@ class SessionsImpl @Inject constructor(
         return resultHandler.processResult<EmailBody>(call, gson).convert { it.email }
     }
 
-    private suspend inline fun <reified T : Any> requestHandler(
+    private suspend fun <T : Any> requestHandler(
         bodyParameters: T,
         applicationId: String,
         path: String
     ): HttpClientCall {
         val parameters = createParameters(
-                environmentManager.environment.servers.first(),
-                applicationId,
-                path.getApiVersion()
-            )
+            environmentManager.environment.servers.first(),
+            applicationId,
+            path.getApiVersion()
+        )
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Post
