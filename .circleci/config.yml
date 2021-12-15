@@ -1,0 +1,161 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+# For a detailed guide to building and testing on Android, read the docs:
+# https://circleci.com/docs/2.0/language-android/ for more details.
+version: 2.1
+
+# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
+# See: https://circleci.com/docs/2.0/orb-intro/
+orbs:
+  android: circleci/android@1.0.3
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Inject user to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.user=$GPR_USER" >> local.properties
+      - run:
+          name: Inject key to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.key=$GPR_KEY" >> local.properties
+      - run:
+          name: Lint
+          command: ./gradlew clean ktlintCheck --continue
+      - run:
+          name: Build
+          command: ./gradlew build assemble
+
+  test:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Inject user to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.user=$GPR_USER" >> local.properties
+      - run:
+          name: Inject key to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.key=$GPR_KEY" >> local.properties
+      - android/create-avd:
+          avd-name: myavd
+          install: true
+          system-image: system-images;android-29;default;x86
+      - android/start-emulator:
+          avd-name: myavd
+          no-window: true
+          restore-gradle-cache-prefix: v1a
+      - run:
+          name: report
+          command: ./gradlew jacocoTestReport createDist
+      - run:
+          name: Save unit test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+      - run:
+          name: Save coverage
+          command: |
+            mkdir -p ~/test-results/test_coverage
+            cp -R app/build/reports/jacocoTestReport ~/test-results/test_coverage/
+          when: always
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results/test_coverage
+      - run:
+          name: Verify minimum code coverage
+          command: sh scripts/verify_code_coverage.sh
+  devRelease:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Inject user to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.user=$GPR_USER" >> local.properties
+      - run:
+          name: Inject key to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.key=$GPR_KEY" >> local.properties
+      - run:
+          name: Inject version to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "version.version=$VERSION" >> local.properties
+      - run:
+          name: Inject build to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "version.build=${100+CIRCLE_BUILD_NUM}" >> local.properties
+      - run:
+          name: Build
+          command: ./gradlew clean ktlintCheck build assemble publishTestReleasePublicationToGitHubRepository
+
+  prodRelease:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Inject user to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.user=$GPR_USER" >> local.properties
+      - run:
+          name: Inject key to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "gpr.key=$GPR_KEY" >> local.properties
+      - run:
+          name: Inject version to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "version.version=$VERSION" >> local.properties
+      - run:
+          name: Inject build to local.properties
+          command: |
+            echo '\\n' >> local.properties
+            echo "version.build=${100+CIRCLE_BUILD_NUM}" >> local.properties
+      - run:
+          name: Build
+          command: ./gradlew clean ktlintCheck build assemble publishProductionReleasePublicationToGitHubRepository
+
+workflows:
+  build-and-test: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - devRelease:
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: develop
+      - prodRelease:
+          requires:
+            - build
+            - test
+          filters:
+            branches:
+              only: master
