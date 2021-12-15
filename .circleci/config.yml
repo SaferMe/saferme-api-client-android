@@ -71,7 +71,9 @@ jobs:
           path: ~/test-results/test_coverage
       - run:
           name: Install xmllint
-          command: sudo apt-get install libxml2
+          command: |
+            sudo apt-get update
+            sudo apt-get install libxml2-utils
       - run:
           name: Verify minimum code coverage
           command: sh scripts/verify_code_coverage.sh
