@@ -49,14 +49,6 @@ jobs:
           command: |
             echo '\\n' >> local.properties
             echo "gpr.key=$GPR_KEY" >> local.properties
-      - android/create-avd:
-          avd-name: myavd
-          install: true
-          system-image: system-images;android-29;default;x86
-      - android/start-emulator:
-          avd-name: myavd
-          no-window: true
-          restore-gradle-cache-prefix: v1a
       - run:
           name: report
           command: ./gradlew jacocoTestReport createDist
@@ -70,12 +62,16 @@ jobs:
           name: Save coverage
           command: |
             mkdir -p ~/test-results/test_coverage
-            cp -R app/build/reports/jacocoTestReport ~/test-results/test_coverage/
+            cp app/build/reports/jacocoTestReport/coverage.zip ~/test-results/test_coverage/
+            cp app/build/reports/jacocoTestReport/jacocoTestReport.xml ~/test-results/test_coverage/
           when: always
       - store_test_results:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-results/test_coverage
+      - run:
+          name: Install xmllint
+          command: sudo apt-get install -y libxml2-utils
       - run:
           name: Verify minimum code coverage
           command: sh scripts/verify_code_coverage.sh
