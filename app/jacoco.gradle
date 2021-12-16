@@ -5,6 +5,14 @@ jacoco {
     reportsDir = file("$buildDir/reports")
 }
 
+task createDist(type: org.gradle.api.tasks.bundling.Zip, dependsOn: "jacocoTestReport"){
+    println "executing"
+    archiveName="coverage.zip"
+    destinationDir = file('build/reports/jacocoTestReport')
+    from (files('./build/reports/jacocoTestReport/html'))
+    println destinationDir.getAbsolutePath()
+}
+
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports for Debug build"
