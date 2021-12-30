@@ -17,6 +17,7 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBod
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
+import com.thundermaps.apilib.android.api.responses.models.Avatar
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
@@ -293,15 +294,22 @@ class MeResourceImplTest {
             api_version = 4
         )
         private val mockUserDetails = UserDetails(
-            id = 85459L,
             acceptedTermsVersion = 4,
             address = null,
             contactNumber = "32903290592",
             email = "abc@gmail.com",
+            id = 85459L,
             firstName = "John",
             lastName = "User2",
-            emailNotificationEnabled = false,
-            personalAccountOption = false
+            avatar = Avatar(
+                "missing/avatars/mini.png",
+                "missing/avatars/small.png",
+                "missing/avatars/medium.png",
+                "missing/avatars/large.png",
+                "missing/avatars/huge.png"
+            ),
+            emailNotificationEnabled = null,
+            personalAccountOption = null
         )
         private val USER_DETAIL_RESPONSE = """
             {

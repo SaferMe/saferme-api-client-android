@@ -11,6 +11,7 @@ class UserDetails(
     @Expose val id: Long,
     @SerializedName("first_name") @Expose val firstName: String,
     @SerializedName("last_name") @Expose val lastName: String,
-    @SerializedName("email_notifications_enabled") @Expose val emailNotificationEnabled: Boolean,
-    @SerializedName("personal_account_option") @Expose val personalAccountOption: Boolean
+    @Expose val avatar: Avatar,
+    @SerializedName("email_notifications_enabled") @Expose val emailNotificationEnabled: Boolean?,
+    @SerializedName("personal_account_option") @Expose val personalAccountOption: Boolean?
 )
