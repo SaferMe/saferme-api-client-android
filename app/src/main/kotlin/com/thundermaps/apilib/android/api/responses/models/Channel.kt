@@ -19,17 +19,17 @@ data class Channel(
     @SerializedName(IS_OPERABLE_BY) val isOperableBy: Boolean,
     @SerializedName(IS_REPORTABLE_BY) val isReportableBy: Boolean,
     @SerializedName(LAST_REPORT_DATE) val lastReportDate: String?,
-    val logo: Avatar,
-    @SerializedName(MEMBER_COUNT) val memberCount: Int?,
+    val logo: Avatar?,
+    @SerializedName(MEMBER_COUNT) val memberCount: Int? = 0,
     val moderated: Boolean,
     val name: String,
-    @SerializedName(PIN_URLS) val pinUrls: PinUrls,
+    @SerializedName(PIN_URLS) val pinUrls: PinUrls?,
     @SerializedName(REPORTS_COUNT) val reportsCount: Int,
-    @SerializedName(RISK_CONTROLS_EDITABILITY) val riskControlsEditablity: Boolean,
+    @SerializedName(RISK_CONTROLS_EDITABILITY) val riskControlsEditablity: String,
     val slug: String,
     @SerializedName(STANDARD_CHANNEL) val standardChannel: Boolean,
     @SerializedName(TEAM_ID) val teamId: Long,
-    @SerializedName(TUNE_IN_COUNT) val tuneInCount: Int?
+    @SerializedName(TUNE_IN_COUNT) val tuneInCount: Int? = 0
 ) {
     companion object {
         const val ALLOW_PUBLIC_COMMENTS = "allow_public_comments"
