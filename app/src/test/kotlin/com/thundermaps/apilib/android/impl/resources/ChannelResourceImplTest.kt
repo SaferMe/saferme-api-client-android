@@ -174,13 +174,6 @@ class ChannelResourceImplTest {
             isOperableBy = true,
             isReportableBy = true,
             lastReportDate = "2021-10-11T12:57:42+13:00",
-            logo = Avatar(
-                mini = "missing/logos/mini.png",
-                small = "missing/logos/small.png",
-                medium = "missing/logos/medium.png",
-                large = "missing/logos/large.png",
-                huge = "missing/logos/huge.png"
-            ),
             memberCount = 2,
             moderated = false,
             name = "Anonymous report",

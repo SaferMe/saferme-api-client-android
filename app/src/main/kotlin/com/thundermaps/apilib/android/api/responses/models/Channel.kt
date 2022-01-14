@@ -19,7 +19,6 @@ data class Channel(
     @SerializedName(IS_OPERABLE_BY) val isOperableBy: Boolean,
     @SerializedName(IS_REPORTABLE_BY) val isReportableBy: Boolean,
     @SerializedName(LAST_REPORT_DATE) val lastReportDate: String?,
-    val logo: Avatar?,
     @SerializedName(MEMBER_COUNT) val memberCount: Int? = 0,
     val moderated: Boolean,
     val name: String,
