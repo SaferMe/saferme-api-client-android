@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
+import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
@@ -29,16 +30,24 @@ internal class SaferMeClientTest {
     private val teamResourceImpl = mock<TeamResourceImpl>()
     private val meResourceImpl = mock<MeResourceImpl>()
     private val sessionsImpl = mock<SessionsImpl>()
+    private val channelImpl = mock<ChannelResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
     fun setUp() {
-        saferMeClient = SaferMeClientImpl(androidClient, environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl)
+        saferMeClient = SaferMeClientImpl(
+            androidClient,
+            environmentManager,
+            teamResourceImpl,
+            meResourceImpl,
+            sessionsImpl,
+            channelImpl
+        )
     }
 
     @After
     fun tearDown() {
-        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl)
+        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl)
     }
 
     @Test
@@ -98,6 +107,13 @@ internal class SaferMeClientTest {
     }
 
     @Test
+    fun verifyChannelResource() {
+        val channelResource = saferMeClient.channelResource
+        assertNotNull(channelResource)
+        assertEquals(channelImpl, channelResource)
+    }
+
+    @Test
     fun verifyMeResource() {
         val meResource = saferMeClient.meResource
         assertNotNull(meResource)
@@ -105,7 +121,7 @@ internal class SaferMeClientTest {
     }
 
     @Test
-    fun verifyEnviromentManager() {
+    fun verifyEnvironmentManager() {
         assertEquals(environmentManager, saferMeClient.environmentManager)
     }
 }
