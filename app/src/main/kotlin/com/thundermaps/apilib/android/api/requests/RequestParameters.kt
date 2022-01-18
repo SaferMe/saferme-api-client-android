@@ -9,5 +9,6 @@ data class RequestParameters(
     // Server Configuration:
     val host: String,
     val port: Int? = null,
-    val api_version: Int
+    val api_version: Int,
+    val parameters: Map<String, String>? = null
 )

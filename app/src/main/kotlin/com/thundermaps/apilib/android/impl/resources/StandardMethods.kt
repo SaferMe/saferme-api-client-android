@@ -318,8 +318,7 @@ class StandardMethods {
             result: (call: HttpClientCall) -> Unit
         ) {
             val (client, template) = api.client(params)
-            val jsonBody =
-                if (payload != null) AndroidClient.gsonSerializer.toJsonTree(payload) else null
+            val jsonBody = payload?.let { AndroidClient.gsonSerializer.toJsonTree(payload) }
             val call = client.call(HttpRequestBuilder().takeFrom(template).apply {
                 method = requestMethod
                 url(AndroidClient.baseUrlBuilder(params).apply {
