@@ -9,11 +9,13 @@ import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
+import com.thundermaps.apilib.android.impl.resources.NotificationResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
 import com.thundermaps.apilib.android.impl.resources.TasksImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
+import io.ktor.util.KtorExperimentalAPI
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -22,6 +24,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
+@KtorExperimentalAPI
 internal class SaferMeClientTest {
     private val androidClient = AndroidClient()
     private val environmentManager: EnvironmentManager = mock {
@@ -31,6 +34,7 @@ internal class SaferMeClientTest {
     private val meResourceImpl = mock<MeResourceImpl>()
     private val sessionsImpl = mock<SessionsImpl>()
     private val channelImpl = mock<ChannelResourceImpl>()
+    private val notificationImpl = mock<NotificationResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -41,13 +45,14 @@ internal class SaferMeClientTest {
             teamResourceImpl,
             meResourceImpl,
             sessionsImpl,
-            channelImpl
+            channelImpl,
+            notificationImpl
         )
     }
 
     @After
     fun tearDown() {
-        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl)
+        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl, notificationImpl)
     }
 
     @Test
@@ -118,6 +123,13 @@ internal class SaferMeClientTest {
         val meResource = saferMeClient.meResource
         assertNotNull(meResource)
         assertEquals(meResourceImpl, meResource)
+    }
+
+    @Test
+    fun verifyNotificationResource() {
+        val notificationResource = saferMeClient.notificationResource
+        assertNotNull(notificationResource)
+        assertEquals(notificationImpl, notificationResource)
     }
 
     @Test
