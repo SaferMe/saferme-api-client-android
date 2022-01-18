@@ -47,8 +47,7 @@ class StandardMethods {
 
             try {
                 standardCall(api, HttpMethod.Post, path, parameters, item) { call ->
-                    var status = SaferMeApiStatus.statusForCode(call.response.status.value)
-                    when (status) {
+                    when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
                         SaferMeApiStatus.CREATED -> success(
                             SaferMeApiResult(
                                 data = call.receive(),
@@ -117,8 +116,7 @@ class StandardMethods {
             try {
                 standardCall(api, HttpMethod.Get, path, parameters, null) { call ->
 
-                    var status = SaferMeApiStatus.statusForCode(call.response.status.value)
-                    when (status) {
+                    when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
                         SaferMeApiStatus.OK -> success(
                             SaferMeApiResult(
                                 data = call.receive(),
@@ -166,13 +164,12 @@ class StandardMethods {
             try {
                 standardCall(api, HttpMethod.Patch, path, parameters, item) { call ->
 
-                    var status = SaferMeApiStatus.statusForCode(call.response.status.value)
-                    when (status) {
+                    when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
                         SaferMeApiStatus.ACCEPTED, SaferMeApiStatus.OTHER_200, SaferMeApiStatus.NO_CONTENT -> {
                             /** Unlike create, we may receive an empty body **/
                             // If this is the case, we need to set data to what was sent in the request
                             val json = String(call.response.content.toByteArray())
-                            var data: Resource? =
+                            val data: Resource? =
                                 if (json == "" || json.trim() == "{}") null
                                 else AndroidClient.gsonSerializer.fromJson(json, Resource::class.java)
                             success(
@@ -213,23 +210,20 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        suspend fun <T : SaferMeDatum> index(
+        suspend inline fun <reified T : Any> index(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
-            listType: TypeToken<List<T>>,
-            success: (SaferMeApiResult<List<T>>) -> Unit,
+            success: (SaferMeApiResult<T>) -> Unit,
             failure: (Exception) -> Unit
         ) {
             try {
                 standardCall(api, HttpMethod.Get, path, parameters, null) { call ->
-                    var status = SaferMeApiStatus.statusForCode(call.response.status.value)
-                    when (status) {
+                    when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
                         SaferMeApiStatus.OK -> {
-                            // There seems to be an issue serializing to a list natively,
-                            // So we will be doing it manually
+                            val typeToken = object : TypeToken<T>() {}
                             val json = String(call.response.content.toByteArray())
-                            val result = AndroidClient.gsonSerializer.fromJson<List<T>>(json, listType.type)
+                            val result = AndroidClient.gsonSerializer.fromJson<T>(json, typeToken.type)
                             success(
                                 SaferMeApiResult(
                                     data = result,
@@ -278,8 +272,7 @@ class StandardMethods {
         ) {
             try {
                 standardCall(api, HttpMethod.Delete, path, parameters, item) { call ->
-                    var status = SaferMeApiStatus.statusForCode(call.response.status.value)
-                    when (status) {
+                    when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
                         SaferMeApiStatus.ACCEPTED, SaferMeApiStatus.OTHER_200, SaferMeApiStatus.NO_CONTENT -> {
                             success(
                                 SaferMeApiResult(

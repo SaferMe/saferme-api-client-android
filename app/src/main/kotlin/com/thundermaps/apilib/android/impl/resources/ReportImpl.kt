@@ -1,10 +1,9 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
-import com.thundermaps.apilib.android.api.resources.Report
 import com.thundermaps.apilib.android.api.resources.ReportResource
+import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.impl.AndroidClient
 
 class ReportImpl(val api: AndroidClient) : ReportResource {
@@ -46,9 +45,8 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         success: (SaferMeApiResult<List<Report>>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        class TaskListToken : TypeToken<List<Report>>()
         StandardMethods.index(
-            api = api, path = "reports?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", listType = TaskListToken(), parameters = parameters, success = success, failure = failure
+            api = api, path = "reports?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, success = success, failure = failure
         )
     }
 

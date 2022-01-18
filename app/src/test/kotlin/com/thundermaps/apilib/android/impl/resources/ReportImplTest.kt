@@ -1,7 +1,7 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
-import com.thundermaps.apilib.android.api.resources.Report
+import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType

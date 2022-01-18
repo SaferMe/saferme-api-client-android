@@ -16,9 +16,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import java.util.Random
-import junit.framework.Assert.assertEquals
-import junit.framework.TestCase
-import junit.framework.TestCase.assertTrue
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -50,7 +49,7 @@ class StandardIndexTest {
         TestHelpers.testIndexRequest(
             api = defaultAPI,
             client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.method, HttpMethod.Get)
+                assertEquals(it.method, HttpMethod.Get)
                 called = true
             })
         )
@@ -69,7 +68,7 @@ class StandardIndexTest {
         TestHelpers.testIndexRequest(
             api = defaultAPI,
             client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.host, testHost)
+                assertEquals(it.url.host, testHost)
                 called = true
             }),
             params = params
@@ -93,7 +92,7 @@ class StandardIndexTest {
             path = testPath,
             params = params,
             client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.encodedPath, expectedPath)
+                assertEquals(it.url.encodedPath, expectedPath)
                 called = true
             }
             ))
@@ -113,7 +112,7 @@ class StandardIndexTest {
             api = defaultAPI,
             params = params,
             client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.port, testPort)
+                assertEquals(it.url.port, testPort)
                 called = true
             }
             ))
@@ -171,29 +170,30 @@ class StandardIndexTest {
 
         TestHelpers.testIndexRequest(
             api = defaultAPI,
-            client = client, success = {
+            client = client,
+            success = {
                 synchronized(successLambdaCalls) {
                     successLambdaCalls++
                 }
 
                 // List returned should contain the same elements as the return list
                 val actualList = it.data
-                actualList.mapIndexed { i, v -> TestCase.assertEquals(returnList[i], v) }
+                actualList.mapIndexed { i, v -> assertEquals(returnList[i], v) }
 
                 assertEquals(returnList.size, actualList.size)
 
                 // Correct status type
-                TestCase.assertEquals(it.serverStatus, SaferMeApiStatus.OK)
+                assertEquals(it.serverStatus, SaferMeApiStatus.OK)
 
                 // Response object captures all the headers in the response
-                TestCase.assertEquals(it.responseHeaders, responseHeaders.toMap())
+                assertEquals(it.responseHeaders, responseHeaders.toMap())
             }, failure = {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
             })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 1)
-        TestCase.assertEquals(failLambdaCalls, 0)
+        assertEquals(successLambdaCalls, 1)
+        assertEquals(failLambdaCalls, 0)
     }
 
     /**
@@ -226,22 +226,22 @@ class StandardIndexTest {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
 
                 // We should get a SaferMeApiError Class
-                TestCase.assertEquals(it::class, SaferMeApiError::class)
+                assertEquals(it::class, SaferMeApiError::class)
                 val error = it as SaferMeApiError
 
                 // Correct status code
-                TestCase.assertEquals(
+                assertEquals(
                     error.serverStatus,
                     SaferMeApiStatus.statusForCode(HttpStatusCode.BadRequest.value)
                 )
 
                 // Correct response headers
-                TestCase.assertEquals(error.responseHeaders, responseHeaders.toMap())
+                assertEquals(error.responseHeaders, responseHeaders.toMap())
             })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 0)
-        TestCase.assertEquals(failLambdaCalls, 1)
+        assertEquals(successLambdaCalls, 0)
+        assertEquals(failLambdaCalls, 1)
     }
 
     /**
@@ -267,11 +267,11 @@ class StandardIndexTest {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
 
                 // We should get a SaferMeApiError Class
-                TestCase.assertEquals(it.message, errorMessage)
+                assertEquals(it.message, errorMessage)
             })
 
         // Ensure callbacks called the correct number of times
-        TestCase.assertEquals(successLambdaCalls, 0)
-        TestCase.assertEquals(failLambdaCalls, 1)
+        assertEquals(successLambdaCalls, 0)
+        assertEquals(failLambdaCalls, 1)
     }
 }
