@@ -24,8 +24,10 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         success: (SaferMeApiResult<Report>) -> Unit,
         failure: (Exception) -> Unit
     ) {
+        val extensionParams = parameters.parameters?.let { map -> map.keys.joinToString("&") { "$it=${map[it]}" } }
+        val path = extensionParams?.let { "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM&$it" } ?: "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM"
         StandardMethods.read(
-            api = api, path = "reports/${item.uuid}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, success = success, failure = failure
+            api = api, path = path, parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -36,7 +38,7 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.update(
-            api = api, path = "reports/${item.uuid}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, item = item, success = success, failure = failure
+            api = api, path = "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM", parameters = parameters, item = item, success = success, failure = failure
         )
     }
 
@@ -46,7 +48,7 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.index(
-            api = api, path = "reports?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, success = success, failure = failure
+            api = api, path = "$REPORT_PATH?$FIELDS_PARAM", parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -58,7 +60,12 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
 
     ) {
         StandardMethods.delete(
-            api = api, path = "reports/${identifier.uuid}", parameters = parameters, success = success, failure = failure, item = identifier
+            api = api, path = "$REPORT_PATH/${identifier.uuid}", parameters = parameters, success = success, failure = failure, item = identifier
         )
+    }
+
+    companion object {
+        private const val REPORT_PATH = "reports"
+        private const val FIELDS_PARAM = "fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by"
     }
 }

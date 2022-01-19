@@ -22,7 +22,7 @@ class NotificationResourceImpl @Inject constructor(
     private val androidClient: AndroidClient,
     private val resultHandler: ResultHandler,
     private val gson: Gson
-): NotificationResource {
+) : NotificationResource {
     override suspend fun getNotifications(parameters: RequestParameters): Result<List<Notification>> {
         val call = getNotificationsCall(parameters)
         return resultHandler.processResult(call, gson)
