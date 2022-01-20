@@ -24,10 +24,8 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         success: (SaferMeApiResult<Report>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        val extensionParams = parameters.parameters?.let { map -> map.keys.joinToString("&") { "$it=${map[it]}" } }
-        val path = extensionParams?.let { "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM&$it" } ?: "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM"
         StandardMethods.read(
-            api = api, path = path, parameters = parameters, success = success, failure = failure
+            api = api, path = "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM", parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -47,8 +45,10 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         success: (SaferMeApiResult<List<Report>>) -> Unit,
         failure: (Exception) -> Unit
     ) {
+        val extensionParams = parameters.parameters?.let { map -> map.keys.joinToString("&") { "$it=${map[it]}" } }
+        val path = extensionParams?.let { "$REPORT_PATH?$FIELDS_PARAM&$it" } ?: "$REPORT_PATH?$FIELDS_PARAM"
         StandardMethods.index(
-            api = api, path = "$REPORT_PATH?$FIELDS_PARAM", parameters = parameters, success = success, failure = failure
+            api = api, path = path, parameters = parameters, success = success, failure = failure
         )
     }
 

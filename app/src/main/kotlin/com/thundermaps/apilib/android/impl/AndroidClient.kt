@@ -1,8 +1,13 @@
 package com.thundermaps.apilib.android.impl
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.responses.models.FieldType
+import com.thundermaps.apilib.android.api.responses.models.FieldTypeDecode
+import com.thundermaps.apilib.android.api.responses.models.FormValue
+import com.thundermaps.apilib.android.api.responses.models.FormValueDecode
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.json.GsonSerializer
@@ -65,12 +70,18 @@ class AndroidClient @Inject constructor() {
         val gsonBuilder = GsonBuilder().apply {
             disableHtmlEscaping()
             excludeFieldsWithoutExposeAnnotation()
-            serializeNulls()
             setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+            registerTypeAdapter(FieldType::class.java, FieldTypeDecode())
+            registerTypeAdapter(FormValue::class.java, FormValueDecode())
         }
 
         // Reusable serializer configured with default options
-        val gsonSerializer = gsonBuilder.create()!!
+        val gsonSerializer: Gson = gsonBuilder.create()
+
+        val gson: Gson = GsonBuilder().apply {
+            registerTypeAdapter(FieldType::class.java, FieldTypeDecode())
+            registerTypeAdapter(FormValue::class.java, FormValueDecode())
+        }.create()
 
         // Reusable URL Builder
         fun baseUrlBuilder(params: RequestParameters): URLBuilder {

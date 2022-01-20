@@ -1,7 +1,9 @@
 object GradlePlugins {
-    data class Versions(val gradle: String = "7.0.3",
-                        val kotlin: String = "1.5.31",
-                        val junit5: String = "1.8.0.0")
+    data class Versions(
+        val gradle: String = "7.0.3",
+        val kotlin: String = "1.5.31",
+        val junit5: String = "1.8.0.0"
+    )
 
     val versions = Versions()
     val gradle = "com.android.tools.build:gradle:${versions.gradle}"
@@ -16,16 +18,18 @@ object Versions {
     const val jacoco = "0.8.7"
 }
 
-    
+
 object Deps {
-    data class Versions(val arch_comp: String = "2.0.0",
-                        val design: String = "1.0.0",
-                        val gson: String = "2.8.5",
-                        val dagger2: String = "2.25.2",
-                        val junit5: String = "5.2.0",
-                        val crayon: String = "0.1.0",
-                        val ktor: String = "1.2.5",
-                        val slf4j: String = "1.6.1")
+    data class Versions(
+        val arch_comp: String = "2.0.0",
+        val design: String = "1.0.0",
+        val gson: String = "2.8.5",
+        val dagger2: String = "2.25.2",
+        val junit5: String = "5.2.0",
+        val crayon: String = "0.1.0",
+        val ktor: String = "1.2.5",
+        val slf4j: String = "1.6.1"
+    )
 
     val versions = Versions()
 
@@ -37,18 +41,25 @@ object Deps {
 }
 
 object TestingDeps {
-    data class Versions(val assertj: String = "3.11.1",
-                        val junit5: String = "5.8.1",
-                        val mockk: String = "1.12.1",
-                        val roboelectric: String = "3.8",
-                        val junit4: String = "4.12",
-                        val coroutines: String = "1.3.2",
-                        val ktor: String = "1.2.5",
-                        val mockitoKotlin2: String = "2.2.0",
-                        val kotlinCoroutine: String = "1.3.9")
+    data class Versions(
+        val assertj: String = "3.11.1",
+        val junit5: String = "5.8.1",
+        val mockk: String = "1.12.1",
+        val roboelectric: String = "3.8",
+        val junit4: String = "4.12",
+        val coroutines: String = "1.3.2",
+        val ktor: String = "1.2.5",
+        val mockitoKotlin2: String = "2.2.0",
+        val kotlinCoroutine: String = "1.3.9",
+        val androidxTest: String = "1.1.0"
+    )
 
     val versions = Versions()
-    
+
+    val androidxTestUnit = "androidx.test.ext:junit-ktx:${versions.androidxTest}"
+    val androidxTestCore = "androidx.test:core:${versions.androidxTest}"
+    val androidxTestRunner = "androidx.test:runner:${versions.androidxTest}"
+
     val junit5_jupiter = "org.junit.jupiter:junit-jupiter:${versions.junit5}"
     val junit5_jupiter_api = "org.junit.jupiter:junit-jupiter-api:${versions.junit5}"
     val junit5_jupiter_runtime = "org.junit.jupiter:junit-jupiter-engine:${versions.junit5}"
@@ -61,5 +72,6 @@ object TestingDeps {
     val ktor_jvm = "io.ktor:ktor-client-mock-jvm:${versions.ktor}"
     val ktor_native = "io.ktor:ktor-client-mock-native:${versions.ktor}"
     val mockitoKotlin2 = "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin2}"
-    val kotlinCoroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutine}"
+    val kotlinCoroutineTest =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutine}"
 }

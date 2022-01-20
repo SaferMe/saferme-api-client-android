@@ -22,7 +22,9 @@ import com.thundermaps.apilib.android.impl.resources.TasksImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SaferMeClientImpl @Inject constructor(
     private val androidClient: AndroidClient,
     override val environmentManager: EnvironmentManager,

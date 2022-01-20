@@ -1,15 +1,16 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
-import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
 import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.SafermeException
+import com.thundermaps.apilib.android.api.fromJsonString
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api.resources.SaferMeDatum
 import com.thundermaps.apilib.android.impl.AndroidClient
+import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gson
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
 import io.ktor.client.call.receive
@@ -36,12 +37,12 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        suspend inline fun <reified Resource : SaferMeDatum> create(
+        suspend inline fun <reified T : Any> create(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
-            item: Resource,
-            crossinline success: (SaferMeApiResult<Resource>) -> Unit,
+            item: T,
+            crossinline success: (SaferMeApiResult<T>) -> Unit,
             crossinline failure: (Exception) -> Unit
         ) {
 
@@ -53,21 +54,24 @@ class StandardMethods {
                                 data = call.receive(),
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap())
+                                responseHeaders = call.response.headers.toMap()
+                            )
                         )
                         SaferMeApiStatus.ACCEPTED -> success(
                             SaferMeApiResult(
                                 data = item,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap())
+                                responseHeaders = call.response.headers.toMap()
+                            )
                         )
                         SaferMeApiStatus.OTHER_200 -> success(
                             SaferMeApiResult(
                                 data = item,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap())
+                                responseHeaders = call.response.headers.toMap()
+                            )
                         )
                         SaferMeApiStatus.OTHER_400 -> {
                             Log.e("sending error", call.response.readBytes().toString())
@@ -75,13 +79,17 @@ class StandardMethods {
                                 SaferMeApiError(
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
-                                    responseHeaders = call.response.headers.toMap()))
+                                    responseHeaders = call.response.headers.toMap()
+                                )
+                            )
                         }
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()))
+                                responseHeaders = call.response.headers.toMap()
+                            )
+                        )
                     }
                     call.response.close()
                 }
@@ -106,11 +114,11 @@ class StandardMethods {
          * @param success Invoked if the request was successful
          * @param failure Invoked if the request failed
          */
-        suspend inline fun <reified Resource : SaferMeDatum> read(
+        suspend inline fun <reified T : Any> read(
             api: AndroidClient,
             path: String,
             parameters: RequestParameters,
-            crossinline success: (SaferMeApiResult<Resource>) -> Unit,
+            crossinline success: (SaferMeApiResult<T>) -> Unit,
             crossinline failure: (Exception) -> Unit
         ) {
             try {
@@ -122,13 +130,16 @@ class StandardMethods {
                                 data = call.receive(),
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap())
+                                responseHeaders = call.response.headers.toMap()
+                            )
                         )
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()))
+                                responseHeaders = call.response.headers.toMap()
+                            )
+                        )
                     }
                     call.response.close()
                 }
@@ -171,20 +182,26 @@ class StandardMethods {
                             val json = String(call.response.content.toByteArray())
                             val data: Resource? =
                                 if (json == "" || json.trim() == "{}") null
-                                else AndroidClient.gsonSerializer.fromJson(json, Resource::class.java)
+                                else gson.fromJson(
+                                    json,
+                                    Resource::class.java
+                                )
                             success(
                                 SaferMeApiResult(
                                     data = data ?: item,
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
-                                    responseHeaders = call.response.headers.toMap())
+                                    responseHeaders = call.response.headers.toMap()
+                                )
                             )
                         }
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()))
+                                responseHeaders = call.response.headers.toMap()
+                            )
+                        )
                     }
                     call.response.close()
                 }
@@ -221,9 +238,8 @@ class StandardMethods {
                 standardCall(api, HttpMethod.Get, path, parameters, null) { call ->
                     when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
                         SaferMeApiStatus.OK -> {
-                            val typeToken = object : TypeToken<T>() {}
                             val json = String(call.response.content.toByteArray())
-                            val result = AndroidClient.gsonSerializer.fromJson<T>(json, typeToken.type)
+                            val result = gson.fromJsonString<T>(json)
                             success(
                                 SaferMeApiResult(
                                     data = result,
@@ -237,7 +253,9 @@ class StandardMethods {
                             SaferMeApiError(
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()))
+                                responseHeaders = call.response.headers.toMap()
+                            )
+                        )
                     }
                     call.response.close()
                 }
@@ -279,7 +297,8 @@ class StandardMethods {
                                     data = item,
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
-                                    responseHeaders = call.response.headers.toMap())
+                                    responseHeaders = call.response.headers.toMap()
+                                )
                             )
                         }
                         SaferMeApiStatus.OTHER_400 -> {
@@ -288,13 +307,17 @@ class StandardMethods {
                                 SaferMeApiError(
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
-                                    responseHeaders = call.response.headers.toMap()))
+                                    responseHeaders = call.response.headers.toMap()
+                                )
+                            )
                         }
                         else -> failure(
                             SaferMeApiError(
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()))
+                                responseHeaders = call.response.headers.toMap()
+                            )
+                        )
                     }
                     call.response.close()
                 }
@@ -318,7 +341,7 @@ class StandardMethods {
             result: (call: HttpClientCall) -> Unit
         ) {
             val (client, template) = api.client(params)
-            val jsonBody = payload?.let { AndroidClient.gsonSerializer.toJsonTree(payload) }
+            val jsonBody = payload?.let { gson.toJsonTree(payload) }
             val call = client.call(HttpRequestBuilder().takeFrom(template).apply {
                 method = requestMethod
                 url(AndroidClient.baseUrlBuilder(params).apply {
