@@ -11,10 +11,12 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gson
 import java.lang.reflect.Type
 import org.json.JSONObject
 
+@ExcludeFromJacocoGeneratedReport
 data class FormField(
     @Expose val data: JSONObject = JSONObject(),
     @Expose val editable: Boolean = false,
@@ -27,6 +29,7 @@ data class FormField(
     @Expose val value: FormValue = FormValue.Unknown
 )
 
+@ExcludeFromJacocoGeneratedReport
 enum class FieldType(val value: String) {
     Category("Category"),
     CheckBox("CheckBox"),
@@ -44,6 +47,7 @@ enum class FieldType(val value: String) {
     Unknown("Unknown")
 }
 
+@ExcludeFromJacocoGeneratedReport
 class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
     override fun deserialize(
         json: JsonElement,
@@ -62,6 +66,7 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
     ): JsonElement = JsonPrimitive(src.value)
 }
 
+@ExcludeFromJacocoGeneratedReport
 open class FormValue {
     data class ValueInt(val value: Int = 0) : FormValue()
     data class ValueString(val value: String = "") : FormValue()
@@ -70,6 +75,7 @@ open class FormValue {
     object Unknown : FormValue()
 }
 
+@ExcludeFromJacocoGeneratedReport
 class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
     override fun deserialize(
         json: JsonElement,

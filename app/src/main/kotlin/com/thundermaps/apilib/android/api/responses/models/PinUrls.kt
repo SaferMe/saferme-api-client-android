@@ -1,7 +1,9 @@
 package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 
+@ExcludeFromJacocoGeneratedReport
 data class PinUrls(
     @SerializedName("at1x") val url1x: String,
     @SerializedName("at2x") val url2x: String,

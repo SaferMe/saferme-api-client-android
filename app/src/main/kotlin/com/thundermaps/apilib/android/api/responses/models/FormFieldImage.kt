@@ -2,7 +2,9 @@ package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 
+@ExcludeFromJacocoGeneratedReport
 data class FormFieldImage(
     @Expose val id: Int,
     @SerializedName("original_url") val originalUrl: String,
@@ -10,4 +12,5 @@ data class FormFieldImage(
     @SerializedName("style_url") val styleUrl: ImageStyleUrl
 )
 
+@ExcludeFromJacocoGeneratedReport
 data class ImageStyleUrl(@Expose val medium: String, @Expose val thumb: String)
