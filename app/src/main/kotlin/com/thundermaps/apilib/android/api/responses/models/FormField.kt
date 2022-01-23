@@ -1,6 +1,5 @@
 package com.thundermaps.apilib.android.api.responses.models
 
-import com.google.gson.InstanceCreator
 import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -63,21 +62,15 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
     ): JsonElement = JsonPrimitive(src.value)
 }
 
-sealed class FormValue(val data: Any) {
-    class ValueInt(val value: Int = 0) : FormValue(value)
-    class ValueString(val value: String = "") : FormValue(value)
-    class ValueJsonArray(val value: JsonArray = JsonArray()) : FormValue(value)
-    class ValueFormFieldImage(val images: List<FormFieldImage> = emptyList()) : FormValue(images)
-    object Unknown : FormValue(Unit)
+open class FormValue {
+    data class ValueInt(val value: Int = 0) : FormValue()
+    data class ValueString(val value: String = "") : FormValue()
+    data class ValueJsonArray(val value: JsonArray = JsonArray()) : FormValue()
+    data class ValueFormFieldImage(val images: List<FormFieldImage> = emptyList()) : FormValue()
+    object Unknown : FormValue()
 }
 
-class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue>,
-    InstanceCreator<FormValue> {
-
-    override fun createInstance(type: Type?): FormValue {
-        return FormValue.Unknown
-    }
-
+class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
     override fun deserialize(
         json: JsonElement,
         typeOfT: Type,
@@ -128,6 +121,6 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue>,
         is FormValue.ValueString -> JsonPrimitive(src.value)
         is FormValue.ValueFormFieldImage -> gson.toJsonTree(src.images)
         is FormValue.ValueJsonArray -> src.value
-        is FormValue.Unknown -> JsonObject()
+        else -> JsonObject()
     }
 }

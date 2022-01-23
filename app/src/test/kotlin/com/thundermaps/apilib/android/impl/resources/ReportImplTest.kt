@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.impl.resources
 import android.util.Log
 import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.impl.AndroidClient
+import com.thundermaps.apilib.android.impl.resources.ReportImpl.Companion.FIELDS_PARAM
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -94,7 +95,7 @@ class ReportImplTest {
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
-        val expectedPath = "/api/v0/reports/$id?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by"
+        val expectedPath = "/api/v0/reports/$id?$FIELDS_PARAM"
 
         val client = TestHelpers.testClient(
             content = reportTestPayload,
@@ -140,7 +141,7 @@ class ReportImplTest {
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
-        val expectedPath = "/api/v0/reports/${requestItem.uuid}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by"
+        val expectedPath = "/api/v0/reports/${requestItem.uuid}?$FIELDS_PARAM"
 
         val client = TestHelpers.testClient(
             content = returnContent,
@@ -186,7 +187,7 @@ class ReportImplTest {
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
-        val expectedPath = "/api/v0/reports?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by"
+        val expectedPath = "/api/v0/reports?$FIELDS_PARAM"
 
         val client = TestHelpers.testClient(
             content = returnJson,
@@ -196,7 +197,6 @@ class ReportImplTest {
                 assertEquals(it.url.encodedPath, expectedPath)
                 inspectCalled = true
             }
-
         )
 
         every {

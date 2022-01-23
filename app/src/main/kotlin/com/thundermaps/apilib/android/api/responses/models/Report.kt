@@ -30,8 +30,9 @@ data class Report(
     @SerializedName(SHAPE_ID) @Expose val shapeId: Int? = null,
     @SerializedName(UPDATED_AT) @Expose val updatedAt: String? = null,
     @SerializedName(USER_ID) @Expose val userId: Int? = null,
+    @SerializedName(USER_SHORT_NAME) @Expose val userShortName: String? = null,
     @SerializedName(VIEWER_COUNT) @Expose val viewerCount: Int? = 0,
-    @SerializedName(FORM_FIELDS) @Expose val formFields: List<FormField>? = null,
+    @SerializedName(FORM_FIELDS) @Expose val formFields: JsonArray? = null,
     @SerializedName(HIDDEN_FIELDS) @Expose val hiddenFields: JsonArray? = null
 ) : SaferMeDatum {
     override fun toString(): String {
@@ -44,7 +45,7 @@ data class Report(
         const val COMMENT_COUNT = "comment_count"
         const val IS_ANONYMOUS = "is_anonymous"
         const val IS_HAZARD = "is_hazard"
-        const val ISO_CREATED_AT = "iso_creared_at"
+        const val ISO_CREATED_AT = "iso_created_at"
         const val REPORT_STATE = "report_state"
         const val REPORT_STATE_ID = "report_state_id"
         const val RISK_ASSESSMENT = "risk_assessment"
@@ -55,6 +56,7 @@ data class Report(
         const val SHAPE_ID = "shape_id"
         const val UPDATED_AT = "updated_at"
         const val USER_ID = "user_id"
+        const val USER_SHORT_NAME = "user_short_name"
         const val VIEWER_COUNT = "viewer_count"
         const val FORM_FIELDS = "form_fields"
         const val MODIFIED_DATE = "modified_date"

@@ -25,5 +25,4 @@ class TestParseReports {
     }
 }
 
-fun Context.readJsonFile(fileName: String): String =
-    InputStreamReader(resources.assets.open(fileName)).readText()
+fun Context.readJsonFile(fileName: String): String = InputStreamReader(resources.assets.open(fileName)).readText()
