@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.impl.resources
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
+import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.SessionBody
@@ -23,6 +24,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -51,16 +53,25 @@ class SessionsImpl @Inject constructor(
         body: SessionBody,
         applicationId: String
     ): Result<Sessions> {
+        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = requestHandler(body, applicationId, LOGIN_PATH)
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun requestPassword(body: EmailBody, applicationId: String): Result<String> {
+        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = requestHandler(body, applicationId, RESET_PASSWORD_PATH)
         return resultHandler.processResult<EmailBody>(call, gson).convert { it.email }
     }
 
     override suspend fun getSsoDetails(ssoId: String, applicationId: String): Result<SsoDetails> {
+        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = requestHandler(bodyParameters = null, applicationId = applicationId, path = "$SSO_DETAILS_PATH/$ssoId", methodType = HttpMethod.Get)
         return resultHandler.processResult(call, gson)
     }

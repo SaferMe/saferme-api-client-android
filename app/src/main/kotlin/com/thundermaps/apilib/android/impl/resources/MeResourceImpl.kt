@@ -1,6 +1,7 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
@@ -19,6 +20,7 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,6 +31,9 @@ class MeResourceImpl @Inject constructor(
     private val gson: Gson
 ) : MeResource {
     override suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = processCall<Unit>(
             parameters = parameters,
             methodType = HttpMethod.Get,
@@ -41,6 +46,9 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         addressBody: UpdateAddressBody
     ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = processCall(parameters = parameters, bodyRequest = addressBody)
         return resultHandler.processResult(call, gson)
     }
@@ -49,6 +57,9 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         updatePasswordBody: UpdatePasswordBody
     ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = processCall(parameters = parameters, bodyRequest = updatePasswordBody)
         return resultHandler.processResult(call, gson)
     }
@@ -57,6 +68,9 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         updateContactNumberBody: UpdateContactNumberBody
     ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call =
             processCall(parameters = parameters, bodyRequest = updateContactNumberBody)
         return resultHandler.processResult(call, gson)
@@ -66,6 +80,9 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         emailBody: EmailBody
     ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = processCall(parameters = parameters, bodyRequest = emailBody)
         return resultHandler.processResult(call, gson)
     }
@@ -74,6 +91,9 @@ class MeResourceImpl @Inject constructor(
         parameters: RequestParameters,
         updateNameBody: UpdateNameBody
     ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = processCall(parameters = parameters, bodyRequest = updateNameBody)
         return resultHandler.processResult(call, gson)
     }

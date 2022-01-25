@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
@@ -111,7 +112,7 @@ class SessionsImplTest {
 
         verifyAndroidClient()
 
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
 
         assertTrue(loginResult.isSuccess)
         assertNotNull(loginResult.getNullableData())
@@ -148,7 +149,7 @@ class SessionsImplTest {
 
         verifyAndroidClient()
 
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
 
         assertTrue(loginResult.isError)
         val error = ((loginResult as Result.Error).exception as ResponseException).responseError
@@ -177,7 +178,7 @@ class SessionsImplTest {
         val loginResult = sessions.login(sessionBody, APPLICATION_ID)
 
         verifyAndroidClient()
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
         assertTrue(loginResult.isError)
         val error = ((loginResult as Result.Error).exception as ResponseException).responseError
         assertTrue(error.isAccountLocked())
@@ -204,7 +205,7 @@ class SessionsImplTest {
         val loginResult = sessions.login(sessionBody, APPLICATION_ID)
 
         verifyAndroidClient()
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
         assertTrue(loginResult.isError)
         assertTrue(inspectCalled)
     }
@@ -228,7 +229,7 @@ class SessionsImplTest {
         val requestPasswordResult = sessions.requestPassword(emailBody, APPLICATION_ID)
 
         verifyAndroidClient(4)
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
         assertTrue(requestPasswordResult.isSuccess)
         assertEquals(emailBody.email, requestPasswordResult.getNullableData())
         assertTrue(inspectCalled)
@@ -253,7 +254,7 @@ class SessionsImplTest {
         val requestPasswordResult = sessions.requestPassword(emailBody, APPLICATION_ID)
 
         verifyAndroidClient(4)
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
         assertTrue(requestPasswordResult.isError)
         assertTrue(inspectCalled)
     }
@@ -277,7 +278,7 @@ class SessionsImplTest {
         val ssoDetailsResults = sessions.getSsoDetails(ssoDetailsMock.ssoTeamId, APPLICATION_ID)
 
         verifyAndroidClient(4)
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
         assertTrue(ssoDetailsResults.isSuccess)
         val ssoDetails = ssoDetailsResults.getNullableData()!!
 
