@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
+import com.thundermaps.apilib.android.api.requests.Constants.APPLICATION_JSON
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.SessionBody
@@ -120,7 +121,6 @@ class SessionsImpl @Inject constructor(
     }
 
     companion object {
-        private const val APPLICATION_JSON = "application/json, text/plain, */*"
         private const val SSO_DETAILS_PATH = "sso_details"
         private const val LOGIN_PATH = "sessions"
         @VisibleForTesting

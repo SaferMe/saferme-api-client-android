@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
+import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
@@ -35,6 +36,7 @@ internal class SaferMeClientTest {
     private val sessionsImpl = mock<SessionsImpl>()
     private val channelImpl = mock<ChannelResourceImpl>()
     private val notificationImpl = mock<NotificationResourceImpl>()
+    private val brandResourceImpl = mock<BrandResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -46,13 +48,14 @@ internal class SaferMeClientTest {
             meResourceImpl,
             sessionsImpl,
             channelImpl,
-            notificationImpl
+            notificationImpl,
+            brandResourceImpl
         )
     }
 
     @After
     fun tearDown() {
-        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl, notificationImpl)
+        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl, notificationImpl, brandResourceImpl)
     }
 
     @Test
@@ -130,6 +133,13 @@ internal class SaferMeClientTest {
         val notificationResource = saferMeClient.notificationResource
         assertNotNull(notificationResource)
         assertEquals(notificationImpl, notificationResource)
+    }
+
+    @Test
+    fun verifyBrandResource() {
+        val brandResource = saferMeClient.brandResource
+        assertNotNull(brandResource)
+        assertEquals(brandResourceImpl, brandResource)
     }
 
     @Test
