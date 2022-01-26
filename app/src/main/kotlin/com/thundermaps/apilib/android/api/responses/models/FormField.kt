@@ -68,10 +68,15 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
 
 @ExcludeFromJacocoGeneratedReport
 open class FormValue {
+    @ExcludeFromJacocoGeneratedReport
     data class ValueInt(val value: Int = 0) : FormValue()
+    @ExcludeFromJacocoGeneratedReport
     data class ValueString(val value: String = "") : FormValue()
+    @ExcludeFromJacocoGeneratedReport
     data class ValueJsonArray(val value: JsonArray = JsonArray()) : FormValue()
+    @ExcludeFromJacocoGeneratedReport
     data class ValueFormFieldImage(val images: List<FormFieldImage> = emptyList()) : FormValue()
+    @ExcludeFromJacocoGeneratedReport
     object Unknown : FormValue()
 }
 

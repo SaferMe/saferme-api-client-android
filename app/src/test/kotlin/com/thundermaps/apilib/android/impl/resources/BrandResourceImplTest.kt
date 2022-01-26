@@ -11,6 +11,7 @@ import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
+import com.thundermaps.apilib.android.api.requests.Constants
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.responses.models.Brand
@@ -102,7 +103,7 @@ class BrandResourceImplTest {
 
     companion object {
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val PATH = "/api/v4/branded_app"
+        private val PATH = "/api/v4/branded_app?fields=${Constants.BRAND_FIELDS.joinToString(",")}"
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private val strengthLevels = StrengthLevels(100, 10000, 1000000)

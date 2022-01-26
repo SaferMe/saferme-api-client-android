@@ -1,7 +1,9 @@
 package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 
+@ExcludeFromJacocoGeneratedReport
 data class Brand(
     @SerializedName(value = APP_ID) val appId: String,
     @SerializedName(value = ANDROID_URL) val appUrl: String,

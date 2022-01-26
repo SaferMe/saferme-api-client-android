@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.impl.resources
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
+import com.thundermaps.apilib.android.api.requests.Constants
 import com.thundermaps.apilib.android.api.requests.Constants.APPLICATION_JSON
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.BrandResource
@@ -62,7 +63,7 @@ class BrandResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "$encodedPath$path"
+                encodedPath = "$encodedPath$path?fields=${Constants.BRAND_FIELDS.joinToString(",")}"
             }.build())
         })
         return call

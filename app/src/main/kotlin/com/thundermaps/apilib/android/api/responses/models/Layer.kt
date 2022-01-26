@@ -1,7 +1,9 @@
 package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 
+@ExcludeFromJacocoGeneratedReport
 data class Layer(
     val id: String,
     val type: String,

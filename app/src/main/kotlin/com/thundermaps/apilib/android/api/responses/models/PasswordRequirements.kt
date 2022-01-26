@@ -1,7 +1,9 @@
 package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 
+@ExcludeFromJacocoGeneratedReport
 data class PasswordRequirements(
     @SerializedName(value = MINIMUM_LENGTH) val minimumLength: Int,
     @SerializedName(value = STRENGTH_LEVELS) val strengthLevels: StrengthLevels
@@ -12,6 +14,7 @@ data class PasswordRequirements(
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 data class StrengthLevels(
     val weak: Int,
     val medium: Int,
