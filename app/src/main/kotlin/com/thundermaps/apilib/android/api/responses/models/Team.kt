@@ -25,10 +25,7 @@ data class Team(
     @SerializedName(MAPBOX_DATASET_ID) @Expose val mapboxDataSetId: String?,
     @SerializedName(MAPBOX_ACCESS_TOKEN) @Expose val mapboxAccessToken: String?
 
-) : DiffItem {
-    override val uniqueId: Any
-        get() = id
-
+) {
     companion object {
         const val CONTACT_TRACING_ENABLED = "contact_tracing_enabled"
         const val FEATURE_TASKS_ENABLED = "feature_tasks_enabled"
