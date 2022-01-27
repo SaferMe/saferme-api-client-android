@@ -96,6 +96,9 @@ class TeamResourceImplTest {
         assertNull(team.isAdmin)
         assertNull(team.isManager)
         assertNull(team.isOwner)
+        assertEquals(MAPBOX_USERNAME, team.mapboxUserName)
+        assertEquals(MAPBOX_DATASET_ID, team.mapboxDataSetId)
+        assertEquals(MAPBOX_ACCESS_TOKEN, team.mapboxAccessToken)
 
         val team2 = Team(
             contactTracingEnabled = false,
@@ -113,7 +116,10 @@ class TeamResourceImplTest {
             wearablesEnabled = false,
             isAdmin = null,
             isManager = null,
-            isOwner = null
+            isOwner = null,
+            mapboxAccessToken = null,
+            mapboxUserName = null,
+            mapboxDataSetId = null
         )
         assertEquals(team2, teams.lastOrNull())
     }
@@ -160,6 +166,9 @@ class TeamResourceImplTest {
         private const val TEST_APP = APPLICATION_ID
         private const val TEST_TEAM = "Test Team"
         private const val TEST_CLIENT_UUID = "client uuid"
+        private const val MAPBOX_USERNAME = "abctest"
+        private const val MAPBOX_DATASET_ID = "datasetID"
+        private const val MAPBOX_ACCESS_TOKEN = "abio32902"
         private val saferMeCredentials = SaferMeCredentials(TEST_KEY, TEST_INSTALL, TEST_APP, TEST_TEAM, TEST_CLIENT_UUID)
         private val defaultParameters = RequestParameters(
             customRequestHeaders = HashMap(),
@@ -184,7 +193,10 @@ class TeamResourceImplTest {
                 "sso_required": false,
                 "sso_team_id": "nb6g6xtcuia",
                 "user_timeout": null,
-                "wearables_enabled": false
+                "wearables_enabled": false,
+                "mapbox_username": $MAPBOX_USERNAME,
+                "mapbox_dataset_id": $MAPBOX_DATASET_ID,
+                "mapbox_access_token": $MAPBOX_ACCESS_TOKEN
               },
               {
                 "id": 6129,
