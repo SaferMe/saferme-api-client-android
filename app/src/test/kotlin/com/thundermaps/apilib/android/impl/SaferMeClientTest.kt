@@ -13,6 +13,7 @@ import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.NotificationResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
+import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TasksImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
@@ -37,6 +38,7 @@ internal class SaferMeClientTest {
     private val channelImpl = mock<ChannelResourceImpl>()
     private val notificationImpl = mock<NotificationResourceImpl>()
     private val brandResourceImpl = mock<BrandResourceImpl>()
+    private val shapeResourceImpl = mock<ShapeResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -49,7 +51,8 @@ internal class SaferMeClientTest {
             sessionsImpl,
             channelImpl,
             notificationImpl,
-            brandResourceImpl
+            brandResourceImpl,
+            shapeResourceImpl
         )
     }
 
@@ -140,6 +143,13 @@ internal class SaferMeClientTest {
         val brandResource = saferMeClient.brandResource
         assertNotNull(brandResource)
         assertEquals(brandResourceImpl, brandResource)
+    }
+
+    @Test
+    fun verifyShapeResource() {
+        val shapeResource = saferMeClient.shapeResource
+        assertNotNull(shapeResource)
+        assertEquals(shapeResourceImpl, shapeResource)
     }
 
     @Test

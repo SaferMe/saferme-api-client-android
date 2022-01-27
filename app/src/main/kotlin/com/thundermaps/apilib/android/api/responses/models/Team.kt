@@ -2,7 +2,8 @@ package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.thundermaps.domain.models.DiffItem
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
+import com.thundermaps.apilib.android.api.requests.models.MapboxFeature
 
 data class Team(
     @SerializedName(CONTACT_TRACING_ENABLED) @Expose val contactTracingEnabled: Boolean,
@@ -24,7 +25,6 @@ data class Team(
     @SerializedName(MAPBOX_USERNAME) @Expose val mapboxUserName: String?,
     @SerializedName(MAPBOX_DATASET_ID) @Expose val mapboxDataSetId: String?,
     @SerializedName(MAPBOX_ACCESS_TOKEN) @Expose val mapboxAccessToken: String?
-
 ) {
     companion object {
         const val CONTACT_TRACING_ENABLED = "contact_tracing_enabled"
@@ -42,5 +42,12 @@ data class Team(
         const val MAPBOX_USERNAME = "mapbox_username"
         const val MAPBOX_DATASET_ID = "mapbox_dataset_id"
         const val MAPBOX_ACCESS_TOKEN = "mapbox_access_token"
+
+        val Team.mapboxFeature: MapboxFeature? get() = if (mapboxUserName.isNullOrEmpty() || mapboxDataSetId.isNullOrEmpty() || mapboxAccessToken.isNullOrEmpty()) {
+            ELog.w(this::javaClass.name, "No map data set for this team")
+            null
+        } else {
+            MapboxFeature(mapboxUserName, mapboxDataSetId, mapboxAccessToken)
+        }
     }
 }
