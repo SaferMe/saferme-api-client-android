@@ -17,7 +17,7 @@ import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Team
-import com.thundermaps.apilib.android.api.responses.models.Team.Companion.mapboxFeature
+import com.thundermaps.apilib.android.api.responses.models.Team.Companion.shapeParameterRequest
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
@@ -109,7 +109,7 @@ class TeamResourceImplTest {
         assertEquals(MAPBOX_DATASET_ID, team.mapboxDataSetId)
         assertEquals(MAPBOX_ACCESS_TOKEN, team.mapboxAccessToken)
 
-        val mapboxFeature = team.mapboxFeature
+        val mapboxFeature = team.shapeParameterRequest
         assertNotNull(mapboxFeature)
         assertEquals(MAPBOX_USERNAME, mapboxFeature?.mapboxUser)
         assertEquals(MAPBOX_DATASET_ID, mapboxFeature?.mapboxDatasetId)
@@ -138,7 +138,7 @@ class TeamResourceImplTest {
         )
         assertEquals(team2, teams.lastOrNull())
 
-        assertNull(team2.mapboxFeature)
+        assertNull(team2.shapeParameterRequest)
     }
 
     @Test

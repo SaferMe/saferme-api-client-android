@@ -28,7 +28,8 @@ object Deps {
         val junit5: String = "5.2.0",
         val crayon: String = "0.1.0",
         val ktor: String = "1.2.5",
-        val slf4j: String = "1.6.1"
+        val slf4j: String = "1.6.1",
+        val mapboxGeoJson: String = "5.8.0"
     )
 
     val versions = Versions()
@@ -38,6 +39,7 @@ object Deps {
     val gson = "com.google.code.gson:gson:${versions.gson}"
     val dagger2 = "com.google.dagger:dagger:${versions.dagger2}"
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
+    val mapboxGeoJson = "com.mapbox.mapboxsdk:mapbox-sdk-geojson:${versions.mapboxGeoJson}"
 }
 
 object TestingDeps {

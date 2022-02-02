@@ -3,7 +3,7 @@ package com.thundermaps.apilib.android.api.responses.models
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
-import com.thundermaps.apilib.android.api.requests.models.MapboxFeature
+import com.thundermaps.apilib.android.api.requests.models.ShapeParameterRequest
 
 data class Team(
     @SerializedName(CONTACT_TRACING_ENABLED) @Expose val contactTracingEnabled: Boolean,
@@ -43,11 +43,11 @@ data class Team(
         const val MAPBOX_DATASET_ID = "mapbox_dataset_id"
         const val MAPBOX_ACCESS_TOKEN = "mapbox_access_token"
 
-        val Team.mapboxFeature: MapboxFeature? get() = if (mapboxUserName.isNullOrEmpty() || mapboxDataSetId.isNullOrEmpty() || mapboxAccessToken.isNullOrEmpty()) {
+        val Team.shapeParameterRequest: ShapeParameterRequest? get() = if (mapboxUserName.isNullOrEmpty() || mapboxDataSetId.isNullOrEmpty() || mapboxAccessToken.isNullOrEmpty()) {
             ELog.w(this::javaClass.name, "No map data set for this team")
             null
         } else {
-            MapboxFeature(mapboxUserName, mapboxDataSetId, mapboxAccessToken)
+            ShapeParameterRequest(mapboxUserName, mapboxDataSetId, mapboxAccessToken)
         }
     }
 }

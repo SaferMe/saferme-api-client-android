@@ -1,6 +1,6 @@
 package com.thundermaps.apilib.android.api.requests.models
 
-data class MapboxFeature(
+data class ShapeParameterRequest(
     val mapboxUser: String,
     val mapboxDatasetId: String,
     val mapboxAccessToken: String

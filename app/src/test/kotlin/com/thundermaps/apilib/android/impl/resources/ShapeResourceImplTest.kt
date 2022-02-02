@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.impl.resources
 
+import com.mapbox.geojson.FeatureCollection
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
@@ -8,7 +9,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.thundermaps.apilib.android.api.requests.RequestParameters
-import com.thundermaps.apilib.android.api.requests.models.MapboxFeature
+import com.thundermaps.apilib.android.api.requests.models.ShapeParameterRequest
 import com.thundermaps.apilib.android.api.resources.ShapeResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -47,7 +48,7 @@ class ShapeResourceImplTest {
     @Test
     fun getFeaturesSuccess() = runBlockingTest {
         var inspectCalled = false
-        val content = "{\"feature\": \"Some data\"}"
+        val content = "{\"type\": \"FeatureCollection\", \"features\":[]}"
         val client = TestHelpers.testClient(
             content = content,
             status = HttpStatusCode.OK,
@@ -66,7 +67,7 @@ class ShapeResourceImplTest {
         verifyAndroidClient()
         assertTrue(result.isSuccess)
         assertTrue(inspectCalled)
-        assertEquals(content, result.getNullableData())
+        assertEquals(FeatureCollection.fromJson(content), result.getNullableData())
     }
 
     @Test
@@ -101,11 +102,18 @@ class ShapeResourceImplTest {
         assertEquals(1, requestParameters.api_version)
     }
 
+    @Test
+    fun testDecodeLink() {
+        val result = LINK.parserLink()
+        assertEquals(NEXTLINK, result)
+    }
     companion object {
-        private val mapboxFeature = MapboxFeature("abc", "layers", "abd")
-        private val responseHeaders =
-            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        private val mapboxFeature = ShapeParameterRequest("abc", "layers", "abd")
         private val path =
             "datasets/v1/${mapboxFeature.mapboxUser}/${mapboxFeature.mapboxDatasetId}/features?access_token=${mapboxFeature.mapboxAccessToken}"
+        private const val NEXTLINK = "https://api.mapbox.com/datasets/v1/frodosghost/32903290932093093920923/features?start=8ab2c3ff95451d2aca532549127e909c"
+        private const val LINK = "<$NEXTLINK>; rel=${"next"}"
+        private val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
     }
 }

@@ -93,6 +93,8 @@ dependencies {
     // Dagger 2 Dependency injection
     implementation(Deps.dagger2)
     kapt(Deps.dagger2_annotation)
+
+    implementation(Deps.mapboxGeoJson)
 }
 
 // Test Dependencies
