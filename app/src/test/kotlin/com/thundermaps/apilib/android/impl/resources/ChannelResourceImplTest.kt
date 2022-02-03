@@ -27,7 +27,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -77,7 +79,34 @@ class ChannelResourceImplTest {
         assertNotNull(channels)
         assertEquals(2, channels?.size)
 
-        assertEquals(channel, channels?.first())
+        val firstChannel = channels?.firstOrNull()
+
+        assertEquals(channel, firstChannel)
+        assertEquals(channel.id, firstChannel?.id)
+        assertFalse(firstChannel?.allowPublicViewers!!)
+        assertTrue(firstChannel.allowPublicComments)
+        assertFalse(firstChannel.allowUserDeleteOwnReports)
+        assertTrue(firstChannel.areNewReportsAnonymous)
+        assertFalse(firstChannel.isBannersEnabled)
+        assertEquals(channel.categoryId, firstChannel.categoryId)
+        assertEquals(channel.description, firstChannel.description)
+        assertFalse(firstChannel.isFormLocked!!)
+        assertFalse(firstChannel.isHazardChannel!!)
+        assertFalse(firstChannel.isAddonChannel)
+        assertFalse(firstChannel.isDeletableBy!!)
+        assertTrue(firstChannel.isManageableBy)
+        assertTrue(firstChannel.isReportableBy)
+        assertEquals(channel.lastReportDate, firstChannel.lastReportDate)
+        assertEquals(channel.memberCount, firstChannel.memberCount)
+        assertFalse(firstChannel.moderated)
+        assertEquals(channel.name, firstChannel.name)
+        assertEquals(channel.reportsCount, firstChannel.reportsCount)
+        assertEquals(channel.riskControlsEditablity, firstChannel.riskControlsEditablity)
+        assertEquals(channel.slug, firstChannel.slug)
+        assertTrue(channel.standardChannel)
+        assertEquals(TEAM_ID, firstChannel.teamId)
+        assertEquals(channel.tuneInCount, firstChannel.tuneInCount)
+        assertNull(firstChannel.pinUrls)
     }
 
     @Test

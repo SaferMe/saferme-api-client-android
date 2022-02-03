@@ -1,10 +1,12 @@
 package com.thundermaps.apilib.android.api.resources
 
 import com.google.gson.annotations.Expose
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@ExcludeFromJacocoGeneratedReport
 data class Task(
 
     @Expose

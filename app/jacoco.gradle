@@ -50,7 +50,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebugUnitTest") {
             android.sourceSets.main.java.srcDirs,
             "src/main/kotlin"
     ]))
-    executionData.setFrom(files("$buildDir/jacoco/testDebugUnitTest.exec"))
+    executionData.setFrom(fileTree(dir: "${buildDir}", includes: ["outputs/code_coverage/debugAndroidTest/connected/*.ec", "jacoco/testDebugUnitTest.exec"]))
 
     // Teamcity service message - if TeamCity has Jacoco plugin then it will be able to
     // ingest the coverage report

@@ -1,6 +1,7 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.responses.models.Result
@@ -13,6 +14,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.url
 import io.ktor.http.HttpMethod
 import io.ktor.util.KtorExperimentalAPI
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,8 +26,10 @@ class TeamResourceImpl @Inject constructor(
     private val gson: Gson
 ) : TeamResource {
     override suspend fun getTeams(parameters: RequestParameters): Result<List<Team>> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = getTeamsCall(parameters)
-
         return resultHandler.processResult(call, gson)
     }
 

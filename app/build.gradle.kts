@@ -1,3 +1,4 @@
+
 plugins {
     id("com.android.library")
     id("maven-publish")
@@ -11,6 +12,7 @@ android {
     defaultConfig {
         minSdk = Versions.minSdk
         targetSdk = Versions.targetSdk
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -34,6 +36,7 @@ android {
     sourceSets {
         getByName("main").java.srcDir("src/main/kotlin")
         getByName("test").java.srcDir("src/test/kotlin")
+        getByName("androidTest").java.srcDir("src/androidTest/kotlin")
     }
 
     buildTypes {
@@ -90,11 +93,17 @@ dependencies {
     // Dagger 2 Dependency injection
     implementation(Deps.dagger2)
     kapt(Deps.dagger2_annotation)
+
+    implementation(Deps.mapboxGeoJson)
 }
 
 // Test Dependencies
 dependencies {
 
+    androidTestImplementation(TestingDeps.androidxTestUnit)
+    androidTestImplementation(TestingDeps.androidxTestCore)
+    androidTestImplementation(TestingDeps.androidxTestRunner)
+    androidTestImplementation(TestingDeps.junit4_legacy)
     // Add MockK dependencies.
     testImplementation(TestingDeps.mockk)
 

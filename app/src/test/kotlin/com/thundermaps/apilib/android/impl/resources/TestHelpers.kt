@@ -228,10 +228,9 @@ class TestHelpers {
 
             // Call the Create method and test the result is correct
             runBlocking {
-                StandardMethods.index(api = api,
+                StandardMethods.index<List<GenericTestObject>>(api = api,
                     path = path,
                     parameters = paramsToSend,
-                    listType = GenericTestObject.GenericListToken(),
                     success = success,
                     failure = failure)
             }

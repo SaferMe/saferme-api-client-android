@@ -3,31 +3,39 @@ package com.thundermaps.apilib.android.impl
 import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.resources.SessionsResource
+import com.thundermaps.apilib.android.api.resources.ShapeResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
+import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
+import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TasksImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SaferMeClientImpl @Inject constructor(
     private val androidClient: AndroidClient,
     override val environmentManager: EnvironmentManager,
     private val teamResourceImpl: TeamResourceImpl,
     private val meResourceImpl: MeResourceImpl,
     private val sessionsImpl: SessionsImpl,
-    private val channelImpl: ChannelResourceImpl
+    private val channelImpl: ChannelResourceImpl,
+    private val brandResourceImpl: BrandResourceImpl,
+    private val shapeResourceImpl: ShapeResourceImpl
 ) : SaferMeClient {
     override val taskResource: TaskResource get() = TasksImpl(androidClient)
 
@@ -48,6 +56,12 @@ class SaferMeClientImpl @Inject constructor(
 
     override val channelResource: ChannelResource
         get() = channelImpl
+
+    override val brandResource: BrandResource
+        get() = brandResourceImpl
+
+    override val shapeResource: ShapeResource
+        get() = shapeResourceImpl
 
     override fun defaultParams(): RequestParameters = RequestParameters(
         customRequestHeaders = HashMap(),

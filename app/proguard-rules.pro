@@ -1,3 +1,4 @@
 -keep class com.thundermaps.apilib.android.api.** { *; }
 -keep class com.thundermaps.domain.models.** { *; }
 -keep class io.ktor.client.features.logging.** { *; }
+-keep class com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport { *; }

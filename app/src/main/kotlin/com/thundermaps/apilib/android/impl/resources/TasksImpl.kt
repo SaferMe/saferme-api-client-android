@@ -1,7 +1,6 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
-import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.Task
@@ -57,9 +56,8 @@ class TasksImpl(val api: AndroidClient) : TaskResource {
         success: (SaferMeApiResult<List<Task>>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        class TaskListToken : TypeToken<List<Task>>()
         StandardMethods.index(
-            api = api, path = "tasks", listType = TaskListToken(), parameters = parameters, success = success, failure = failure
+            api = api, path = "tasks", parameters = parameters, success = success, failure = failure
         )
     }
 

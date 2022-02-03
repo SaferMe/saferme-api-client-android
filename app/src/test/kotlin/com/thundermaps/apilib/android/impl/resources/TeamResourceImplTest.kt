@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.thundermaps.apilib.android.api.SaferMeCredentials
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.TeamResource
@@ -16,6 +17,7 @@ import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Team
+import com.thundermaps.apilib.android.api.responses.models.Team.Companion.shapeParameterRequest
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
@@ -23,6 +25,11 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockkObject
+import io.mockk.runs
+import io.mockk.unmockkAll
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -44,12 +51,15 @@ class TeamResourceImplTest {
 
     @Before
     fun setUp() {
+        mockkObject(ELog)
+        every { ELog.w(any(), any()) } just runs
         teamResource = TeamResourceImpl(androidClient, resultHandler, gson)
     }
 
     @After
     fun tearDown() {
         verifyNoMoreInteractions(androidClient)
+        unmockkAll()
     }
 
     @Test
@@ -80,7 +90,6 @@ class TeamResourceImplTest {
         assertEquals(2, teams?.size)
         val team = teams?.firstOrNull()
         assertEquals(6141L, team!!.id)
-        assertEquals(6141L, team.uniqueId)
         assertFalse(team.contactTracingEnabled)
         assertFalse(team.formContactTracingEnabled)
         assertTrue(team.featureTasksEnabled)
@@ -96,6 +105,15 @@ class TeamResourceImplTest {
         assertNull(team.isAdmin)
         assertNull(team.isManager)
         assertNull(team.isOwner)
+        assertEquals(MAPBOX_USERNAME, team.mapboxUserName)
+        assertEquals(MAPBOX_DATASET_ID, team.mapboxDataSetId)
+        assertEquals(MAPBOX_ACCESS_TOKEN, team.mapboxAccessToken)
+
+        val mapboxFeature = team.shapeParameterRequest
+        assertNotNull(mapboxFeature)
+        assertEquals(MAPBOX_USERNAME, mapboxFeature?.mapboxUser)
+        assertEquals(MAPBOX_DATASET_ID, mapboxFeature?.mapboxDatasetId)
+        assertEquals(MAPBOX_ACCESS_TOKEN, mapboxFeature?.mapboxAccessToken)
 
         val team2 = Team(
             contactTracingEnabled = false,
@@ -113,9 +131,14 @@ class TeamResourceImplTest {
             wearablesEnabled = false,
             isAdmin = null,
             isManager = null,
-            isOwner = null
+            isOwner = null,
+            mapboxAccessToken = null,
+            mapboxUserName = null,
+            mapboxDataSetId = null
         )
         assertEquals(team2, teams.lastOrNull())
+
+        assertNull(team2.shapeParameterRequest)
     }
 
     @Test
@@ -152,7 +175,8 @@ class TeamResourceImplTest {
     }
 
     companion object {
-        private val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        private val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private const val TEAMS_PATH = "/api/v4/teams"
         private const val TEST_KEY = "Test Key"
@@ -160,7 +184,11 @@ class TeamResourceImplTest {
         private const val TEST_APP = APPLICATION_ID
         private const val TEST_TEAM = "Test Team"
         private const val TEST_CLIENT_UUID = "client uuid"
-        private val saferMeCredentials = SaferMeCredentials(TEST_KEY, TEST_INSTALL, TEST_APP, TEST_TEAM, TEST_CLIENT_UUID)
+        private const val MAPBOX_USERNAME = "abctest"
+        private const val MAPBOX_DATASET_ID = "datasetID"
+        private const val MAPBOX_ACCESS_TOKEN = "abio32902"
+        private val saferMeCredentials =
+            SaferMeCredentials(TEST_KEY, TEST_INSTALL, TEST_APP, TEST_TEAM, TEST_CLIENT_UUID)
         private val defaultParameters = RequestParameters(
             customRequestHeaders = HashMap(),
             credentials = saferMeCredentials,
@@ -184,7 +212,10 @@ class TeamResourceImplTest {
                 "sso_required": false,
                 "sso_team_id": "nb6g6xtcuia",
                 "user_timeout": null,
-                "wearables_enabled": false
+                "wearables_enabled": false,
+                "mapbox_username": $MAPBOX_USERNAME,
+                "mapbox_dataset_id": $MAPBOX_DATASET_ID,
+                "mapbox_access_token": $MAPBOX_ACCESS_TOKEN
               },
               {
                 "id": 6129,

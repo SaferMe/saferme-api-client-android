@@ -10,11 +10,22 @@ interface SaferMeClientService {
     fun getClient(): SaferMeClient
 
     companion object {
+        private var INSTANCE: SaferMeClientService? = null
+
         fun getService(): SaferMeClientService {
-            return DaggerSaferMeClientService
-                .builder()
-                .saferMeClientModule(SaferMeClientModule())
-                .build()
+            val tempInstance = INSTANCE
+            if (tempInstance != null) {
+                return tempInstance
+            }
+            synchronized(this) {
+                val instance = DaggerSaferMeClientService
+                    .builder()
+                    .saferMeClientModule(SaferMeClientModule())
+                    .build()
+                INSTANCE = instance
+
+                return instance
+            }
         }
     }
 }

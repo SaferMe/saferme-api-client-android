@@ -1,10 +1,10 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.reflect.TypeToken
+import androidx.annotation.VisibleForTesting
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
-import com.thundermaps.apilib.android.api.resources.Report
 import com.thundermaps.apilib.android.api.resources.ReportResource
+import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.impl.AndroidClient
 
 class ReportImpl(val api: AndroidClient) : ReportResource {
@@ -16,9 +16,15 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.create(
-            api = api, path = "reports", parameters = parameters, item = item, success = success, failure = failure
+            api = api,
+            path = REPORT_PATH,
+            parameters = parameters,
+            item = item,
+            success = success,
+            failure = failure
         )
     }
+
     override suspend fun read(
         parameters: RequestParameters,
         item: Report,
@@ -26,7 +32,11 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.read(
-            api = api, path = "reports/${item.uuid}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, success = success, failure = failure
+            api = api,
+            path = "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM",
+            parameters = parameters,
+            success = success,
+            failure = failure
         )
     }
 
@@ -37,7 +47,12 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.update(
-            api = api, path = "reports/${item.uuid}?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", parameters = parameters, item = item, success = success, failure = failure
+            api = api,
+            path = "$REPORT_PATH/${item.uuid}?$FIELDS_PARAM",
+            parameters = parameters,
+            item = item,
+            success = success,
+            failure = failure
         )
     }
 
@@ -46,9 +61,12 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         success: (SaferMeApiResult<List<Report>>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        class TaskListToken : TypeToken<List<Report>>()
+        val extensionParams =
+            parameters.parameters?.let { map -> map.keys.joinToString("&") { "$it=${map[it]}" } }
+        val path = extensionParams?.let { "$REPORT_PATH?$FIELDS_PARAM&$it" }
+            ?: "$REPORT_PATH?$FIELDS_PARAM"
         StandardMethods.index(
-            api = api, path = "reports?fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by", listType = TaskListToken(), parameters = parameters, success = success, failure = failure
+            api = api, path = path, parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -60,7 +78,19 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
 
     ) {
         StandardMethods.delete(
-            api = api, path = "reports/${identifier.uuid}", parameters = parameters, success = success, failure = failure, item = identifier
+            api = api,
+            path = "$REPORT_PATH/${identifier.uuid}",
+            parameters = parameters,
+            success = success,
+            failure = failure,
+            item = identifier
         )
+    }
+
+    companion object {
+        private const val REPORT_PATH = "reports"
+        @VisibleForTesting
+        const val FIELDS_PARAM =
+            "fields=categories_title,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by,report_state,user_short_name"
     }
 }

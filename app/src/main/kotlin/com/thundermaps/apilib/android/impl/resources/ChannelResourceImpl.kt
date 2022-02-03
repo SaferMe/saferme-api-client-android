@@ -1,6 +1,7 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.responses.models.Channel
@@ -13,6 +14,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.url
 import io.ktor.http.HttpMethod
 import io.ktor.util.KtorExperimentalAPI
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,6 +30,10 @@ class ChannelResourceImpl @Inject constructor(
         teamId: Long,
         fields: String
     ): Result<List<Channel>> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+
         val call = getChannelsCall(parameters, teamId, fields)
 
         return resultHandler.processResult(call, gson)
