@@ -10,7 +10,6 @@ import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
-import com.thundermaps.apilib.android.impl.resources.NotificationResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
@@ -36,7 +35,6 @@ internal class SaferMeClientTest {
     private val meResourceImpl = mock<MeResourceImpl>()
     private val sessionsImpl = mock<SessionsImpl>()
     private val channelImpl = mock<ChannelResourceImpl>()
-    private val notificationImpl = mock<NotificationResourceImpl>()
     private val brandResourceImpl = mock<BrandResourceImpl>()
     private val shapeResourceImpl = mock<ShapeResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
@@ -50,7 +48,6 @@ internal class SaferMeClientTest {
             meResourceImpl,
             sessionsImpl,
             channelImpl,
-            notificationImpl,
             brandResourceImpl,
             shapeResourceImpl
         )
@@ -58,7 +55,7 @@ internal class SaferMeClientTest {
 
     @After
     fun tearDown() {
-        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl, notificationImpl, brandResourceImpl)
+        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl, brandResourceImpl)
     }
 
     @Test
@@ -129,13 +126,6 @@ internal class SaferMeClientTest {
         val meResource = saferMeClient.meResource
         assertNotNull(meResource)
         assertEquals(meResourceImpl, meResource)
-    }
-
-    @Test
-    fun verifyNotificationResource() {
-        val notificationResource = saferMeClient.notificationResource
-        assertNotNull(notificationResource)
-        assertEquals(notificationImpl, notificationResource)
     }
 
     @Test

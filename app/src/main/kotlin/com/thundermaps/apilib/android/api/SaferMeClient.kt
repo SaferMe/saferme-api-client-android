@@ -6,7 +6,6 @@ import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api.resources.MeResource
-import com.thundermaps.apilib.android.api.resources.NotificationResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.resources.ShapeResource
@@ -26,7 +25,6 @@ interface SaferMeClient {
     val teamResource: TeamResource
     val meResource: MeResource
     val channelResource: ChannelResource
-    val notificationResource: NotificationResource
     val brandResource: BrandResource
     val shapeResource: ShapeResource
 }
