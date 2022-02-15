@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.api.responses.models
 import com.google.gson.annotations.SerializedName
 
 data class Category(
+    val id: Int,
     val name: String,
     @SerializedName(value = LABEL_NAME) val labelName: String?,
     val depth: Int,

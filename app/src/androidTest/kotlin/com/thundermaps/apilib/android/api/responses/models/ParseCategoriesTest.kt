@@ -8,7 +8,6 @@ import com.thundermaps.apilib.android.api.readJsonFile
 import com.thundermaps.apilib.android.impl.AndroidClient
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -19,10 +18,29 @@ class ParseCategoriesTest {
     @Test
     fun parserCategories() {
         val categories =
-            AndroidClient.gsonSerializer.fromJsonString<List<Category>>(appContext.readJsonFile("categories.json"))
+            AndroidClient.gson.fromJsonString<List<Category>>(appContext.readJsonFile("categories.json"))
 
         assertNotNull(categories)
         assertEquals(10, categories.size)
-        assertNull(categories.first().parentId)
+        val firstCategory = categories.first()
+        assertEquals(category.id, firstCategory.id)
+        assertEquals(category.name, firstCategory.name)
+        assertEquals(category.labelName, firstCategory.labelName)
+        assertEquals(category.depth, firstCategory.depth)
+        assertEquals(category.pinColor, firstCategory.pinColor)
+        assertEquals(category.position, firstCategory.position)
+        assertEquals(category.parentId, firstCategory.parentId)
+    }
+
+    companion object {
+        private val category = Category(
+            193524,
+            "Test hazard",
+            "Report Category",
+            0,
+            "aqua",
+            85371,
+            null
+        )
     }
 }

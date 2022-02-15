@@ -8,7 +8,7 @@ interface CategoryResource {
     suspend fun getCategory(
         parameters: RequestParameters,
         channelId: Int,
-        fields: String = CATEGORY_FIELDS.joinToString()
+        fields: String = CATEGORY_FIELDS.joinToString(",")
     ): Result<List<Category>>
 
     companion object {
