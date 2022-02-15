@@ -40,7 +40,7 @@ class SaferMeClientImpl @Inject constructor(
     private val channelImpl: ChannelResourceImpl,
     private val brandResourceImpl: BrandResourceImpl,
     private val shapeResourceImpl: ShapeResourceImpl,
-    private val categoryResourceImpl: CategoryResourceImpl,
+    private val categoryResourceImpl: CategoryResourceImpl
 ) : SaferMeClient {
     override val taskResource: TaskResource get() = TasksImpl(androidClient)
 
