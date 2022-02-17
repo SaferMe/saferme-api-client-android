@@ -10,7 +10,6 @@ data class Category(
     @SerializedName(value = PIN_COLOR) val pinColor: String,
     val position: Int,
     @SerializedName(value = PARENT_ID) val parentId: Int? = null
-
 ) {
     companion object {
         const val LABEL_NAME = "label_name"
