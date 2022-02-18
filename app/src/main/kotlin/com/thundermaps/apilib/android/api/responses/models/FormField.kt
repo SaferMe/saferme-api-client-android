@@ -18,15 +18,17 @@ import org.json.JSONObject
 
 @ExcludeFromJacocoGeneratedReport
 data class FormField(
-    @Expose val data: JSONObject = JSONObject(),
+    @Expose val id: Int = 0,
+    @Expose val label: String? = null,
+    @Expose val key: String = "",
+    @Expose val data: String? = null,
     @Expose val editable: Boolean = false,
     @SerializedName("field_type") @Expose val fieldType: FieldType = FieldType.Unknown,
     @SerializedName("field_visibility") @Expose val fieldVisibility: String = "invisible",
     @SerializedName("form_order") @Expose val formOrder: Int = 0,
-    @Expose val id: Int = 0,
-    @Expose val key: String = "",
-    @Expose val mandatory: Boolean = false,
-    @Expose val value: FormValue = FormValue.Unknown
+    @Expose val mandatory: Boolean? = null,
+    @Expose val value: FormValue? = null,
+    @Expose val visibility: String = ""
 )
 
 @ExcludeFromJacocoGeneratedReport
@@ -70,14 +72,15 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
 open class FormValue {
     @ExcludeFromJacocoGeneratedReport
     data class ValueInt(val value: Int = 0) : FormValue()
+
     @ExcludeFromJacocoGeneratedReport
     data class ValueString(val value: String = "") : FormValue()
+
     @ExcludeFromJacocoGeneratedReport
     data class ValueJsonArray(val value: JsonArray = JsonArray()) : FormValue()
+
     @ExcludeFromJacocoGeneratedReport
     data class ValueFormFieldImage(val images: List<FormFieldImage> = emptyList()) : FormValue()
-    @ExcludeFromJacocoGeneratedReport
-    object Unknown : FormValue()
 }
 
 @ExcludeFromJacocoGeneratedReport
@@ -86,7 +89,7 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
         json: JsonElement,
         typeOfT: Type,
         context: JsonDeserializationContext
-    ): FormValue {
+    ): FormValue? {
         return when {
             json.isJsonPrimitive -> {
                 try {
@@ -95,7 +98,7 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
                     try {
                         FormValue.ValueString(json.asString)
                     } catch (exception: Exception) {
-                        FormValue.Unknown
+                        null
                     }
                 }
             }
@@ -118,7 +121,7 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
                 }
             }
             else -> {
-                FormValue.Unknown
+                null
             }
         }
     }
