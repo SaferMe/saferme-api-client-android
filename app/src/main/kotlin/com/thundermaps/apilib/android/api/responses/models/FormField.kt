@@ -68,6 +68,35 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
 }
 
 @ExcludeFromJacocoGeneratedReport
+open class DataValue {
+    data class DataJsonObject(val value: JsonObject) : DataValue()
+    data class DataString(val value: String) : DataValue()
+}
+
+@ExcludeFromJacocoGeneratedReport
+class DataValueDecode : JsonSerializer<DataValue>, JsonDeserializer<DataValue> {
+    override fun serialize(
+        src: DataValue,
+        typeOfSrc: Type,
+        context: JsonSerializationContext
+    ): JsonElement = when (src) {
+        is DataValue.DataString -> JsonPrimitive(src.value)
+        is DataValue.DataJsonObject -> gson.toJsonTree(src.value)
+        else -> JsonObject()
+    }
+
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
+    ): DataValue? = when {
+        json.isJsonObject -> DataValue.DataJsonObject(json.asJsonObject)
+        json.isJsonPrimitive -> DataValue.DataString(json.asString)
+        else -> null
+    }
+}
+
+@ExcludeFromJacocoGeneratedReport
 open class FormValue {
     @ExcludeFromJacocoGeneratedReport
     data class ValueInt(val value: Int = 0) : FormValue()

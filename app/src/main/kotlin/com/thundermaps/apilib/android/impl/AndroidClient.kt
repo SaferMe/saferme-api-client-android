@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.responses.models.DataValue
+import com.thundermaps.apilib.android.api.responses.models.DataValueDecode
 import com.thundermaps.apilib.android.api.responses.models.FieldType
 import com.thundermaps.apilib.android.api.responses.models.FieldTypeDecode
 import com.thundermaps.apilib.android.api.responses.models.FormValue
@@ -73,6 +75,7 @@ class AndroidClient @Inject constructor() {
             setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             registerTypeAdapter(FieldType::class.java, FieldTypeDecode())
             registerTypeAdapter(FormValue::class.java, FormValueDecode())
+            registerTypeAdapter(DataValue::class.java, DataValueDecode())
         }
 
         // Reusable serializer configured with default options
@@ -81,6 +84,7 @@ class AndroidClient @Inject constructor() {
         val gson: Gson = GsonBuilder().apply {
             registerTypeAdapter(FieldType::class.java, FieldTypeDecode())
             registerTypeAdapter(FormValue::class.java, FormValueDecode())
+            registerTypeAdapter(DataValue::class.java, DataValueDecode())
         }.create()
 
         // Reusable URL Builder
