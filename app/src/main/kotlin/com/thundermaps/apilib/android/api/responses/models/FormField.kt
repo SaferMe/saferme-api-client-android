@@ -14,7 +14,6 @@ import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gson
 import java.lang.reflect.Type
-import org.json.JSONObject
 
 @ExcludeFromJacocoGeneratedReport
 data class FormField(
