@@ -20,7 +20,7 @@ data class FormField(
     @Expose val id: Int = 0,
     @Expose val label: String? = null,
     @Expose val key: String = "",
-    @Expose val data: String? = null,
+    @Expose val data: DataValue? = null,
     @Expose val editable: Boolean = false,
     @SerializedName("field_type") @Expose val fieldType: FieldType = FieldType.Unknown,
     @SerializedName("field_visibility") @Expose val fieldVisibility: String = "invisible",
@@ -68,9 +68,13 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
 }
 
 @ExcludeFromJacocoGeneratedReport
-open class DataValue {
-    data class DataJsonObject(val value: JsonObject) : DataValue()
-    data class DataString(val value: String) : DataValue()
+open class DataValue(private val data: Any) {
+    data class DataJsonObject(val value: JsonObject) : DataValue(value)
+    data class DataString(val value: String) : DataValue(value)
+
+    override fun equals(other: Any?): Boolean {
+        return (data == (other as? DataValue)?.data)
+    }
 }
 
 @ExcludeFromJacocoGeneratedReport
@@ -166,3 +170,19 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
         else -> JsonObject()
     }
 }
+
+@ExcludeFromJacocoGeneratedReport
+data class OptionHolder(
+    @SerializedName("multi_select") @Expose val isMultiSelect: Boolean,
+    @Expose val options: List<Option>
+)
+
+@ExcludeFromJacocoGeneratedReport
+data class Option(
+    @Expose val label: String,
+    @Expose val value: String,
+    @Expose val enabled: Boolean,
+    @SerializedName("multi_option_id") @Expose val multiOptionId: Long,
+    @SerializedName("display_order") @Expose val displayOrder: Int,
+    @SerializedName("is_default") @Expose val isDefault: Boolean = false
+)
