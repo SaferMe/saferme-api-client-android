@@ -26,10 +26,16 @@ data class Severity(
     @Expose val key: String = "",
     @Expose val label: String = "",
     @Expose val value: Int = 0
-)
+) : RiskItem {
+    override val name: String
+        get() = label
+}
 
 data class Likelihood(
     @Expose val key: String = "",
     @Expose val label: String = "",
     @Expose val value: Int = 0
-)
+) : RiskItem {
+    override val name: String
+        get() = label
+}
