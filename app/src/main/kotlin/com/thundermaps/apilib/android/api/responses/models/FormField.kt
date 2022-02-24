@@ -45,6 +45,10 @@ enum class FieldType(val value: String) {
     RiskMatrix("RiskMatrix"),
     SectionBreak("SectionBreak"),
     ShortTextBox("ShortTextBox"),
+    RadioButton("RadioButton"),
+    NumberedList("NumberedList"),
+    Signature("Signature"),
+    BulletedList("BulletedList"),
     Unknown("Unknown")
 }
 
