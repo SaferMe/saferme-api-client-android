@@ -49,6 +49,7 @@ enum class FieldType(val value: String) {
     NumberedList("NumberedList"),
     Signature("Signature"),
     BulletedList("BulletedList"),
+    DateAndTime("DateAndTime"),
     Unknown("Unknown")
 }
 
