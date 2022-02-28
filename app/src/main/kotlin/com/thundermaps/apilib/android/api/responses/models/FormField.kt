@@ -50,6 +50,7 @@ enum class FieldType(val value: String) {
     Signature("Signature"),
     BulletedList("BulletedList"),
     DateAndTime("DateAndTime"),
+    IntegerRange("IntegerRange"),
     Unknown("Unknown")
 }
 
@@ -190,4 +191,13 @@ data class Option(
     @SerializedName("multi_option_id") @Expose val multiOptionId: Long,
     @SerializedName("display_order") @Expose val displayOrder: Int,
     @SerializedName("is_default") @Expose val isDefault: Boolean = false
+)
+
+@ExcludeFromJacocoGeneratedReport
+data class SliderData(
+    val minimum: Int,
+    val maximum: Int,
+    val default: Int,
+    val colour: String,
+    val description: String
 )
