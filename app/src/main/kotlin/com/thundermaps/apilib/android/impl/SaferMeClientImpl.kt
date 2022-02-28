@@ -4,6 +4,7 @@ import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.BrandResource
+import com.thundermaps.apilib.android.api.resources.CategoryResource
 import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api.resources.MeResource
@@ -14,6 +15,7 @@ import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
 import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
+import com.thundermaps.apilib.android.impl.resources.CategoryResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
@@ -23,10 +25,12 @@ import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TasksImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
+import io.ktor.util.KtorExperimentalAPI
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@OptIn(KtorExperimentalAPI::class)
 class SaferMeClientImpl @Inject constructor(
     private val androidClient: AndroidClient,
     override val environmentManager: EnvironmentManager,
@@ -35,7 +39,8 @@ class SaferMeClientImpl @Inject constructor(
     private val sessionsImpl: SessionsImpl,
     private val channelImpl: ChannelResourceImpl,
     private val brandResourceImpl: BrandResourceImpl,
-    private val shapeResourceImpl: ShapeResourceImpl
+    private val shapeResourceImpl: ShapeResourceImpl,
+    private val categoryResourceImpl: CategoryResourceImpl
 ) : SaferMeClient {
     override val taskResource: TaskResource get() = TasksImpl(androidClient)
 
@@ -62,6 +67,9 @@ class SaferMeClientImpl @Inject constructor(
 
     override val shapeResource: ShapeResource
         get() = shapeResourceImpl
+
+    override val categoryResource: CategoryResource
+        get() = categoryResourceImpl
 
     override fun defaultParams(): RequestParameters = RequestParameters(
         customRequestHeaders = HashMap(),

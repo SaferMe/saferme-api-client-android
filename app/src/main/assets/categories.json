@@ -1,0 +1,92 @@
+[
+  {
+    "id": 193524,
+    "name": "Test hazard",
+    "label_name": "Report Category",
+    "depth": 0,
+    "pin_color": "aqua",
+    "position": 85371,
+    "parent_id": null
+  },
+  {
+    "id": 193573,
+    "name": "House repair",
+    "label_name": "Secondary Category",
+    "depth": 1,
+    "pin_color": "green",
+    "position": 2,
+    "parent_id": 193524
+  },
+  {
+    "id": 193576,
+    "name": "Construction",
+    "label_name": "Secondary Category",
+    "depth": 1,
+    "pin_color": "green",
+    "position": 1,
+    "parent_id": 193524
+  },
+  {
+    "id": 193577,
+    "name": "House",
+    "label_name": "Tertiary Category",
+    "depth": 2,
+    "pin_color": "green",
+    "position": 3,
+    "parent_id": 193576
+  },
+  {
+    "id": 193578,
+    "name": "Road",
+    "label_name": "Tertiary Category",
+    "depth": 2,
+    "pin_color": "green",
+    "position": 2,
+    "parent_id": 193576
+  },
+  {
+    "id": 193579,
+    "name": "Bridge",
+    "label_name": "Tertiary Category",
+    "depth": 2,
+    "pin_color": "green",
+    "position": 1,
+    "parent_id": 193576
+  },
+  {
+    "id": 193580,
+    "name": "House 1",
+    "label_name": "Tertiary Category",
+    "depth": 2,
+    "pin_color": "green",
+    "position": 1,
+    "parent_id": 193573
+  },
+  {
+    "id": 193581,
+    "name": "House 2",
+    "label_name": "Tertiary Category",
+    "depth": 2,
+    "pin_color": "green",
+    "position": 2,
+    "parent_id": 193573
+  },
+  {
+    "id": 193582,
+    "name": "House 12",
+    "label_name": null,
+    "depth": 3,
+    "pin_color": "green",
+    "position": 3,
+    "parent_id": 193580
+  },
+  {
+    "id": 193583,
+    "name": "House 11",
+    "label_name": null,
+    "depth": 3,
+    "pin_color": "green",
+    "position": 2,
+    "parent_id": 193580
+  }
+]

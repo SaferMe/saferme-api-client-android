@@ -7,6 +7,7 @@ import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
+import com.thundermaps.apilib.android.impl.resources.CategoryResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
@@ -37,6 +38,7 @@ internal class SaferMeClientTest {
     private val channelImpl = mock<ChannelResourceImpl>()
     private val brandResourceImpl = mock<BrandResourceImpl>()
     private val shapeResourceImpl = mock<ShapeResourceImpl>()
+    private val categoryResourceImpl = mock<CategoryResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -49,7 +51,8 @@ internal class SaferMeClientTest {
             sessionsImpl,
             channelImpl,
             brandResourceImpl,
-            shapeResourceImpl
+            shapeResourceImpl,
+            categoryResourceImpl
         )
     }
 
@@ -140,6 +143,13 @@ internal class SaferMeClientTest {
         val shapeResource = saferMeClient.shapeResource
         assertNotNull(shapeResource)
         assertEquals(shapeResourceImpl, shapeResource)
+    }
+
+    @Test
+    fun verifyCategoryResource() {
+        val categoryResource = saferMeClient.categoryResource
+        assertNotNull(categoryResource)
+        assertEquals(categoryResourceImpl, categoryResource)
     }
 
     @Test
