@@ -13,7 +13,7 @@ interface CategoryResource {
 
     companion object {
         internal val CATEGORY_FIELDS = listOf(
-            "id", "name", "depth", "parent", "label_name", "pin_color", "position"
+            "id", "name", "depth", "parent", "label_name", "pin_color", "position", "pin_appearance"
         )
     }
 }

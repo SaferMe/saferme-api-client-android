@@ -10,6 +10,7 @@ import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
 import com.thundermaps.apilib.android.impl.resources.CategoryResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
+import com.thundermaps.apilib.android.impl.resources.FormResourceImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
@@ -39,6 +40,7 @@ internal class SaferMeClientTest {
     private val brandResourceImpl = mock<BrandResourceImpl>()
     private val shapeResourceImpl = mock<ShapeResourceImpl>()
     private val categoryResourceImpl = mock<CategoryResourceImpl>()
+    private val formResourceImpl = mock<FormResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -52,13 +54,22 @@ internal class SaferMeClientTest {
             channelImpl,
             brandResourceImpl,
             shapeResourceImpl,
-            categoryResourceImpl
+            categoryResourceImpl,
+            formResourceImpl
         )
     }
 
     @After
     fun tearDown() {
-        verifyNoMoreInteractions(environmentManager, teamResourceImpl, meResourceImpl, sessionsImpl, channelImpl, brandResourceImpl)
+        verifyNoMoreInteractions(
+            environmentManager,
+            teamResourceImpl,
+            meResourceImpl,
+            sessionsImpl,
+            channelImpl,
+            brandResourceImpl,
+            formResourceImpl
+        )
     }
 
     @Test
@@ -150,6 +161,14 @@ internal class SaferMeClientTest {
         val categoryResource = saferMeClient.categoryResource
         assertNotNull(categoryResource)
         assertEquals(categoryResourceImpl, categoryResource)
+    }
+
+    @Test
+    fun verifyFormResource() {
+        val formResource = saferMeClient.formResource
+
+        assertNotNull(formResource)
+        assertEquals(formResourceImpl, formResource)
     }
 
     @Test
