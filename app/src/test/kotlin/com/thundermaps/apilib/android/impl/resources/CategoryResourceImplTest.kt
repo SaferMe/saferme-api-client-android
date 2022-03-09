@@ -169,7 +169,8 @@ class CategoryResourceImplTest {
             0,
             "aqua",
             85371,
-            null
+            null,
+            "default"
         )
         private val CATEGORIES_SUCCESS_RESPONSE =
             """
@@ -181,7 +182,8 @@ class CategoryResourceImplTest {
                     "depth": 0,
                     "pin_color": "aqua",
                     "position": 85371,
-                    "parent_id": null
+                    "parent_id": null,
+                    "pin_appearance":"default"
                   },
                   {
                     "id": 193573,
@@ -190,43 +192,49 @@ class CategoryResourceImplTest {
                     "depth": 1,
                     "pin_color": "green",
                     "position": 2,
-                    "parent_id": 193524
+                    "parent_id": 193524,
+                    "pin_appearance":"lightbulb"
                   },
                   {
                     "id": 193576,
                     "name": "Construction",
                     "label_name": "Secondary Category",
                     "depth": 1,
-                    "pin_color": "green",
+                    "pin_color": "yellow",
                     "position": 1,
-                    "parent_id": 193524
+                    "parent_id": 193524,
+                    "pin_appearance":"question"
                   },
                   {
                     "id": 193577,
                     "name": "House",
                     "label_name": "Tertiary Category",
                     "depth": 2,
-                    "pin_color": "green",
+                    "pin_color": "slate",
                     "position": 3,
-                    "parent_id": 193576
+                    "parent_id": 193576,
+                    "pin_appearance":"geo"
                   },
                   {
                     "id": 193578,
                     "name": "Road",
                     "label_name": "Tertiary Category",
                     "depth": 2,
-                    "pin_color": "green",
+                    "pin_color": "blue-violet",
                     "position": 2,
-                    "parent_id": 193576
+                    "parent_id": 193576,
+                    "pin_appearance":"notes"
+                    
                   },
                   {
                     "id": 193579,
                     "name": "Bridge",
                     "label_name": "Tertiary Category",
                     "depth": 2,
-                    "pin_color": "green",
+                    "pin_color": "aqua",
                     "position": 1,
-                    "parent_id": 193576
+                    "parent_id": 193576,
+                    "pin_appearance":"broken"
                   },
                   {
                     "id": 193580,
@@ -235,25 +243,28 @@ class CategoryResourceImplTest {
                     "depth": 2,
                     "pin_color": "green",
                     "position": 1,
-                    "parent_id": 193573
+                    "parent_id": 193573,
+                    "pin_appearance":"police"
                   },
                   {
                     "id": 193581,
                     "name": "House 2",
                     "label_name": "Tertiary Category",
                     "depth": 2,
-                    "pin_color": "green",
+                    "pin_color": "red",
                     "position": 2,
-                    "parent_id": 193573
+                    "parent_id": 193573,
+                    "pin_appearance":"fire"
                   },
                   {
                     "id": 193582,
                     "name": "House 12",
                     "label_name": null,
                     "depth": 3,
-                    "pin_color": "green",
+                    "pin_color": "tm-green",
                     "position": 3,
-                    "parent_id": 193580
+                    "parent_id": 193580,
+                    "pin_appearance":"hazard"
                   },
                   {
                     "id": 193583,
@@ -262,7 +273,8 @@ class CategoryResourceImplTest {
                     "depth": 3,
                     "pin_color": "green",
                     "position": 2,
-                    "parent_id": 193580
+                    "parent_id": 193580,
+                    "pin_appearance":"house"
                   }
                 ]
             """.trimIndent()
