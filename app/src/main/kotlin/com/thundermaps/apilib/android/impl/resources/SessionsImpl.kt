@@ -73,18 +73,26 @@ class SessionsImpl @Inject constructor(
         if (!environmentManager.environment.servers.first().isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = requestHandler(bodyParameters = null, applicationId = applicationId, path = "$SSO_DETAILS_PATH/$ssoId", methodType = HttpMethod.Get)
-        return resultHandler.processResult(call, gson)
-    }
-
-    override suspend fun getSsoSessions(code: String, applicationId: String, ssoDetails: SsoDetails): Result<SsoSessions> {
         val call = requestHandler(
             bodyParameters = null,
             applicationId = applicationId,
-            path = """
-            $SSO_SESSIONS_PATH?code=$code&sso_team_id=${ssoDetails.ssoTeamId}&callback_url=msauth.com.thundermaps.saferme://auth&fields=installation_id,client_uuid
-            """.trimIndent(),
+            path = "$SSO_DETAILS_PATH/$ssoId",
             methodType = HttpMethod.Get
+        )
+        return resultHandler.processResult(call, gson)
+    }
+
+    override suspend fun getSsoSessions(
+        code: String,
+        applicationId: String,
+        ssoDetails: SsoDetails,
+        nonce: String?
+    ): Result<SsoSessions> {
+        val call = requestHandler(
+            bodyParameters = null,
+            applicationId = applicationId,
+            path = "$SSO_SESSIONS_PATH?code=$code&sso_team_id=${ssoDetails.ssoTeamId}&callback_url=$SSO_REDIRECT_URL&fields=$SSO_FIELDS&nonce=$nonce",
+            methodType = HttpMethod.Post
         )
         return resultHandler.processResult(call, gson)
     }
@@ -123,8 +131,13 @@ class SessionsImpl @Inject constructor(
     companion object {
         private const val SSO_DETAILS_PATH = "sso_details"
         private const val LOGIN_PATH = "sessions"
+
         @VisibleForTesting
         const val SSO_SESSIONS_PATH = "auth/sm_azure_oauth2/callback"
         private const val RESET_PASSWORD_PATH = "reset_passwords/request_token"
+
+        @VisibleForTesting
+        const val SSO_REDIRECT_URL = "msauth.com.thundermaps.saferme://auth"
+        const val SSO_FIELDS = "installation_id,client_uuid"
     }
 }

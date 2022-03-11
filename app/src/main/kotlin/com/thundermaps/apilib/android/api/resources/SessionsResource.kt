@@ -12,5 +12,5 @@ interface SessionsResource {
     suspend fun login(body: SessionBody, applicationId: String): Result<Sessions>
     suspend fun requestPassword(body: EmailBody, applicationId: String): Result<String>
     suspend fun getSsoDetails(ssoId: String, applicationId: String): Result<SsoDetails>
-    suspend fun getSsoSessions(code: String, applicationId: String, ssoDetails: SsoDetails): Result<SsoSessions>
+    suspend fun getSsoSessions(code: String, applicationId: String, ssoDetails: SsoDetails, nonce: String?): Result<SsoSessions>
 }
