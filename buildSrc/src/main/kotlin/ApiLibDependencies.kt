@@ -17,7 +17,6 @@ object ApiLibVersions {
     const val jacoco = "0.8.7"
 }
 
-
 object ApiLibDeps {
     object Versions {
         val arch_comp: String = "2.0.0"
@@ -44,7 +43,7 @@ object ApiLibTestingDeps {
         val assertj: String = "3.11.1"
         val junit5: String = "5.8.1"
         val mockk: String = "1.12.1"
-        //val roboelectric: String = "3.8"
+        // val roboelectric: String = "3.8"
         val junit4: String = "4.12"
         val coroutines: String = "1.3.2"
         val ktor: String = "1.2.5"
