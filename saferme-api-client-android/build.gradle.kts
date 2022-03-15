@@ -105,7 +105,7 @@ dependencies {
     androidTestImplementation(TestingDeps.androidxTestRunner)
     androidTestImplementation(TestingDeps.junit4)
     // Add MockK dependencies.
-    testImplementation(TestingDeps.mockk)
+    testImplementation(TestingDeps.mockk_io)
 
     // ktor mocking libs
     testImplementation(TestingDeps.ktor_base)

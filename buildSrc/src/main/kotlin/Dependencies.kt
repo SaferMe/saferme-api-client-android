@@ -43,7 +43,7 @@ object TestingDeps {
     object Versions {
         val assertj: String = "3.11.1"
         val junit5: String = "5.8.1"
-        val mockk: String = "1.12.1"
+        val mockk_io: String = "1.12.1"
         val roboelectric: String = "3.8"
         val junit4: String = "4.12"
         val coroutines: String = "1.3.2"
@@ -64,7 +64,7 @@ object TestingDeps {
     val junit4 = "junit:junit:${Versions.junit4}"
     val junit5_vintage = "org.junit.vintage:junit-vintage-engine:${Versions.junit5}"
     val assertj = "org.assertj:assertj-core:${Versions.assertj}"
-    val mockk = "io.mockk:mockk:${Versions.mockk}"
+    val mockk_io = "io.mockk:mockk:${Versions.mockk}"
     val ktor_base = "io.ktor:ktor-client-mock:${Versions.ktor}"
     val ktor_jvm = "io.ktor:ktor-client-mock-jvm:${Versions.ktor}"
     val ktor_native = "io.ktor:ktor-client-mock-native:${Versions.ktor}"

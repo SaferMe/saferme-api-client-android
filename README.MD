@@ -67,7 +67,7 @@ Call the create method on the Task Resource supplying the approproiate success a
                 { println("It Failed!") })
         }
 
-### Next stepsh
+### Next steps
 Look at the interfaces that extend SaferMeResource to see all the resources that have been implemented. most resources will implement the standard methods index, create, read, update and delete.
 
 Some Resources may have custom methods available

@@ -1,4 +1,3 @@
 gpr.user=GITHUB_USERNAME
 gpr.key=GITHUB_ACCESS_TOKEN
 version.build=1234
-version.version=1.0.0.1234
