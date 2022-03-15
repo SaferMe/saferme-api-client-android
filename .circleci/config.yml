@@ -62,8 +62,8 @@ jobs:
           name: Save coverage
           command: |
             mkdir -p ~/test-results/test_coverage
-            cp app/build/reports/jacocoTestReport/coverage.zip ~/test-results/test_coverage/
-            cp app/build/reports/jacocoTestReport/jacocoTestReport.xml ~/test-results/test_coverage/
+            cp saferme-api-client-android/build/reports/jacocoTestReport/coverage.zip ~/test-results/test_coverage/
+            cp saferme-api-client-android/build/reports/jacocoTestReport/jacocoTestReport.xml ~/test-results/test_coverage/
           when: always
       - store_test_results:
           path: ~/test-results
