@@ -43,7 +43,7 @@ object TestingDeps {
     object Versions {
         val assertj: String = "3.11.1"
         val junit5: String = "5.8.1"
-        val mockk_io: String = "1.12.1"
+        val mockk: String = "1.12.1"
         val roboelectric: String = "3.8"
         val junit4: String = "4.12"
         val coroutines: String = "1.3.2"
