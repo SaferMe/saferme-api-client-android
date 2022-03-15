@@ -1,4 +1,4 @@
-object GradlePlugins {
+object ApiLibGradlePlugins {
     object Versions {
         val gradle: String = "7.0.3"
         val kotlin: String = "1.5.31"
@@ -10,7 +10,7 @@ object GradlePlugins {
     val junit5 = "de.mannodermaus.gradle.plugins:android-junit5:${Versions.junit5}"
 }
 
-object Versions {
+object ApiLibVersions {
     const val compileSdk = 30
     const val targetSdk = 30
     const val minSdk = 23
@@ -18,7 +18,7 @@ object Versions {
 }
 
 
-object Deps {
+object ApiLibDeps {
     object Versions {
         val arch_comp: String = "2.0.0"
         val design: String = "1.0.0"
@@ -32,19 +32,19 @@ object Deps {
     }
 
     val kotlinStdlibJdk8 =
-        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${GradlePlugins.Versions.kotlin}"
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${ApiLibGradlePlugins.Versions.kotlin}"
     val gson = "com.google.code.gson:gson:${Versions.gson}"
     val dagger2 = "com.google.dagger:dagger:${Versions.dagger2}"
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${Versions.dagger2}"
     val mapboxGeoJson = "com.mapbox.mapboxsdk:mapbox-sdk-geojson:${Versions.mapboxGeoJson}"
 }
 
-object TestingDeps {
+object ApiLibTestingDeps {
     object Versions {
         val assertj: String = "3.11.1"
         val junit5: String = "5.8.1"
         val mockk: String = "1.12.1"
-        val roboelectric: String = "3.8"
+        //val roboelectric: String = "3.8"
         val junit4: String = "4.12"
         val coroutines: String = "1.3.2"
         val ktor: String = "1.2.5"

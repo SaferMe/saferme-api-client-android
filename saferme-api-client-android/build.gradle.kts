@@ -8,10 +8,10 @@ plugins {
 }
 
 android {
-    compileSdk = Versions.compileSdk
+    compileSdk = ApiLibVersions.compileSdk
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = ApiLibVersions.minSdk
+        targetSdk = ApiLibVersions.targetSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -74,59 +74,59 @@ android {
 // Project dependencies
 dependencies {
     // Kotlin stdlib
-    implementation(Deps.kotlinStdlibJdk8)
+    implementation(ApiLibDeps.kotlinStdlibJdk8)
 
     // KTOR
-    implementation("io.ktor:ktor-client-core:${Deps.Versions.ktor}")
-    implementation("io.ktor:ktor-client-cio:${Deps.Versions.ktor}")
-    implementation("io.ktor:ktor-client-android:${Deps.Versions.ktor}")
+    implementation("io.ktor:ktor-client-core:${ApiLibDeps.Versions.ktor}")
+    implementation("io.ktor:ktor-client-cio:${ApiLibDeps.Versions.ktor}")
+    implementation("io.ktor:ktor-client-android:${ApiLibDeps.Versions.ktor}")
 
-    implementation("io.ktor:ktor-client-gson:${Deps.Versions.ktor}")
+    implementation("io.ktor:ktor-client-gson:${ApiLibDeps.Versions.ktor}")
     //  implementation("io.ktor:ktor-client-logging-native:${Deps.versions.ktor}")
 
     // Logging for HTTPClient
-    implementation("org.slf4j:slf4j-simple:${Deps.Versions.slf4j}")
+    implementation("org.slf4j:slf4j-simple:${ApiLibDeps.Versions.slf4j}")
     implementation("com.raygun:raygun4android:4.0.0")
     // Gson Serialisation
-    implementation(Deps.gson)
+    implementation(ApiLibDeps.gson)
 
     // Dagger 2 Dependency injection
-    implementation(Deps.dagger2)
-    kapt(Deps.dagger2_annotation)
+    implementation(ApiLibDeps.dagger2)
+    kapt(ApiLibDeps.dagger2_annotation)
 
-    implementation(Deps.mapboxGeoJson)
+    implementation(ApiLibDeps.mapboxGeoJson)
 }
 
 // Test Dependencies
 dependencies {
 
-    androidTestImplementation(TestingDeps.androidxTestUnit)
-    androidTestImplementation(TestingDeps.androidxTestCore)
-    androidTestImplementation(TestingDeps.androidxTestRunner)
-    androidTestImplementation(TestingDeps.junit4)
+    androidTestImplementation(ApiLibTestingDeps.androidxTestUnit)
+    androidTestImplementation(ApiLibTestingDeps.androidxTestCore)
+    androidTestImplementation(ApiLibTestingDeps.androidxTestRunner)
+    androidTestImplementation(ApiLibTestingDeps.junit4)
     // Add MockK dependencies.
-    testImplementation(TestingDeps.mockk_io)
+    testImplementation(ApiLibTestingDeps.mockk_io)
 
     // ktor mocking libs
-    testImplementation(TestingDeps.ktor_base)
-    testImplementation(TestingDeps.ktor_jvm)
-    testImplementation(TestingDeps.ktor_native)
+    testImplementation(ApiLibTestingDeps.ktor_base)
+    testImplementation(ApiLibTestingDeps.ktor_jvm)
+    testImplementation(ApiLibTestingDeps.ktor_native)
 
     // Add JUnit5 dependencies.
-    testImplementation(TestingDeps.junit5_jupiter)
-    testImplementation(TestingDeps.junit5_jupiter_api)
-    testImplementation(TestingDeps.junit5_jupiter_params)
-    testRuntimeOnly(TestingDeps.junit5_jupiter_runtime)
+    testImplementation(ApiLibTestingDeps.junit5_jupiter)
+    testImplementation(ApiLibTestingDeps.junit5_jupiter_api)
+    testImplementation(ApiLibTestingDeps.junit5_jupiter_params)
+    testRuntimeOnly(ApiLibTestingDeps.junit5_jupiter_runtime)
 
     // Add JUnit4 legacy dependencies.
-    testImplementation(TestingDeps.junit4)
-    testRuntimeOnly(TestingDeps.junit5_vintage)
+    testImplementation(ApiLibTestingDeps.junit4)
+    testRuntimeOnly(ApiLibTestingDeps.junit5_vintage)
 
     // Add AssertJ dependencies.
-    testImplementation(TestingDeps.assertj)
+    testImplementation(ApiLibTestingDeps.assertj)
 
-    testImplementation(TestingDeps.mockitoKotlin2)
-    testImplementation(TestingDeps.kotlinCoroutineTest)
+    testImplementation(ApiLibTestingDeps.mockitoKotlin2)
+    testImplementation(ApiLibTestingDeps.kotlinCoroutineTest)
 }
 
 // Apply jacoco config (For test Coverage Reports)
