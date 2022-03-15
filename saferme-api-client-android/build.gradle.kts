@@ -74,18 +74,18 @@ android {
 // Project dependencies
 dependencies {
     // Kotlin stdlib
-    implementation(Deps.kotlin_stdlib_jdk8)
+    implementation(Deps.kotlinStdlibJdk8)
 
     // KTOR
-    implementation("io.ktor:ktor-client-core:${Deps.versions.ktor}")
-    implementation("io.ktor:ktor-client-cio:${Deps.versions.ktor}")
-    implementation("io.ktor:ktor-client-android:${Deps.versions.ktor}")
+    implementation("io.ktor:ktor-client-core:${Deps.Versions.ktor}")
+    implementation("io.ktor:ktor-client-cio:${Deps.Versions.ktor}")
+    implementation("io.ktor:ktor-client-android:${Deps.Versions.ktor}")
 
-    implementation("io.ktor:ktor-client-gson:${Deps.versions.ktor}")
+    implementation("io.ktor:ktor-client-gson:${Deps.Versions.ktor}")
     //  implementation("io.ktor:ktor-client-logging-native:${Deps.versions.ktor}")
 
     // Logging for HTTPClient
-    implementation("org.slf4j:slf4j-simple:${Deps.versions.slf4j}")
+    implementation("org.slf4j:slf4j-simple:${Deps.Versions.slf4j}")
     implementation("com.raygun:raygun4android:4.0.0")
     // Gson Serialisation
     implementation(Deps.gson)
@@ -103,7 +103,7 @@ dependencies {
     androidTestImplementation(TestingDeps.androidxTestUnit)
     androidTestImplementation(TestingDeps.androidxTestCore)
     androidTestImplementation(TestingDeps.androidxTestRunner)
-    androidTestImplementation(TestingDeps.junit4_legacy)
+    androidTestImplementation(TestingDeps.junit4)
     // Add MockK dependencies.
     testImplementation(TestingDeps.mockk)
 
@@ -119,7 +119,7 @@ dependencies {
     testRuntimeOnly(TestingDeps.junit5_jupiter_runtime)
 
     // Add JUnit4 legacy dependencies.
-    testImplementation(TestingDeps.junit4_legacy)
+    testImplementation(TestingDeps.junit4)
     testRuntimeOnly(TestingDeps.junit5_vintage)
 
     // Add AssertJ dependencies.

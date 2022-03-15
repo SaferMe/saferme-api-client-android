@@ -1,4 +1,4 @@
 rootProject.buildFileName = 'build.gradle.kts'
-rootProject.name='SaferMeAPILib'
-include ':app'
+rootProject.name='saferme-api-client-android'
+include ':saferme-api-client-android'
 
