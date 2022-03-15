@@ -3,7 +3,7 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.util.*
 
-object Maven {
+object ApiMaven {
     var localProperties = Properties().apply {
         try {
             this.load(FileInputStream("buildSrc/local.properties"))

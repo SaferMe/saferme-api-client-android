@@ -43,16 +43,16 @@ android {
         getByName("release") {
             setProperty(
                 "archivesBaseName",
-                "$buildDir/outputs/aar/${ObsidianMaven.artifactId}-${ObsidianMaven.version}.${ObsidianMaven.build}"
+                "$buildDir/outputs/aar/${ApiMaven.artifactId}-${ApiMaven.version}.${ApiMaven.build}"
             )
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-            println("##teamcity[setParameter name='target_release_version' value='${ObsidianMaven.version}.${ObsidianMaven.build}']")
+            println("##teamcity[setParameter name='target_release_version' value='${ApiMaven.version}.${ApiMaven.build}']")
         }
         getByName("debug") {
             setProperty(
                 "archivesBaseName",
-                "$buildDir/outputs/aar/${ObsidianMaven.artifactId}-${ObsidianMaven.version}.${ObsidianMaven.build}"
+                "$buildDir/outputs/aar/${ApiMaven.artifactId}-${ApiMaven.version}.${ApiMaven.build}"
             )
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -138,20 +138,20 @@ publishing {
     repositories {
         maven {
             name = "GitHub"
-            url = uri(uri("${ObsidianMaven.gprBaseUrl}/${ObsidianMaven.gprRepoOwner}/${ObsidianMaven.gprRepoId}"))
+            url = uri(uri("${ApiMaven.gprBaseUrl}/${ApiMaven.gprRepoOwner}/${ApiMaven.gprRepoId}"))
             credentials {
-                username = ObsidianMaven.gprUser
-                password = ObsidianMaven.gprKey
+                username = ApiMaven.gprUser
+                password = ApiMaven.gprKey
             }
         }
     }
     publications {
 
         register("ProductionRelease", MavenPublication::class) {
-            groupId = ObsidianMaven.group
-            artifactId = "${ObsidianMaven.artifactId}-release"
-            version = "${ObsidianMaven.version}.${ObsidianMaven.build}"
-            artifact("$buildDir/outputs/aar/${ObsidianMaven.artifactId}-${ObsidianMaven.version}.${ObsidianMaven.build}-release.aar")
+            groupId = ApiMaven.group
+            artifactId = "${ApiMaven.artifactId}-release"
+            version = "${ApiMaven.version}.${ApiMaven.build}"
+            artifact("$buildDir/outputs/aar/${ApiMaven.artifactId}-${ApiMaven.version}.${ApiMaven.build}-release.aar")
 
             pom {
                 withXml {
@@ -174,10 +174,10 @@ publishing {
         }
 
         register("TestRelease", MavenPublication::class) {
-            groupId = ObsidianMaven.group
-            artifactId = "${ObsidianMaven.artifactId}-test"
-            version = "${ObsidianMaven.version}.${ObsidianMaven.build}"
-            artifact("$buildDir/outputs/aar/${ObsidianMaven.artifactId}-${ObsidianMaven.version}.${ObsidianMaven.build}-debug.aar")
+            groupId = ApiMaven.group
+            artifactId = "${ApiMaven.artifactId}-test"
+            version = "${ApiMaven.version}.${ApiMaven.build}"
+            artifact("$buildDir/outputs/aar/${ApiMaven.artifactId}-${ApiMaven.version}.${ApiMaven.build}-debug.aar")
 
             pom {
                 withXml {
