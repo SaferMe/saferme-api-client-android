@@ -75,6 +75,8 @@ Some Resources may have custom methods available
 ## Developers Guide
 If you wish to develop this project you will need to get a good environment setup. This guide assumes you will be using Android Studio 3.5.x and has only been tested on OSX Mojave.
 
+Other projects are dependent on this one, and the variable names in buildSrc/src/main/kotlin/Dependencies.kt are used by other projects - be VERY careful if editing this file, as it may cause other projects to break.
+
 ### Installation
 * Clone the Repo: `git clone git@github.com:SaferMe/saferme-api-client-android.git`
 
@@ -121,7 +123,11 @@ To run the whole suite and generate a coverage report: `$ ./gradlew test jacocoT
 Report will be output to `app/build/reports`
 
 ## Building & Publishing
+Update version.txt in the base directory to specify the version NAME.
+update builsSrc.local.properties value for 'version' to have the version BUILD_NUMBER
+The published package will be NAME.BUILD_NUMBER
 If you have changed any of the values in local.properties it is recommend you run the following with the --rerun-tasks flag, as gradle may not detect these changes and will use previously generated artifacts
+
 
 ##### Build AAR	
 	$ ./gradlew build

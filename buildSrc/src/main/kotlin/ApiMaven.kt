@@ -1,25 +1,23 @@
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
-import java.util.*
+import java.util.Properties
 
-object Maven {
+object ApiMaven {
     var localProperties = Properties().apply {
         try {
             this.load(FileInputStream("buildSrc/local.properties"))
         } catch (ex: FileNotFoundException) {
-            //Set some defaults
+            // Set some defaults
             this.setProperty("gpr.user", "unspecified")
             this.setProperty("gpr.key", "unspecified")
             this.setProperty("version.build", "-1")
         }
 
-        //Load the version from version.txt
+        // Load the version from version.txt
         val fileVersion: String? = File("version.txt").useLines { it.firstOrNull() }
         if (fileVersion != null) this.setProperty("version.version", fileVersion)
-
     }
-
 
     var group: String = "me.safer.apilib"
     var artifactId: String = "saferme-kotlin"
@@ -35,19 +33,19 @@ object Maven {
         "unspecified"
     }
 
-    var gprKey= when {
+    var gprKey = when {
         System.getenv().containsKey("GPR_KEY") -> System.getenv("GPR_KEY")
         localProperties.containsKey("gpr.key") -> localProperties.getProperty("gpr.key").trim()
         else -> "unspecified"
     }
 
-    var build:Int = when {
+    var build: Int = when {
         System.getenv().containsKey("BUILD") -> System.getenv("BUILD").toInt()
         localProperties.containsKey("version.build") -> localProperties.getProperty("version.build").trim().toInt()
         else -> -1
     }
 
-    var version  = if (System.getenv().containsKey("VERSION")) {
+    var version = if (System.getenv().containsKey("VERSION")) {
         System.getenv("VERSION")
     } else {
         localProperties.getProperty("version.version").trim()

@@ -40,7 +40,8 @@ class ParseCategoriesTest {
             0,
             "aqua",
             85371,
-            null
+            null,
+            "default"
         )
     }
 }

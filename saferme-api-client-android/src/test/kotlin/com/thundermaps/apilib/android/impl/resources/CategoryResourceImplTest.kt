@@ -224,7 +224,7 @@ class CategoryResourceImplTest {
                     "position": 2,
                     "parent_id": 193576,
                     "pin_appearance":"notes"
-                    
+
                   },
                   {
                     "id": 193579,
