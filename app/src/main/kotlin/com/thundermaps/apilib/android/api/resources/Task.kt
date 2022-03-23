@@ -47,7 +47,7 @@ data class Task(
         sb.append("Description:\t\t $description\n")
         sb.append("Report:\t\t$report_uuid\n")
         sb.append("Creator:\t\t$creator_id\n")
-        sb.append("Created At:\t\t${fmt.format(client_created_at)}\n")
+        sb.append("Created At:\t\t${fmt.format(client_created_at ?: "")}\n")
         if (assignee_id != null)
             sb.append("Assigned To:\t\t$assignee_id\n")
         if (completed_at == null) {
