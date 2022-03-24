@@ -13,6 +13,7 @@ data class Report(
     @Expose val title: String? = null,
     @SerializedName(ACCOUNT_ID) @Expose val accountId: Int? = null,
     @Expose val address: String? = null,
+    @Expose val appearance: String? = null,
     @SerializedName(CATEGORIES_TITLE) @Expose val categoriesTitle: String? = null,
     @SerializedName(CATEGORY_ID) @Expose val categoryId: Int = 0,
     @SerializedName(COMMENT_COUNT) @Expose val commentCount: Int? = null,
