@@ -37,6 +37,8 @@ enum class FieldType(val value: String) {
     DropDown("DropDown"),
     FileUpload("FileUpload"),
     FreeText("FreeText"),
+    InternalAttendees("InternalAttendees"),
+    ExternalAttendees("ExternalAttendees"),
     Image("Image"),
     LongTextBox("LongTextBox"),
     RelativePosition("RelativePosition"),
