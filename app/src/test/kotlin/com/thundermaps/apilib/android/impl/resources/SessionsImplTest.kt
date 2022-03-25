@@ -296,11 +296,12 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyGetSsoSessionssSuccess() = runBlockingTest {
+    fun verifyGetSsoSessionsSuccess() = runBlockingTest {
         var inspectCalled = false
         val code = "932909205op950295uof23909423"
+        val nonce = "nonce"
         val path = """
-            ${SessionsImpl.SSO_SESSIONS_PATH}?code=$code&sso_team_id=${ssoDetailsMock.ssoTeamId}&callback_url=msauth.com.thundermaps.saferme://auth&fields=installation_id,client_uuid
+            ${SessionsImpl.SSO_SESSIONS_PATH}?code=$code&sso_team_id=${ssoDetailsMock.ssoTeamId}&callback_url=${SessionsImpl.SSO_REDIRECT_URL}&fields=${SessionsImpl.SSO_FIELDS}&nonce=$nonce
             """.trimIndent()
         val client = TestHelpers.testClient(
             content = SSO_SESSIONS_SUCCESS_RESPONSE,
@@ -308,14 +309,14 @@ class SessionsImplTest {
             headers = responseHeaders,
             requestInspector = {
                 assertEquals(path, it.url.encodedPath)
-                assertEquals(HttpMethod.Get, it.method)
+                assertEquals(HttpMethod.Post, it.method)
                 inspectCalled = true
             }
         )
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val ssoSessionsResult = sessions.getSsoSessions(code, APPLICATION_ID, ssoDetailsMock)
+        val ssoSessionsResult = sessions.getSsoSessions(code, APPLICATION_ID, ssoDetailsMock, nonce)
 
         verifyAndroidClient(4)
         verify(environmentManager).environment
