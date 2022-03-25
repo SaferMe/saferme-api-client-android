@@ -13,7 +13,9 @@ data class Report(
     @Expose val title: String? = null,
     @SerializedName(ACCOUNT_ID) @Expose val accountId: Int? = null,
     @Expose val address: String? = null,
+    @Expose val appearance: String? = null,
     @SerializedName(CATEGORIES_TITLE) @Expose val categoriesTitle: String? = null,
+    @SerializedName(CATEGORY_ID) @Expose val categoryId: Int = 0,
     @SerializedName(COMMENT_COUNT) @Expose val commentCount: Int? = null,
     @Expose val description: String? = null,
     @SerializedName(IS_ANONYMOUS) @Expose val isAnonymous: Boolean? = false,
@@ -42,6 +44,7 @@ data class Report(
     companion object {
         const val ACCOUNT_ID = "account_id"
         const val CATEGORIES_TITLE = "categories_title"
+        const val CATEGORY_ID = "category_id"
         const val COMMENT_COUNT = "comment_count"
         const val IS_ANONYMOUS = "is_anonymous"
         const val IS_HAZARD = "is_hazard"
