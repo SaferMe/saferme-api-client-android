@@ -2,6 +2,7 @@ package com.thundermaps.apilib.android.api
 
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.resources.AttachmentResource
 import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.resources.CategoryResource
 import com.thundermaps.apilib.android.api.resources.ChannelResource
@@ -31,4 +32,5 @@ interface SaferMeClient {
     val shapeResource: ShapeResource
     val categoryResource: CategoryResource
     val formResource: FormResource
+    val attachmentResource: AttachmentResource
 }

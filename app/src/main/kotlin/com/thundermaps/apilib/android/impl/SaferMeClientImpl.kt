@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.impl
 import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.resources.AttachmentResource
 import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.resources.CategoryResource
 import com.thundermaps.apilib.android.api.resources.ChannelResource
@@ -15,6 +16,7 @@ import com.thundermaps.apilib.android.api.resources.ShapeResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
+import com.thundermaps.apilib.android.impl.resources.AttachmentResourceImpl
 import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
 import com.thundermaps.apilib.android.impl.resources.CategoryResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
@@ -43,7 +45,8 @@ class SaferMeClientImpl @Inject constructor(
     private val brandResourceImpl: BrandResourceImpl,
     private val shapeResourceImpl: ShapeResourceImpl,
     private val categoryResourceImpl: CategoryResourceImpl,
-    private val formResourceImpl: FormResourceImpl
+    private val formResourceImpl: FormResourceImpl,
+    private val attachmentResourceImpl: AttachmentResourceImpl
 ) : SaferMeClient {
     override val taskResource: TaskResource get() = TasksImpl(androidClient)
 
@@ -76,6 +79,9 @@ class SaferMeClientImpl @Inject constructor(
 
     override val formResource: FormResource
         get() = formResourceImpl
+
+    override val attachmentResource: AttachmentResource
+        get() = attachmentResourceImpl
 
     override fun defaultParams(): RequestParameters = RequestParameters(
         customRequestHeaders = HashMap(),
