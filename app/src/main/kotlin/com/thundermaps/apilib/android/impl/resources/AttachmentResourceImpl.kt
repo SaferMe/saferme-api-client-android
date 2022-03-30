@@ -50,9 +50,10 @@ class AttachmentResourceImpl @Inject constructor(
         val (client, requestBuilder) = androidClient.client(parameters)
         val uploadAuthorizationResult = getUploadAuthentication(urlBuilder, client, requestBuilder)
 
-        uploadAuthorizationResult.getNullableData()?.let { uploadAuthorization ->
+        uploadAuthorizationResult.getNullableData()?.let { response ->
+            val uploadAuthorization = response.uploadAuthorization
             uploadFile(client, filePath, uploadAuthorization)
-            return createFileAttachment(urlBuilder, client, requestBuilder, uploadAuthorization.key)
+            return createFileAttachment(urlBuilder, client, requestBuilder, uploadAuthorization.keyPrefix)
         }
 
         return resultHandler.handleException(UserNotAuthenticatedException("Error get upload authorization"))
@@ -64,7 +65,7 @@ class AttachmentResourceImpl @Inject constructor(
         uploadAuthorization: UploadAuthorization
     ) {
         val formData = formData {
-            append(KEY, "${uploadAuthorization.key}/$IMAGE_FILE_NAME")
+            append(KEY, "${uploadAuthorization.keyPrefix}/$IMAGE_FILE_NAME")
             append(
                 AuthorizationFields.SUCCESS_ACTION_STATUS,
                 uploadAuthorization.fields.successActionStatus
@@ -91,7 +92,7 @@ class AttachmentResourceImpl @Inject constructor(
         urlBuilder: URLBuilder,
         client: HttpClient,
         requestBuilder: HttpRequestBuilder
-    ): Result<UploadAuthorization> {
+    ): Result<UploadAuthorizationResponse> {
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(urlBuilder.apply {
@@ -105,7 +106,7 @@ class AttachmentResourceImpl @Inject constructor(
         urlBuilder: URLBuilder,
         client: HttpClient,
         requestBuilder: HttpRequestBuilder,
-        key: String
+        keyPrefix: String
     ): Result<FileAttachment> {
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Post
@@ -114,7 +115,7 @@ class AttachmentResourceImpl @Inject constructor(
             }.build())
             contentType(ContentType.Application.Json)
             body = {
-                FileAttachmentRequest(KeyRequest("$key/$IMAGE_FILE_NAME"))
+                FileAttachmentRequest(KeyRequest("$keyPrefix$IMAGE_FILE_NAME"))
             }
         })
         return resultHandler.processResult(call, gson)
@@ -135,6 +136,11 @@ class AttachmentResourceImpl @Inject constructor(
         private const val IMAGE_FILE_NAME = "image.png"
     }
 }
+
+@ExcludeFromJacocoGeneratedReport
+internal data class UploadAuthorizationResponse(
+    @SerializedName(value = "upload_authorization") val uploadAuthorization: UploadAuthorization
+)
 
 @ExcludeFromJacocoGeneratedReport
 internal data class UploadAuthorization(
