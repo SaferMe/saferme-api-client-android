@@ -10,6 +10,7 @@ import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import io.ktor.client.call.HttpClientCall
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.toByteArray
+import timber.log.Timber
 
 @KtorExperimentalAPI
 suspend inline fun <reified T : Any> ResultHandler.processResult(
@@ -18,11 +19,12 @@ suspend inline fun <reified T : Any> ResultHandler.processResult(
 ): Result<T> {
     val status = SaferMeApiStatus.statusForCode(call.response.status.value)
     val responseString = String(call.response.content.toByteArray())
+    Timber.e("responseString: $responseString")
     return when (status) {
         SaferMeApiStatus.OK, SaferMeApiStatus.OTHER_200 -> {
             try {
                 val response = gson.fromJsonString<T>(responseString)
-
+                Timber.e("response: $response")
                 handleSuccess(response)
             } catch (exception: Exception) {
                 handleException(exception)

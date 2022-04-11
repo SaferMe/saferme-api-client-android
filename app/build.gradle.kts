@@ -94,6 +94,8 @@ dependencies {
     implementation(Deps.dagger2)
     kapt(Deps.dagger2_annotation)
 
+    implementation(Deps.awsAndroidS3)
+
     implementation(Deps.mapboxGeoJson)
 }
 
