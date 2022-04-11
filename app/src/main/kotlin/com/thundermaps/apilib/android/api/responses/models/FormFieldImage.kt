@@ -7,9 +7,9 @@ import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 @ExcludeFromJacocoGeneratedReport
 data class FormFieldImage(
     @Expose val id: Int,
-    @SerializedName("original_url") val originalUrl: String,
+    @SerializedName("original_url") @Expose val originalUrl: String,
     @Expose val filename: String,
-    @SerializedName("style_url") val styleUrl: ImageStyleUrl
+    @SerializedName("style_url") @Expose val styleUrl: ImageStyleUrl
 )
 
 @ExcludeFromJacocoGeneratedReport

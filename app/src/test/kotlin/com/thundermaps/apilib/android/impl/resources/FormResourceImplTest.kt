@@ -17,7 +17,7 @@ import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
-import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gson
+import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -43,7 +43,7 @@ class FormResourceImplTest {
 
     @Before
     fun setUp() {
-        formResource = FormResourceImpl(androidClient, resultHandler, gson)
+        formResource = FormResourceImpl(androidClient, resultHandler, gsonSerializer)
     }
 
     @After
@@ -84,7 +84,7 @@ class FormResourceImplTest {
         assertEquals(1, form!!.id)
         assertEquals("Cleaner streams Form", form.name)
         assertEquals(52, form.version)
-        assertEquals(gson.fromJsonString<List<FormField>>(FIELDS), form.fields)
+        assertEquals(gsonSerializer.fromJsonString<List<FormField>>(FIELDS), form.fields)
     }
 
     @Test

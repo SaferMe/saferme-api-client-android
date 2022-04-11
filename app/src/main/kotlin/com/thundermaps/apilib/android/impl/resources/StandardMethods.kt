@@ -10,7 +10,6 @@ import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.api.resources.SaferMeDatum
 import com.thundermaps.apilib.android.impl.AndroidClient
-import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gson
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
@@ -183,7 +182,7 @@ class StandardMethods {
                             val json = String(call.response.content.toByteArray())
                             val data: Resource? =
                                 if (json == "" || json.trim() == "{}") null
-                                else gson.fromJsonString(json)
+                                else gsonSerializer.fromJsonString(json)
                             success(
                                 SaferMeApiResult(
                                     data = data ?: item,
@@ -237,7 +236,7 @@ class StandardMethods {
                     when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
                         SaferMeApiStatus.OK -> {
                             val json = String(call.response.content.toByteArray())
-                            val result = gson.fromJsonString<T>(json)
+                            val result = gsonSerializer.fromJsonString<T>(json)
                             success(
                                 SaferMeApiResult(
                                     data = result,

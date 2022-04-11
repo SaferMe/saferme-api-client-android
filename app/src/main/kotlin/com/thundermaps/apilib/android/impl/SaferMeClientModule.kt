@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class SaferMeClientModule {
     @Provides
     @Singleton
-    fun provideGson(): Gson = AndroidClient.gson
+    fun provideGson(): Gson = AndroidClient.gsonSerializer
 
     @Provides
     @Singleton

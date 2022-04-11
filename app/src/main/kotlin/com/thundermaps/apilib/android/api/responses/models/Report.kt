@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.thundermaps.apilib.android.api.resources.Location
 import com.thundermaps.apilib.android.api.resources.SaferMeDatum
-import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gson
+import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 
 data class Report(
     @Expose val uuid: String = "",
@@ -38,7 +38,7 @@ data class Report(
     @SerializedName(HIDDEN_FIELDS) @Expose val hiddenFields: JsonArray? = null
 ) : SaferMeDatum {
     override fun toString(): String {
-        return gson.toJson(this)
+        return gsonSerializer.toJson(this)
     }
 
     companion object {

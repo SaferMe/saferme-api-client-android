@@ -1,9 +1,11 @@
 package com.thundermaps.apilib.android.api.responses.models
 
+import com.google.gson.annotations.Expose
+
 data class Avatar(
-    val mini: String,
-    val small: String,
-    val medium: String,
-    val large: String,
-    val huge: String
+    @Expose val mini: String,
+    @Expose val small: String,
+    @Expose val medium: String,
+    @Expose val large: String,
+    @Expose val huge: String
 )

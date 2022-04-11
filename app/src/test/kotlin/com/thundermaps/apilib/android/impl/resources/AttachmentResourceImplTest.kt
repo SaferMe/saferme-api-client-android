@@ -23,7 +23,7 @@ import org.junit.Test
 
 @ExperimentalCoroutinesApi
 @OptIn(KtorExperimentalAPI::class)
-class UploadAuthorizationTest {
+class AttachmentResourceImplTest {
     private val androidClient: AndroidClient = mock()
     private val resultHandler: ResultHandler = ResultHandler()
     private val gson = AndroidClient.gsonSerializer
@@ -93,7 +93,7 @@ class UploadAuthorizationTest {
         )
 
         private const val key = "async_uploads/9c457cb6-cc9a-4e6b-9b07-d50de3c45fb9"
-        private const val policy = "eyJleHBpcmF0aW9uIjoiM"
+        private const val policy = "eyJleHBpcmF0aW9uIjoiMjAyMi0wNC0xMVQyMTo1NTozNloiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJ0aHVuZGVybWFwcy11cGxvYWRzIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJhc3luY191cGxvYWRzL2E1ZmIxNmViLTE4NDktNDQ2OC1iNTllLWNjMmQ1YWU0MDBhOCJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL3BuZyJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJQ1BOQUVBUFVONTRLWElBLzIwMjIwNDExL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7rtwurQ16LWRhdGUiOiIyMDIyMDQxMVQyMDU1MzZaIn1dfQ=="
         private const val amzSignature =
             "58af91e9a564683a14c0a05c70d1c7bff7e448361ce9cf525c04a114a323a93201"
         private const val uploadUrl = "https://test-uploads.s3.amazonaws.com"

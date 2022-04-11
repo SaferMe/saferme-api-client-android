@@ -2,7 +2,6 @@ package com.thundermaps.apilib.android.impl.resources
 
 import android.net.Uri
 import android.security.keystore.UserNotAuthenticatedException
-import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -115,7 +114,7 @@ class AttachmentResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(urlBuilder.apply {
-                encodedPath = "${encodedPath}$AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
+                encodedPath = "${encodedPath}$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
             }.build())
         })
         return resultHandler.processResult(call, gson)
@@ -141,14 +140,11 @@ class AttachmentResourceImpl @Inject constructor(
     }
 
     companion object {
-        @VisibleForTesting
-        const val CONTENT_TYPE_PARAMETER = "content_type"
-        const val IMAGE_PNG = "image/png"
 
-        const val FILE_ATTACHMENTS_PATH = "file_attachments"
-
-        @VisibleForTesting
-        const val AUTHORIZATION_PATH = "file_attachments/upload_authorization"
+        private const val CONTENT_TYPE_PARAMETER = "content_type"
+        private const val IMAGE_PNG = "image/png"
+        private const val FILE_ATTACHMENTS_PATH = "file_attachments"
+        private const val FILE_AUTHORIZATION_PATH = "file_attachments/upload_authorization"
 
         private const val KEY = "key"
         private const val POLICY = "policy"
@@ -194,7 +190,7 @@ data class AuthorizationFields(
 
 @ExcludeFromJacocoGeneratedReport
 internal data class FileAttachmentRequest(
-    @SerializedName(value = FILE_ATTACHMENT) val fileAttachment: KeyRequest
+    @SerializedName(value = FILE_ATTACHMENT) @Expose val fileAttachment: KeyRequest
 ) {
     companion object {
         internal const val FILE_ATTACHMENT = "file_attachment"

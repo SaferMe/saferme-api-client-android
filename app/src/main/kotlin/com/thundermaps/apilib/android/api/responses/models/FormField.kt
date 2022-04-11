@@ -12,7 +12,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
-import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gson
+import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 import java.lang.reflect.Type
 
 @ExcludeFromJacocoGeneratedReport
@@ -93,7 +93,7 @@ class DataValueDecode : JsonSerializer<DataValue>, JsonDeserializer<DataValue> {
         context: JsonSerializationContext
     ): JsonElement = when (src) {
         is DataValue.DataString -> JsonPrimitive(src.value)
-        is DataValue.DataJsonObject -> gson.toJsonTree(src.value)
+        is DataValue.DataJsonObject -> gsonSerializer.toJsonTree(src.value)
         else -> JsonObject()
     }
 
@@ -149,7 +149,7 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
                 } else {
                     try {
                         FormValue.ValueFormFieldImage(
-                            gson.fromJson(
+                            gsonSerializer.fromJson(
                                 json.asJsonArray,
                                 object : TypeToken<List<FormFieldImage>>() {}.type
                             )
@@ -173,7 +173,7 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
     ): JsonElement = when (src) {
         is FormValue.ValueInt -> JsonPrimitive(src.value)
         is FormValue.ValueString -> JsonPrimitive(src.value)
-        is FormValue.ValueFormFieldImage -> gson.toJsonTree(src.images)
+        is FormValue.ValueFormFieldImage -> gsonSerializer.toJsonTree(src.images)
         is FormValue.ValueJsonArray -> src.value
         else -> JsonObject()
     }

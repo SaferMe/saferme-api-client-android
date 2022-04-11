@@ -81,12 +81,6 @@ class AndroidClient @Inject constructor() {
         // Reusable serializer configured with default options
         val gsonSerializer: Gson = gsonBuilder.create()
 
-        val gson: Gson = GsonBuilder().apply {
-            registerTypeAdapter(FieldType::class.java, FieldTypeDecode())
-            registerTypeAdapter(FormValue::class.java, FormValueDecode())
-            registerTypeAdapter(DataValue::class.java, DataValueDecode())
-        }.create()
-
         // Reusable URL Builder
         fun baseUrlBuilder(params: RequestParameters): URLBuilder {
             return URLBuilder().apply {

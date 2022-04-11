@@ -1,8 +1,10 @@
 package com.thundermaps.apilib.android.api.responses.models
 
+import com.google.gson.annotations.Expose
+
 data class Form(
-    val id: Int,
-    val name: String,
-    val version: Int,
-    val fields: List<FormField>
+    @Expose val id: Int,
+    @Expose val name: String,
+    @Expose val version: Int,
+    @Expose val fields: List<FormField>
 )
