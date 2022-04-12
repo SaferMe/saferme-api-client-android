@@ -36,7 +36,8 @@ data class Report(
     @SerializedName(USER_SHORT_NAME) @Expose val userShortName: String? = null,
     @SerializedName(VIEWER_COUNT) @Expose val viewerCount: Int? = 0,
     @SerializedName(FORM_FIELDS) @Expose val formFields: JsonArray? = null,
-    @SerializedName(HIDDEN_FIELDS) @Expose val hiddenFields: JsonArray? = null
+    @SerializedName(HIDDEN_FIELDS) @Expose val hiddenFields: JsonArray? = null,
+    @SerializedName(ASSIGNMENT_DUE_AT) @Expose val assignmentDueAt: String? = null
 ) : SaferMeDatum {
     override fun toString(): String {
         return gson.toJson(this)
@@ -62,6 +63,7 @@ data class Report(
         const val UPDATED_AT = "updated_at"
         const val USER_ID = "user_id"
         const val USER_SHORT_NAME = "user_short_name"
+        const val ASSIGNMENT_DUE_AT = "assignment_due_at"
         const val VIEWER_COUNT = "viewer_count"
         const val FORM_FIELDS = "form_fields"
         const val MODIFIED_DATE = "modified_date"
