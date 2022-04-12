@@ -12,6 +12,7 @@ data class Report(
     @Expose val id: Int? = 0,
     @Expose val title: String? = null,
     @SerializedName(ACCOUNT_ID) @Expose val accountId: Int? = null,
+    @SerializedName(ASSIGNEE_ID) @Expose val assigneeId: String? = null,
     @Expose val address: String? = null,
     @Expose val appearance: String? = null,
     @SerializedName(CATEGORIES_TITLE) @Expose val categoriesTitle: String? = null,
@@ -43,6 +44,7 @@ data class Report(
 
     companion object {
         const val ACCOUNT_ID = "account_id"
+        const val ASSIGNEE_ID = "assignee_id"
         const val CATEGORIES_TITLE = "categories_title"
         const val CATEGORY_ID = "category_id"
         const val COMMENT_COUNT = "comment_count"
