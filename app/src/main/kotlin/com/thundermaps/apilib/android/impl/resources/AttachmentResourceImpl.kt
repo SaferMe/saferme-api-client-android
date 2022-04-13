@@ -19,16 +19,14 @@ import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
-import io.ktor.client.request.post
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.url
 import io.ktor.client.response.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import io.ktor.http.URLBuilder
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.toByteArray
@@ -62,25 +60,24 @@ class AttachmentResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return@coroutineScope resultHandler.handleException(UnknownHostException())
         }
-        val urlBuilder = AndroidClient.baseUrlBuilder(parameters)
         val (client, requestBuilder) = androidClient.client(parameters)
-        val uploadAuthorizationResult = getUploadAuthentication(urlBuilder, client, requestBuilder)
+        val uploadAuthorizationResult = getUploadAuthentication(parameters, client, requestBuilder)
 
         uploadAuthorizationResult.getNullableData()?.let { response ->
             val uploadAuthorization = response.uploadAuthorization
             val uploadFileJob = scope.async {
                 uploadFile(client, filePath, uploadAuthorization)
             }
-            val createdFileAttachmentDeferred = scope.async {
+            val createFileAttachmentDeferred = scope.async {
                 createFileAttachment(
-                    urlBuilder,
+                    parameters,
                     client,
                     requestBuilder,
                     uploadAuthorization.keyPrefix
                 )
             }
             uploadFileJob.await()
-            return@coroutineScope createdFileAttachmentDeferred.await()
+            return@coroutineScope createFileAttachmentDeferred.await()
         }
         return@coroutineScope resultHandler.handleException(UserNotAuthenticatedException("Error get upload authorization"))
     }
@@ -91,7 +88,7 @@ class AttachmentResourceImpl @Inject constructor(
         uploadAuthorization: UploadAuthorization
     ) {
         val formData = formData {
-            append(KEY, "${uploadAuthorization.keyPrefix}/$IMAGE_FILE_NAME")
+            append(KEY, "${uploadAuthorization.keyPrefix}$IMAGE_FILE_NAME")
             val fields = uploadAuthorization.fields
             append(
                 AuthorizationFields.SUCCESS_ACTION_STATUS,
@@ -113,24 +110,28 @@ class AttachmentResourceImpl @Inject constructor(
                 )
             })
         }
-        Timber.e("uploadAuthorization: $uploadAuthorization")
-        client.post<HttpResponse>(uploadAuthorization.url) {
+        val httpResponse = client.submitFormWithBinaryData<HttpResponse>(
+            url = uploadAuthorization.url,
+            formData = formData
+        )
+        Timber.e("responseStatus: ${httpResponse.status.description}")
+        /*client.post<HttpResponse>(uploadAuthorization.url) {
             body = MultiPartFormDataContent(formData)
         }.use { response ->
             Timber.e("responseStatus: ${response.status.description}")
-        }
+        }*/
     }
 
     suspend fun getUploadAuthentication(
-        urlBuilder: URLBuilder,
+        parameters: RequestParameters,
         client: HttpClient,
         requestBuilder: HttpRequestBuilder
     ): Result<UploadAuthorizationResponse> {
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
-            url(urlBuilder.apply {
+            url(AndroidClient.baseUrlBuilder(parameters).apply {
                 encodedPath =
-                    "${encodedPath}$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
+                    "$encodedPath$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
             }.build())
         })
         val responseString = String(call.response.content.toByteArray())
@@ -146,20 +147,20 @@ class AttachmentResourceImpl @Inject constructor(
     }
 
     private suspend fun createFileAttachment(
-        urlBuilder: URLBuilder,
+        parameters: RequestParameters,
         client: HttpClient,
         requestBuilder: HttpRequestBuilder,
         keyPrefix: String
     ): Result<FileAttachment> {
+        val fileAttachmentBody = FileAttachmentRequest(KeyRequest("$keyPrefix$IMAGE_FILE_NAME"))
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Post
-            url(urlBuilder.apply {
-                encodedPath = "${encodedPath}$FILE_ATTACHMENTS_PATH"
+            url(AndroidClient.baseUrlBuilder(parameters).apply {
+                encodedPath = "$encodedPath$FILE_ATTACHMENTS_PATH"
             }.build())
+
             contentType(ContentType.Application.Json)
-            body = {
-                FileAttachmentRequest(KeyRequest("$keyPrefix$IMAGE_FILE_NAME"))
-            }
+            body = fileAttachmentBody
         })
         return resultHandler.processResult(call, gson)
     }
@@ -225,4 +226,4 @@ internal data class FileAttachmentRequest(
 }
 
 @ExcludeFromJacocoGeneratedReport
-internal data class KeyRequest(val key: String)
+internal data class KeyRequest(@SerializedName(value = "key") @Expose val key: String)

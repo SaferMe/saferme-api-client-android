@@ -17,7 +17,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -62,9 +61,8 @@ class AttachmentResourceImplTest {
         )
         val requestBuilder = HttpRequestBuilder()
 
-        val urlBuilder = AndroidClient.baseUrlBuilder(defaultParameters)
-
-        val result = attachmentResource.getUploadAuthentication(urlBuilder, client, requestBuilder)
+        val result =
+            attachmentResource.getUploadAuthentication(defaultParameters, client, requestBuilder)
 
 //        assertNotNull(result.getNullableData())
         assertEquals(uploadAuthorizationResponse, result.getNullableData())
@@ -95,8 +93,10 @@ class AttachmentResourceImplTest {
         )
 
         private const val key = "async_uploads/9c457cb6-cc9a-4e6b-9b07-d50de3c45fb9"
-        private const val policy = "eyJleHBpcmF0aW9uIjoiMjAyMi0wNC0xMVQyMTo1NTozNloiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJ0aHVuZGVybWFwcy11cGxvYWRzIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJhc3luY191cGxvYWRzL2E1ZmIxNmViLTE4NDktNDQ2OC1iNTllLWNjMmQ1YWU0MDBhOCJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL3BuZyJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJQ1BOQUVBUFVONTRLWElBLzIwMjIwNDExL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7rtwurQ16LWRhdGUiOiIyMDIyMDQxMVQyMDU1MzZaIn1dfQ=="
-        private const val amzSignature = "58af91e9a564683a14c0a05c70d1c7bff7e448361ce9cf525c04a114a323a93201"
+        private const val policy =
+            "eyJleHBpcmF0aW9uIjoiMjAyMi0wNC0xMVQyMTo1NTozNloiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJ0aHVuZGVybWFwcy11cGxvYWRzIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJhc3luY191cGxvYWRzL2E1ZmIxNmViLTE4NDktNDQ2OC1iNTllLWNjMmQ1YWU0MDBhOCJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL3BuZyJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJQ1BOQUVBUFVONTRLWElBLzIwMjIwNDExL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7rtwurQ16LWRhdGUiOiIyMDIyMDQxMVQyMDU1MzZaIn1dfQ=="
+        private const val amzSignature =
+            "58af91e9a564683a14c0a05c70d1c7bff7e448361ce9cf525c04a114a323a93201"
         private const val uploadUrl = "https://test-uploads.s3.amazonaws.com"
 
         private val uploadAuthorizationResponse = UploadAuthorizationResponse(
