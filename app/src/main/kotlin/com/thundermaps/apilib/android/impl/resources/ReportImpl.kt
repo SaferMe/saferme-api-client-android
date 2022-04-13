@@ -91,6 +91,6 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         private const val REPORT_PATH = "reports"
         @VisibleForTesting
         const val FIELDS_PARAM =
-            "fields=categories_title,category_id,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by,report_state,user_short_name,appearance,assignee_id,assignment_due_At"
+            "fields=categories_title,category_id,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by,report_state,user_short_name,appearance,assignee_id,assignment_due_at"
     }
 }
