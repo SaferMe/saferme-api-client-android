@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.impl
 
+import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.thundermaps.apilib.android.api.SaferMeCredentials
@@ -69,6 +70,7 @@ class AndroidClient @Inject constructor() {
     companion object {
 
         // Default GSON Configuration
+        @VisibleForTesting
         val gsonBuilder = GsonBuilder().apply {
             disableHtmlEscaping()
             excludeFieldsWithoutExposeAnnotation()

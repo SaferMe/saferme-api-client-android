@@ -17,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -65,6 +66,7 @@ class AttachmentResourceImplTest {
 
         val result = attachmentResource.getUploadAuthentication(urlBuilder, client, requestBuilder)
 
+//        assertNotNull(result.getNullableData())
         assertEquals(uploadAuthorizationResponse, result.getNullableData())
 
         assertTrue(inspectCalled)
@@ -94,8 +96,7 @@ class AttachmentResourceImplTest {
 
         private const val key = "async_uploads/9c457cb6-cc9a-4e6b-9b07-d50de3c45fb9"
         private const val policy = "eyJleHBpcmF0aW9uIjoiMjAyMi0wNC0xMVQyMTo1NTozNloiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJ0aHVuZGVybWFwcy11cGxvYWRzIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJhc3luY191cGxvYWRzL2E1ZmIxNmViLTE4NDktNDQ2OC1iNTllLWNjMmQ1YWU0MDBhOCJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL3BuZyJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJQ1BOQUVBUFVONTRLWElBLzIwMjIwNDExL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7rtwurQ16LWRhdGUiOiIyMDIyMDQxMVQyMDU1MzZaIn1dfQ=="
-        private const val amzSignature =
-            "58af91e9a564683a14c0a05c70d1c7bff7e448361ce9cf525c04a114a323a93201"
+        private const val amzSignature = "58af91e9a564683a14c0a05c70d1c7bff7e448361ce9cf525c04a114a323a93201"
         private const val uploadUrl = "https://test-uploads.s3.amazonaws.com"
 
         private val uploadAuthorizationResponse = UploadAuthorizationResponse(
@@ -116,7 +117,28 @@ class AttachmentResourceImplTest {
             )
         )
         private const val newResponse = """
-            {"upload_authorization":{"method":"POST","key":"async_uploads/301ac994-356a-46d4-94a9-ed494c2fc9c4","key_prefix":"async_uploads/301ac994-356a-46d4-94a9-ed494c2fc9c4/","url":"https://thundermaps-uploads.s3.amazonaws.com","fields":{"key":"async_uploads/301ac994-356a-46d4-94a9-ed494c2fc9c4","success_action_status":"201","Content-Type":"image/png","policy":"eyJleHBpcmF0aW9uIjoiMjAyMi0wNC0xMVQxMjozNDoxMloiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJ0aHVuZGVybWFwcy11cGxvYWRzIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJhc3luY191cGxvYWRzLzMwMWFjOTk0LTM1NmEtNDZkNC05NGE5LWVkNDk0YzJmYzljNCJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL3BuZyJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJQ1BOQUVBUFVONTRLWElBLzIwMjIwNDExL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7IngtYW16LWRhdGUiOiIyMDIyMDQxMVQxMTM0MTJaIn1dfQ==","x-amz-credential":"AKIAICPNAEAPUN54KXIA/20220411/us-east-1/s3/aws4_request","x-amz-algorithm":"AWS4-HMAC-SHA256","x-amz-date":"20220411T113412Z","x-amz-signature":"5e35d7fb8c1f8d8e175fb2e33dd758b7e757811b1601e1e992a09b92f60ccf5a"},"required_fields":["Content-Type","file"]}}
+            {
+  "upload_authorization": {
+    "method": "POST",
+    "key": "async_uploads/646d992d-1018-48e0-ad00-148b8a8e6445",
+    "key_prefix": "async_uploads/646d992d-1018-48e0-ad00-148b8a8e6445/",
+    "url": "https://thundermaps-uploads.s3.amazonaws.com",
+    "fields": {
+      "key": "async_uploads/646d992d-1018-48e0-ad00-148b8a8e6445",
+      "success_action_status": "201",
+      "Content-Type": "image/png",
+      "policy": "eyJleHBpcmF0aW9uIjoiMjAyMi0wNC0xMlQwMjowNzo1MFoiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJ0aHVuZGVybWFwcy11cGxvYWRzIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJhc3luY191cGxvYWRzLzY0NmQ5OTJkLTEwMTgtNDhlMC1hZDAwLTE0OGI4YThlNjQ0NSJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL3BuZyJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJQ1BOQUVBUFVONTRLWElBLzIwMjIwNDEyL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7IngtYW16LWRhdGUiOiIyMDIyMDQxMlQwMTA3NTBaIn1dfQ==",
+      "x-amz-credential": "AKIAICPNAEAPUN54KXIA/20220412/us-east-1/s3/aws4_request",
+      "x-amz-algorithm": "AWS4-HMAC-SHA256",
+      "x-amz-date": "20220412T010750Z",
+      "x-amz-signature": "ba6d5c3afd5c71db9826f9b2e768fb350b5078844d431a1f755157f00f8b7ebf"
+    },
+    "required_fields": [
+      "Content-Type",
+      "file"
+    ]
+  }
+}
         """
         private const val uploadAuthorizationResponseSuccess = """
             {
@@ -129,11 +151,12 @@ class AttachmentResourceImplTest {
                   "key": "$key",
                   "success_action_status": "201",
                   "Content-Type": "image/png",
+                  
                   "policy": "$policy",
                   "x-amz-credential": "AKIAICPNAEAPUN54KXIA/20220410/us-east-1/s3/aws4_request",
                   "x-amz-algorithm": "AWS4-HMAC-SHA256",
                   "x-amz-date": "20220410T233530Z",
-                  "x-amz-signature": $amzSignature
+                  "x-amz-signature": "$amzSignature"
                 },
                 "required_fields": [
                   "Content-Type",

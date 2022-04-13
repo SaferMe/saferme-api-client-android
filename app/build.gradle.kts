@@ -97,6 +97,10 @@ dependencies {
     implementation(Deps.awsAndroidS3)
 
     implementation(Deps.mapboxGeoJson)
+
+    implementation(Deps.moshi)
+    implementation(Deps.moshiKotlin)
+    kapt(Deps.moshiCodegen)
 }
 
 // Test Dependencies

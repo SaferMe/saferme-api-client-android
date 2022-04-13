@@ -1,10 +1,13 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import android.net.Uri
 import android.security.keystore.UserNotAuthenticatedException
 import com.google.gson.Gson
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
@@ -16,7 +19,6 @@ import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.forms.FormPart
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.post
@@ -29,10 +31,14 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.URLBuilder
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
+import io.ktor.util.toByteArray
 import java.io.File
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.io.errors.IOException
 import timber.log.Timber
 
 @KtorExperimentalAPI
@@ -42,12 +48,19 @@ class AttachmentResourceImpl @Inject constructor(
     private val resultHandler: ResultHandler,
     private val gson: Gson
 ) : AttachmentResource {
+    private val moshi: Moshi by lazy {
+        Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+    }
+
     override suspend fun uploadFile(
         parameters: RequestParameters,
         filePath: String
-    ): Result<FileAttachment> {
+    ): Result<FileAttachment> = coroutineScope {
+        val scope = this
         if (!parameters.host.isInternetAvailable()) {
-            return resultHandler.handleException(UnknownHostException())
+            return@coroutineScope resultHandler.handleException(UnknownHostException())
         }
         val urlBuilder = AndroidClient.baseUrlBuilder(parameters)
         val (client, requestBuilder) = androidClient.client(parameters)
@@ -55,17 +68,21 @@ class AttachmentResourceImpl @Inject constructor(
 
         uploadAuthorizationResult.getNullableData()?.let { response ->
             val uploadAuthorization = response.uploadAuthorization
-            uploadFile(client, filePath, uploadAuthorization)
-            return uploadAuthorization.keyPrefix?.let {
+            val uploadFileJob = scope.async {
+                uploadFile(client, filePath, uploadAuthorization)
+            }
+            val createdFileAttachmentDeferred = scope.async {
                 createFileAttachment(
-                    urlBuilder, client, requestBuilder,
-                    it
+                    urlBuilder,
+                    client,
+                    requestBuilder,
+                    uploadAuthorization.keyPrefix
                 )
             }
-                ?: resultHandler.handleException(UserNotAuthenticatedException("Error get upload authorization"))
+            uploadFileJob.await()
+            return@coroutineScope createdFileAttachmentDeferred.await()
         }
-
-        return resultHandler.handleException(UserNotAuthenticatedException("Error get upload authorization"))
+        return@coroutineScope resultHandler.handleException(UserNotAuthenticatedException("Error get upload authorization"))
     }
 
     private suspend fun uploadFile(
@@ -73,36 +90,34 @@ class AttachmentResourceImpl @Inject constructor(
         filePath: String,
         uploadAuthorization: UploadAuthorization
     ) {
-        Timber.e("uploadAuthorization: $uploadAuthorization")
         val formData = formData {
             append(KEY, "${uploadAuthorization.keyPrefix}/$IMAGE_FILE_NAME")
-            uploadAuthorization.fields?.let { fields ->
-                append(
-                    AuthorizationFields.SUCCESS_ACTION_STATUS,
-                    fields.successActionStatus
-                )
-                append(AuthorizationFields.CONTENT_TYPE, fields.contentType)
-                append(POLICY, fields.policy)
-                append(AuthorizationFields.X_AMZ_ALGORITHM, fields.amzAlgorithm)
-                append(AuthorizationFields.X_AMZ_DATE, fields.amzDate)
-                append(AuthorizationFields.X_AMZ_CREDENTIAL, fields.amzCredential)
-                append(AuthorizationFields.X_AMZ_SIGNATURE, fields.amzSignature)
-            }
-            append(FormPart(FILE, File(filePath).readBytes(), Headers.build {
+            val fields = uploadAuthorization.fields
+            append(
+                AuthorizationFields.SUCCESS_ACTION_STATUS,
+                fields.successActionStatus
+            )
+            append(AuthorizationFields.CONTENT_TYPE, fields.contentType)
+            append(POLICY, fields.policy)
+            append(AuthorizationFields.X_AMZ_ALGORITHM, fields.amzAlgorithm)
+            append(AuthorizationFields.X_AMZ_DATE, fields.amzDate)
+            append(AuthorizationFields.X_AMZ_CREDENTIAL, fields.amzCredential)
+            append(AuthorizationFields.X_AMZ_SIGNATURE, fields.amzSignature)
+
+            val file = File(filePath)
+            append(FILE, file.readBytes(), Headers.build {
+                append(HttpHeaders.ContentType, IMAGE_PNG)
                 append(
                     HttpHeaders.ContentDisposition,
                     "${FileAttachment.FILE_NAME}=$IMAGE_FILE_NAME"
                 )
-            }))
+            })
         }
-        Uri.parse(uploadAuthorization.url).host?.let {
-            Timber.e("host: $it")
-            Timber.e("formData: $formData")
-            client.post<HttpResponse>(it) {
-                body = MultiPartFormDataContent(formData)
-            }.use { response ->
-                Timber.e("responseStatus: ${response.status.description}")
-            }
+        Timber.e("uploadAuthorization: $uploadAuthorization")
+        client.post<HttpResponse>(uploadAuthorization.url) {
+            body = MultiPartFormDataContent(formData)
+        }.use { response ->
+            Timber.e("responseStatus: ${response.status.description}")
         }
     }
 
@@ -114,10 +129,20 @@ class AttachmentResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(urlBuilder.apply {
-                encodedPath = "${encodedPath}$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
+                encodedPath =
+                    "${encodedPath}$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
             }.build())
         })
-        return resultHandler.processResult(call, gson)
+        val responseString = String(call.response.content.toByteArray())
+        val adapter = moshi.adapter(UploadAuthorizationResponse::class.java)
+        val data: UploadAuthorizationResponse? = try {
+            adapter.fromJson(responseString)
+        } catch (exception: IOException) {
+            null
+        }
+        return data?.let { resultHandler.handleSuccess(it) } ?: resultHandler.handleException(
+            Exception()
+        )
     }
 
     private suspend fun createFileAttachment(
@@ -140,7 +165,6 @@ class AttachmentResourceImpl @Inject constructor(
     }
 
     companion object {
-
         private const val CONTENT_TYPE_PARAMETER = "content_type"
         private const val IMAGE_PNG = "image/png"
         private const val FILE_ATTACHMENTS_PATH = "file_attachments"
@@ -153,30 +177,33 @@ class AttachmentResourceImpl @Inject constructor(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class UploadAuthorizationResponse(
-    @SerializedName(value = "upload_authorization") @Expose val uploadAuthorization: UploadAuthorization
+    @Json(name = "upload_authorization") @Expose val uploadAuthorization: UploadAuthorization
 )
 
+@JsonClass(generateAdapter = true)
 data class UploadAuthorization(
-    @Expose val key: String?,
-    @SerializedName(value = KEY_PREFIX) @Expose val keyPrefix: String?,
-    @Expose val url: String?,
-    @Expose val fields: AuthorizationFields?
+    @Expose val key: String,
+    @Json(name = KEY_PREFIX) @Expose val keyPrefix: String,
+    @Expose val url: String,
+    @Expose val fields: AuthorizationFields
 ) {
     companion object {
         const val KEY_PREFIX = "key_prefix"
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class AuthorizationFields(
     @Expose val key: String,
-    @SerializedName(value = SUCCESS_ACTION_STATUS) @Expose val successActionStatus: String,
-    @SerializedName(value = CONTENT_TYPE) @Expose val contentType: String,
+    @Json(name = SUCCESS_ACTION_STATUS) @Expose val successActionStatus: String,
+    @Json(name = CONTENT_TYPE) @Expose val contentType: String,
     @Expose val policy: String,
-    @SerializedName(value = X_AMZ_CREDENTIAL) @Expose val amzCredential: String,
-    @SerializedName(value = X_AMZ_ALGORITHM) @Expose val amzAlgorithm: String,
-    @SerializedName(value = X_AMZ_DATE) @Expose val amzDate: String,
-    @SerializedName(value = X_AMZ_SIGNATURE) @Expose val amzSignature: String
+    @Json(name = X_AMZ_CREDENTIAL) @Expose val amzCredential: String,
+    @Json(name = X_AMZ_ALGORITHM) @Expose val amzAlgorithm: String,
+    @Json(name = X_AMZ_DATE) @Expose val amzDate: String,
+    @Json(name = X_AMZ_SIGNATURE) @Expose val amzSignature: String
 ) {
     companion object {
         const val SUCCESS_ACTION_STATUS = "success_action_status"

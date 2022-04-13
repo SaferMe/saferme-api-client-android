@@ -30,7 +30,8 @@ object Deps {
         val ktor: String = "1.2.5",
         val slf4j: String = "1.6.1",
         val mapboxGeoJson: String = "5.8.0",
-        val awsAndroid: String = "2.44.0"
+        val awsAndroid: String = "2.44.0",
+        val moshi: String = "1.13.0"
     )
 
     val versions = Versions()
@@ -42,6 +43,9 @@ object Deps {
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
     val mapboxGeoJson = "com.mapbox.mapboxsdk:mapbox-sdk-geojson:${versions.mapboxGeoJson}"
     val awsAndroidS3 = "com.amazonaws:aws-android-sdk-s3:${versions.awsAndroid}"
+    val moshi = "com.squareup.moshi:moshi:${versions.moshi}"
+    val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${versions.moshi}"
+    val moshiCodegen = "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
 }
 
 object TestingDeps {
