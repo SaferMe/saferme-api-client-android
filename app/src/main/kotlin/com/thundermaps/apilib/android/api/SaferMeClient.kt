@@ -14,6 +14,7 @@ import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.resources.ShapeResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
+import com.thundermaps.apilib.android.api.resources.TeamUsersResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
 
 interface SaferMeClient {
@@ -33,4 +34,5 @@ interface SaferMeClient {
     val categoryResource: CategoryResource
     val formResource: FormResource
     val attachmentResource: AttachmentResource
+    val teamUsersResource: TeamUsersResource
 }
