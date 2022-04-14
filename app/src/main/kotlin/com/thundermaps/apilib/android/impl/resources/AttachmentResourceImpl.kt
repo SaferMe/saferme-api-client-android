@@ -37,7 +37,6 @@ import javax.inject.Singleton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.io.errors.IOException
-import timber.log.Timber
 
 @KtorExperimentalAPI
 @Singleton
@@ -110,16 +109,10 @@ class AttachmentResourceImpl @Inject constructor(
                 )
             })
         }
-        val httpResponse = client.submitFormWithBinaryData<HttpResponse>(
+        client.submitFormWithBinaryData<HttpResponse>(
             url = uploadAuthorization.url,
             formData = formData
         )
-        Timber.e("responseStatus: ${httpResponse.status.description}")
-        /*client.post<HttpResponse>(uploadAuthorization.url) {
-            body = MultiPartFormDataContent(formData)
-        }.use { response ->
-            Timber.e("responseStatus: ${response.status.description}")
-        }*/
     }
 
     suspend fun getUploadAuthentication(
