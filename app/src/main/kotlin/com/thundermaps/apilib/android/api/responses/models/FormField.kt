@@ -77,7 +77,9 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
 
 @ExcludeFromJacocoGeneratedReport
 open class DataValue(private val data: Any) {
+    @ExcludeFromJacocoGeneratedReport
     data class DataJsonObject(val value: JsonObject) : DataValue(value)
+    @ExcludeFromJacocoGeneratedReport
     data class DataString(val value: String) : DataValue(value)
 
     override fun equals(other: Any?): Boolean {
