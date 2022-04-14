@@ -1,6 +1,7 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import android.security.keystore.UserNotAuthenticatedException
+import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -27,16 +28,15 @@ import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
-import io.ktor.util.toByteArray
 import java.io.File
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.io.errors.IOException
 
 @KtorExperimentalAPI
 @Singleton
@@ -51,6 +51,7 @@ class AttachmentResourceImpl @Inject constructor(
             .build()
     }
 
+    @ExcludeFromJacocoGeneratedReport
     override suspend fun uploadFile(
         parameters: RequestParameters,
         filePath: String
@@ -75,17 +76,19 @@ class AttachmentResourceImpl @Inject constructor(
                     uploadAuthorization.keyPrefix
                 )
             }
-            uploadFileJob.await()
-            return@coroutineScope createFileAttachmentDeferred.await()
+            if (uploadFileJob.await()) {
+                return@coroutineScope createFileAttachmentDeferred.await()
+            }
         }
-        return@coroutineScope resultHandler.handleException(UserNotAuthenticatedException("Error get upload authorization"))
+        return@coroutineScope resultHandler.handleException(UserNotAuthenticatedException("Error upload file"))
     }
 
+    @ExcludeFromJacocoGeneratedReport
     private suspend fun uploadFile(
         client: HttpClient,
         filePath: String,
         uploadAuthorization: UploadAuthorization
-    ) {
+    ): Boolean {
         val formData = formData {
             append(KEY, "${uploadAuthorization.keyPrefix}$IMAGE_FILE_NAME")
             val fields = uploadAuthorization.fields
@@ -109,10 +112,10 @@ class AttachmentResourceImpl @Inject constructor(
                 )
             })
         }
-        client.submitFormWithBinaryData<HttpResponse>(
+        return client.submitFormWithBinaryData<HttpResponse>(
             url = uploadAuthorization.url,
             formData = formData
-        )
+        ).status == HttpStatusCode.Created
     }
 
     suspend fun getUploadAuthentication(
@@ -127,19 +130,11 @@ class AttachmentResourceImpl @Inject constructor(
                     "$encodedPath$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
             }.build())
         })
-        val responseString = String(call.response.content.toByteArray())
-        val adapter = moshi.adapter(UploadAuthorizationResponse::class.java)
-        val data: UploadAuthorizationResponse? = try {
-            adapter.fromJson(responseString)
-        } catch (exception: IOException) {
-            null
-        }
-        return data?.let { resultHandler.handleSuccess(it) } ?: resultHandler.handleException(
-            Exception()
-        )
+        return resultHandler.processResult(call, moshi, gson)
     }
 
-    private suspend fun createFileAttachment(
+    @VisibleForTesting
+    suspend fun createFileAttachment(
         parameters: RequestParameters,
         client: HttpClient,
         requestBuilder: HttpRequestBuilder,

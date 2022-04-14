@@ -17,6 +17,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -61,18 +63,78 @@ class AttachmentResourceImplTest {
         )
         val requestBuilder = HttpRequestBuilder()
 
-        val result =
-            attachmentResource.getUploadAuthentication(defaultParameters, client, requestBuilder)
-
-//        assertNotNull(result.getNullableData())
+        val result = attachmentResource.getUploadAuthentication(defaultParameters, client, requestBuilder)
         assertEquals(uploadAuthorizationResponse, result.getNullableData())
 
+        assertTrue(inspectCalled)
+    }
+
+    @Test
+    fun `verify get upload error`() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = badCredentialsResponse,
+            status = HttpStatusCode.NonAuthoritativeInformation,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(
+                    UPLOAD_PATH,
+                    it.url.encodedPath
+                )
+                assertEquals(
+                    HttpMethod.Get,
+                    it.method
+                )
+                inspectCalled = true
+            }
+        )
+        val requestBuilder = HttpRequestBuilder()
+
+        val result =
+            attachmentResource.getUploadAuthentication(defaultParameters, client, requestBuilder)
+        assertNull(result.getNullableData())
+        assertTrue(inspectCalled)
+    }
+
+    @Test
+    fun `verify get uploadFileAttachment`() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = fileAttachmentSuccessResponse,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(
+                    FILE_ATTACHMENT_PATH,
+                    it.url.encodedPath
+                )
+                assertEquals(
+                    HttpMethod.Post,
+                    it.method
+                )
+                inspectCalled = true
+            }
+        )
+        val requestBuilder = HttpRequestBuilder()
+
+        val result = attachmentResource.createFileAttachment(
+            defaultParameters,
+            client,
+            requestBuilder,
+            "$key/"
+        )
+        val fileAttachment = result.getNullableData()
+        assertNotNull(fileAttachment)
+
+        assertEquals(2644153, fileAttachment?.id)
+        assertEquals("https://abdu.ieio", fileAttachment?.originalUrl)
         assertTrue(inspectCalled)
     }
 
     companion object {
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        private const val FILE_ATTACHMENT_PATH = "/api/v4/file_attachments"
         private const val UPLOAD_PATH =
             "/api/v4/file_attachments/upload_authorization?content_type=image/png"
 
@@ -141,5 +203,38 @@ class AttachmentResourceImplTest {
               }
             }
         """
+
+        private val badCredentialsResponse =
+            """
+                {
+                   "errors":[
+                      "Please enter your email and password"
+                   ],
+                   "failures":{
+                      "base":[
+                         "Please enter your email and password"
+                      ]
+                   },
+                   "error_codes":{
+                      "base":[
+                         {
+                            "error":"bad_credentials"
+                         }
+                      ]
+                   }
+                }
+            """.trimIndent()
+
+        private val fileAttachmentSuccessResponse = """
+            {
+              "id": 2644153,
+              "original_url": "https://abdu.ieio",
+              "filename": null,
+              "style_url": {},
+              "photo_time": null,
+              "photo_location": null,
+              "tags": {}
+            }
+        """.trimIndent()
     }
 }
