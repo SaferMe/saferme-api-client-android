@@ -1,13 +1,12 @@
 package com.thundermaps.apilib.android.impl.resources
 
+import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
-import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TeamUsersResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
-import com.thundermaps.apilib.android.api.responses.models.Team
 import com.thundermaps.apilib.android.api.responses.models.TeamUserDetails
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.call.HttpClientCall
@@ -29,23 +28,35 @@ class TeamUsersResourceImpl @Inject constructor(
 ) : TeamUsersResource {
 
     private suspend fun getTeamUsersCall(
-        parameters: RequestParameters
+        parameters: RequestParameters,
+        teamId: String
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}teams"
+                encodedPath = "${encodedPath}${TEAM_PATH}${encodedPath}$teamId?$FIELDS_PARAM"
             }.build())
         })
         return call
     }
 
-    override suspend fun getTeamUsers(parameters: RequestParameters): Result<List<TeamUserDetails>> {
+    override suspend fun getTeamUsers(
+        parameters: RequestParameters,
+        teamId: String
+    ): Result<List<TeamUserDetails>> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = getTeamUsersCall(parameters)
+        val call = getTeamUsersCall(parameters, teamId)
         return resultHandler.processResult(call, gson)
+    }
+
+    companion object {
+        private const val TEAM_PATH = "teams"
+
+        @VisibleForTesting
+        const val FIELDS_PARAM =
+            "fields=first_name,last_name,email,-supervisor_id"
     }
 }

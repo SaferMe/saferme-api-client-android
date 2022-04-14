@@ -17,6 +17,7 @@ import com.thundermaps.apilib.android.impl.resources.SessionsImpl
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TasksImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
+import com.thundermaps.apilib.android.impl.resources.TeamUsersResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
 import io.ktor.util.KtorExperimentalAPI
 import org.junit.After
@@ -41,6 +42,7 @@ internal class SaferMeClientTest {
     private val shapeResourceImpl = mock<ShapeResourceImpl>()
     private val categoryResourceImpl = mock<CategoryResourceImpl>()
     private val formResourceImpl = mock<FormResourceImpl>()
+    private val teamUserResourceImpl = mock<TeamUsersResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -55,7 +57,8 @@ internal class SaferMeClientTest {
             brandResourceImpl,
             shapeResourceImpl,
             categoryResourceImpl,
-            formResourceImpl
+            formResourceImpl,
+            teamUserResourceImpl
         )
     }
 
