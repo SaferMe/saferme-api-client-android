@@ -116,30 +116,6 @@ class AttachmentResourceImplTest {
                 )
             )
         )
-        private const val newResponse = """
-            {
-  "upload_authorization": {
-    "method": "POST",
-    "key": "async_uploads/646d992d-1018-48e0-ad00-148b8a8e6445",
-    "key_prefix": "async_uploads/646d992d-1018-48e0-ad00-148b8a8e6445/",
-    "url": "https://thundermaps-uploads.s3.amazonaws.com",
-    "fields": {
-      "key": "async_uploads/646d992d-1018-48e0-ad00-148b8a8e6445",
-      "success_action_status": "201",
-      "Content-Type": "image/png",
-      "policy": "eyJleHBpcmF0aW9uIjoiMjAyMi0wNC0xMlQwMjowNzo1MFoiLCJjb25kaXRpb25zIjpbeyJidWNrZXQiOiJ0aHVuZGVybWFwcy11cGxvYWRzIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJhc3luY191cGxvYWRzLzY0NmQ5OTJkLTEwMTgtNDhlMC1hZDAwLTE0OGI4YThlNjQ0NSJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifSx7IkNvbnRlbnQtVHlwZSI6ImltYWdlL3BuZyJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJQ1BOQUVBUFVONTRLWElBLzIwMjIwNDEyL3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7IngtYW16LWRhdGUiOiIyMDIyMDQxMlQwMTA3NTBaIn1dfQ==",
-      "x-amz-credential": "AKIAICPNAEAPUN54KXIA/20220412/us-east-1/s3/aws4_request",
-      "x-amz-algorithm": "AWS4-HMAC-SHA256",
-      "x-amz-date": "20220412T010750Z",
-      "x-amz-signature": "ba6d5c3afd5c71db9826f9b2e768fb350b5078844d431a1f755157f00f8b7ebf"
-    },
-    "required_fields": [
-      "Content-Type",
-      "file"
-    ]
-  }
-}
-        """
         private const val uploadAuthorizationResponseSuccess = """
             {
               "upload_authorization": {
