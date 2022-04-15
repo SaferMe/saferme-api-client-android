@@ -35,7 +35,7 @@ class TeamUsersResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}${TEAM_PATH}${encodedPath}$teamId?$FIELDS_PARAM"
+                encodedPath = "${encodedPath}$TEAM_PATH/$teamId?$FIELDS_PARAM"
             }.build())
         })
         return call
@@ -53,7 +53,7 @@ class TeamUsersResourceImpl @Inject constructor(
     }
 
     companion object {
-        private const val TEAM_PATH = "teams"
+        private const val TEAM_PATH = "team_users"
 
         @VisibleForTesting
         const val FIELDS_PARAM =
