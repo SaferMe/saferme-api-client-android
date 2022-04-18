@@ -199,9 +199,9 @@ data class Option(
 
 @ExcludeFromJacocoGeneratedReport
 data class SliderData(
-    val minimum: Int,
-    val maximum: Int,
-    val default: Int,
-    val colour: String,
-    val description: String
+    @Expose val minimum: Int,
+    @Expose val maximum: Int,
+    @Expose val default: Int,
+    @Expose val colour: String,
+    @Expose val description: String
 )

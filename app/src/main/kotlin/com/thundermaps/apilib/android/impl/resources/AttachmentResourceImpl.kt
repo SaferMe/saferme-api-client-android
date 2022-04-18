@@ -168,15 +168,15 @@ class AttachmentResourceImpl @Inject constructor(
 
 @JsonClass(generateAdapter = true)
 data class UploadAuthorizationResponse(
-    @Json(name = "upload_authorization") @Expose val uploadAuthorization: UploadAuthorization
+    @Json(name = "upload_authorization") val uploadAuthorization: UploadAuthorization
 )
 
 @JsonClass(generateAdapter = true)
 data class UploadAuthorization(
-    @Expose val key: String,
-    @Json(name = KEY_PREFIX) @Expose val keyPrefix: String,
-    @Expose val url: String,
-    @Expose val fields: AuthorizationFields
+    val key: String,
+    @Json(name = KEY_PREFIX) val keyPrefix: String,
+    val url: String,
+    val fields: AuthorizationFields
 ) {
     companion object {
         const val KEY_PREFIX = "key_prefix"
@@ -185,14 +185,14 @@ data class UploadAuthorization(
 
 @JsonClass(generateAdapter = true)
 data class AuthorizationFields(
-    @Expose val key: String,
-    @Json(name = SUCCESS_ACTION_STATUS) @Expose val successActionStatus: String,
-    @Json(name = CONTENT_TYPE) @Expose val contentType: String,
-    @Expose val policy: String,
-    @Json(name = X_AMZ_CREDENTIAL) @Expose val amzCredential: String,
-    @Json(name = X_AMZ_ALGORITHM) @Expose val amzAlgorithm: String,
-    @Json(name = X_AMZ_DATE) @Expose val amzDate: String,
-    @Json(name = X_AMZ_SIGNATURE) @Expose val amzSignature: String
+    val key: String,
+    @Json(name = SUCCESS_ACTION_STATUS) val successActionStatus: String,
+    @Json(name = CONTENT_TYPE) val contentType: String,
+    val policy: String,
+    @Json(name = X_AMZ_CREDENTIAL) val amzCredential: String,
+    @Json(name = X_AMZ_ALGORITHM) val amzAlgorithm: String,
+    @Json(name = X_AMZ_DATE) val amzDate: String,
+    @Json(name = X_AMZ_SIGNATURE) val amzSignature: String
 ) {
     companion object {
         const val SUCCESS_ACTION_STATUS = "success_action_status"

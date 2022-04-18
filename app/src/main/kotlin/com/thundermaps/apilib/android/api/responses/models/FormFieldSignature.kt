@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class FormFieldSignature(
     @SerializedName(value = FILE_ATTACHMENT_ID) @Expose val fileAttachmentId: Int,
-    @SerializedName(value = FILE_NAME) @Expose val fileName: String,
+    @SerializedName(value = FILE_NAME) @Expose val fileName: String?,
     @SerializedName(value = ORIGINAL_URL) @Expose val url: String,
     @SerializedName(value = SIGNEE_NAME) @Expose val signeeName: String
 ) : Parcelable {

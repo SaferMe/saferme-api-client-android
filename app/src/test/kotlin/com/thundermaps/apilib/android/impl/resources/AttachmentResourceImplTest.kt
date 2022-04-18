@@ -101,7 +101,7 @@ class AttachmentResourceImplTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = fileAttachmentSuccessResponse,
-            status = HttpStatusCode.OK,
+            status = HttpStatusCode.Accepted,
             headers = responseHeaders,
             requestInspector = {
                 assertEquals(

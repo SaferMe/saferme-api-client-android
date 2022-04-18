@@ -22,7 +22,7 @@ suspend inline fun <reified T : Any> ResultHandler.processResult(
     val status = SaferMeApiStatus.statusForCode(call.response.status.value)
     val responseString = String(call.response.content.toByteArray())
     return when (status) {
-        SaferMeApiStatus.OK, SaferMeApiStatus.OTHER_200 -> {
+        SaferMeApiStatus.OK, SaferMeApiStatus.OTHER_200, SaferMeApiStatus.ACCEPTED, SaferMeApiStatus.CREATED -> {
             try {
                 val response = gson.fromJsonString<T>(responseString)
 
