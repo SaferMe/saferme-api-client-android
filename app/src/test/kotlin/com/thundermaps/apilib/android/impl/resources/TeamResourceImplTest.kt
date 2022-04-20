@@ -178,7 +178,7 @@ class TeamResourceImplTest {
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val TEAMS_PATH = "/api/v4/teams"
+        private const val TEAMS_PATH = "/api/v4/teams?fields=mapbox_username,mapbox_dataset_id,mapbox_access_token"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID

@@ -40,9 +40,14 @@ class TeamResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}teams"
+                encodedPath = "${encodedPath}$PATH?$FIELDS"
             }.build())
         })
         return call
+    }
+
+    companion object {
+        const val PATH = "teams"
+        const val FIELDS = "fields=mapbox_username,mapbox_dataset_id,mapbox_access_token"
     }
 }
