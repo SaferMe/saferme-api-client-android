@@ -3,7 +3,7 @@ package com.thundermaps.apilib.android.api.responses.models
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class TeamUserDetails(
+class TeamUser(
     @Expose val id: Long,
     @SerializedName("user_id") @Expose val userId: Long,
     @SerializedName("agreed_to_join") @Expose val agreedToJoin: Boolean,
