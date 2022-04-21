@@ -75,6 +75,7 @@ class TeamResourceImpl @Inject constructor(
 
     companion object {
         private const val TEAM_USER_PATH = "team_users"
+
         @VisibleForTesting
         const val TEAM_USER_FIELDS = "fields=first_name,last_name,email"
 
