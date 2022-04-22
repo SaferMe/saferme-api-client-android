@@ -2,6 +2,7 @@
 plugins {
     id("com.android.library")
     id("maven-publish")
+    id("kotlin-parcelize")
     kotlin("android")
     kotlin("kapt")
 }
