@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.thundermaps.apilib.android.api.SaferMeClient
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
+import com.thundermaps.apilib.android.impl.resources.AttachmentResourceImpl
 import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
 import com.thundermaps.apilib.android.impl.resources.CategoryResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
@@ -41,6 +42,7 @@ internal class SaferMeClientTest {
     private val shapeResourceImpl = mock<ShapeResourceImpl>()
     private val categoryResourceImpl = mock<CategoryResourceImpl>()
     private val formResourceImpl = mock<FormResourceImpl>()
+    private val attachmentResourceImpl = mock<AttachmentResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -55,7 +57,8 @@ internal class SaferMeClientTest {
             brandResourceImpl,
             shapeResourceImpl,
             categoryResourceImpl,
-            formResourceImpl
+            formResourceImpl,
+            attachmentResourceImpl
         )
     }
 
@@ -68,7 +71,8 @@ internal class SaferMeClientTest {
             sessionsImpl,
             channelImpl,
             brandResourceImpl,
-            formResourceImpl
+            formResourceImpl,
+            attachmentResourceImpl
         )
     }
 
@@ -174,5 +178,10 @@ internal class SaferMeClientTest {
     @Test
     fun verifyEnvironmentManager() {
         assertEquals(environmentManager, saferMeClient.environmentManager)
+    }
+
+    @Test
+    fun verifyGetAttachmentResource() {
+        assertEquals(attachmentResourceImpl, saferMeClient.attachmentResource)
     }
 }

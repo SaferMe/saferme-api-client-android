@@ -1,12 +1,13 @@
 package com.thundermaps.apilib.android.api.responses.models
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 
 @ExcludeFromJacocoGeneratedReport
 data class PasswordRequirements(
-    @SerializedName(value = MINIMUM_LENGTH) val minimumLength: Int,
-    @SerializedName(value = STRENGTH_LEVELS) val strengthLevels: StrengthLevels
+    @SerializedName(value = MINIMUM_LENGTH) @Expose val minimumLength: Int,
+    @SerializedName(value = STRENGTH_LEVELS) @Expose val strengthLevels: StrengthLevels
 ) {
     companion object {
         const val MINIMUM_LENGTH = "minimum_length"
@@ -16,7 +17,7 @@ data class PasswordRequirements(
 
 @ExcludeFromJacocoGeneratedReport
 data class StrengthLevels(
-    val weak: Int,
-    val medium: Int,
-    val strong: Int
+    @Expose val weak: Int,
+    @Expose val medium: Int,
+    @Expose val strong: Int
 )

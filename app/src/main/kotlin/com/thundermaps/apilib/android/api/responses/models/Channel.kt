@@ -1,34 +1,35 @@
 package com.thundermaps.apilib.android.api.responses.models
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class Channel(
-    @SerializedName(ALLOW_PUBLIC_COMMENTS) val allowPublicComments: Boolean,
-    @SerializedName(ALLOW_PUBLIC_VIEWERS) val allowPublicViewers: Boolean,
-    @SerializedName(ALLOW_USER_DELETE_OWN_REPORTS) val allowUserDeleteOwnReports: Boolean,
-    @SerializedName(ARE_NEW_REPORTS_ANONYMOUS) val areNewReportsAnonymous: Boolean,
-    @SerializedName(BANNERS_ENABLED) val isBannersEnabled: Boolean,
-    @SerializedName(CATEGORY_ID) val categoryId: Long,
-    val description: String,
-    @SerializedName(FORM_LOCKED) val isFormLocked: Boolean?,
-    @SerializedName(HAZARD_CHANNEL) val isHazardChannel: Boolean?,
-    val id: Long,
-    @SerializedName(IS_ADDON_CHANNEL) val isAddonChannel: Boolean,
-    @SerializedName(IS_DELETABLE_BY) val isDeletableBy: Boolean?,
-    @SerializedName(IS_MANAGEABLE_BY) val isManageableBy: Boolean,
-    @SerializedName(IS_OPERABLE_BY) val isOperableBy: Boolean,
-    @SerializedName(IS_REPORTABLE_BY) val isReportableBy: Boolean,
-    @SerializedName(LAST_REPORT_DATE) val lastReportDate: String?,
-    @SerializedName(MEMBER_COUNT) val memberCount: Int? = 0,
-    val moderated: Boolean,
-    val name: String,
-    @SerializedName(PIN_URLS) val pinUrls: PinUrls?,
-    @SerializedName(REPORTS_COUNT) val reportsCount: Int,
-    @SerializedName(RISK_CONTROLS_EDITABILITY) val riskControlsEditablity: String,
-    val slug: String,
-    @SerializedName(STANDARD_CHANNEL) val standardChannel: Boolean,
-    @SerializedName(TEAM_ID) val teamId: Long,
-    @SerializedName(TUNE_IN_COUNT) val tuneInCount: Int? = 0
+    @SerializedName(ALLOW_PUBLIC_COMMENTS) @Expose val allowPublicComments: Boolean,
+    @SerializedName(ALLOW_PUBLIC_VIEWERS) @Expose val allowPublicViewers: Boolean,
+    @SerializedName(ALLOW_USER_DELETE_OWN_REPORTS) @Expose val allowUserDeleteOwnReports: Boolean,
+    @SerializedName(ARE_NEW_REPORTS_ANONYMOUS) @Expose val areNewReportsAnonymous: Boolean,
+    @SerializedName(BANNERS_ENABLED) @Expose val isBannersEnabled: Boolean,
+    @SerializedName(CATEGORY_ID) @Expose val categoryId: Long,
+    @Expose val description: String,
+    @SerializedName(FORM_LOCKED) @Expose val isFormLocked: Boolean?,
+    @SerializedName(HAZARD_CHANNEL) @Expose val isHazardChannel: Boolean?,
+    @Expose val id: Long,
+    @SerializedName(IS_ADDON_CHANNEL) @Expose val isAddonChannel: Boolean,
+    @SerializedName(IS_DELETABLE_BY) @Expose val isDeletableBy: Boolean?,
+    @SerializedName(IS_MANAGEABLE_BY) @Expose val isManageableBy: Boolean,
+    @SerializedName(IS_OPERABLE_BY) @Expose val isOperableBy: Boolean,
+    @SerializedName(IS_REPORTABLE_BY) @Expose val isReportableBy: Boolean,
+    @SerializedName(LAST_REPORT_DATE) @Expose val lastReportDate: String?,
+    @SerializedName(MEMBER_COUNT) @Expose val memberCount: Int? = 0,
+    @Expose val moderated: Boolean,
+    @Expose val name: String,
+    @SerializedName(PIN_URLS) @Expose val pinUrls: PinUrls?,
+    @SerializedName(REPORTS_COUNT) @Expose val reportsCount: Int,
+    @SerializedName(RISK_CONTROLS_EDITABILITY) @Expose val riskControlsEditablity: String,
+    @Expose val slug: String,
+    @SerializedName(STANDARD_CHANNEL) @Expose val standardChannel: Boolean,
+    @SerializedName(TEAM_ID) @Expose val teamId: Long,
+    @SerializedName(TUNE_IN_COUNT) @Expose val tuneInCount: Int? = 0
 ) {
     companion object {
         const val ALLOW_PUBLIC_COMMENTS = "allow_public_comments"

@@ -2,6 +2,7 @@
 plugins {
     id("com.android.library")
     id("maven-publish")
+    id("kotlin-parcelize")
     kotlin("android")
     kotlin("kapt")
 }
@@ -93,7 +94,13 @@ dependencies {
     implementation(Deps.dagger2)
     kapt(Deps.dagger2_annotation)
 
+    implementation(Deps.awsAndroidS3)
+
     implementation(Deps.mapboxGeoJson)
+
+    implementation(Deps.moshi)
+    implementation(Deps.moshiKotlin)
+    kapt(Deps.moshiCodegen)
 }
 
 // Test Dependencies
