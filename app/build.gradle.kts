@@ -3,7 +3,6 @@ plugins {
     id("com.android.library")
     id("maven-publish")
     kotlin("android")
-    kotlin("android.extensions")
     kotlin("kapt")
 }
 
