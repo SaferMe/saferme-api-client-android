@@ -123,6 +123,9 @@ open class FormValue {
 
     @ExcludeFromJacocoGeneratedReport
     data class ValueFormFieldImage(val images: List<FormFieldImage> = emptyList()) : FormValue()
+
+    @ExcludeFromJacocoGeneratedReport
+    data class ValueFormFieldSignature(val signature: FormFieldSignature) : FormValue()
 }
 
 @ExcludeFromJacocoGeneratedReport
