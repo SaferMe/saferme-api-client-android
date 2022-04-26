@@ -19,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class TasksImplTest {
+class TaskResourceImplTest {
 
     @MockK
     lateinit var defaultAPI: AndroidClient
@@ -67,7 +67,7 @@ class TasksImplTest {
         }
 
         runBlocking {
-            TasksImpl(defaultAPI).create(TestHelpers.defaultParams, Task(),
+            TaskResourceImpl(defaultAPI).create(TestHelpers.defaultParams, Task(),
                 {
                     assertEquals(it.data.uuid, uuid)
                     synchronized(count) { count++ }
@@ -112,7 +112,7 @@ class TasksImplTest {
         }
 
         runBlocking {
-            TasksImpl(defaultAPI).read(TestHelpers.defaultParams, Task(uuid = uuid),
+            TaskResourceImpl(defaultAPI).read(TestHelpers.defaultParams, Task(uuid = uuid),
                 {
                     assertEquals(it.data.uuid, uuid)
                     synchronized(count) { count++ }
@@ -158,7 +158,7 @@ class TasksImplTest {
         }
 
         runBlocking {
-            TasksImpl(defaultAPI).update(TestHelpers.defaultParams, requestItem,
+            TaskResourceImpl(defaultAPI).update(TestHelpers.defaultParams, requestItem,
                 {
                     // return value should be the same object
                     assertTrue(it.data === requestItem)
@@ -204,7 +204,7 @@ class TasksImplTest {
         }
 
         runBlocking {
-            TasksImpl(defaultAPI).index(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI).index(TestHelpers.defaultParams,
                 {
                     val actualList = it.data
                     assertEquals(2, actualList.size)

@@ -16,7 +16,7 @@ import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
-import com.thundermaps.apilib.android.impl.resources.TasksImpl
+import com.thundermaps.apilib.android.impl.resources.TaskResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
 import io.ktor.util.KtorExperimentalAPI
@@ -90,8 +90,8 @@ internal class SaferMeClientTest {
     fun verifyTaskResource() {
         val taskResource = saferMeClient.taskResource
         assertNotNull(taskResource)
-        assertTrue(taskResource is TasksImpl)
-        assertEquals(androidClient, (taskResource as TasksImpl).api)
+        assertTrue(taskResource is TaskResourceImpl)
+        assertEquals(androidClient, (taskResource as TaskResourceImpl).api)
     }
 
     @Test
