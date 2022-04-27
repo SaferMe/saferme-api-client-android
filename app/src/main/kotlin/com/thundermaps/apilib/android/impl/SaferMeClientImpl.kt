@@ -26,7 +26,7 @@ import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
-import com.thundermaps.apilib.android.impl.resources.TasksImpl
+import com.thundermaps.apilib.android.impl.resources.TaskResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
 import io.ktor.util.KtorExperimentalAPI
@@ -48,7 +48,7 @@ class SaferMeClientImpl @Inject constructor(
     private val formResourceImpl: FormResourceImpl,
     private val attachmentResourceImpl: AttachmentResourceImpl
 ) : SaferMeClient {
-    override val taskResource: TaskResource get() = TasksImpl(androidClient)
+    override val taskResource: TaskResource get() = TaskResourceImpl(androidClient)
 
     override val reportResource: ReportResource = ReportImpl(androidClient)
 

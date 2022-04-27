@@ -8,7 +8,7 @@ import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.impl.AndroidClient
 import java.lang.IllegalArgumentException
 
-class TasksImpl(val api: AndroidClient) : TaskResource {
+class TaskResourceImpl(val api: AndroidClient) : TaskResource {
 
     override suspend fun create(
         parameters: RequestParameters,
