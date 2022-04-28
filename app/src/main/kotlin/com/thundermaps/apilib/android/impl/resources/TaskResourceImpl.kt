@@ -7,6 +7,7 @@ import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.impl.AndroidClient
 import java.lang.IllegalArgumentException
+import timber.log.Timber
 
 class TaskResourceImpl(val api: AndroidClient) : TaskResource {
 
@@ -17,9 +18,15 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
         failure: (Exception) -> Unit
     ) {
         StandardMethods.create(
-            api = api, path = "tasks", parameters = parameters, item = item, success = success, failure = failure
+            api = api,
+            path = "tasks",
+            parameters = parameters,
+            item = item,
+            success = success,
+            failure = failure
         )
     }
+
     override suspend fun read(
         parameters: RequestParameters,
         item: Task,
@@ -28,7 +35,11 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
     ) {
         val uuid = item.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         StandardMethods.read(
-            api = api, path = "tasks/$uuid", parameters = parameters, success = success, failure = failure
+            api = api,
+            path = "tasks/$uuid",
+            parameters = parameters,
+            success = success,
+            failure = failure
         )
     }
 
@@ -47,7 +58,12 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
             e.printStackTrace()
         }
         StandardMethods.update(
-            api = api, path = "tasks/$uuid", parameters = parameters, item = item, success = success, failure = failure
+            api = api,
+            path = "tasks/$uuid",
+            parameters = parameters,
+            item = item,
+            success = success,
+            failure = failure
         )
     }
 
@@ -68,8 +84,21 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
         failure: (Exception) -> Unit
 
     ) {
+        val uuid = identifier.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
+        try {
+            val jsonBody =
+                AndroidClient.gsonSerializer.toJsonTree(identifier)
+            if (jsonBody != null) Timber.tag("send-body update:").e(jsonBody.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         StandardMethods.delete(
-            api = api, path = "tasks", parameters = parameters, success = success, failure = failure, item = identifier
+            api = api,
+            path = "tasks/$uuid",
+            parameters = parameters,
+            success = success,
+            failure = failure,
+            item = identifier
         )
     }
 }
