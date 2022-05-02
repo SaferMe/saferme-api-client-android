@@ -22,6 +22,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.util.toByteArray
 import io.ktor.util.toMap
+import timber.log.Timber
 
 class StandardMethods {
     companion object {
@@ -45,7 +46,7 @@ class StandardMethods {
             crossinline success: (SaferMeApiResult<T>) -> Unit,
             crossinline failure: (Exception) -> Unit
         ) {
-
+            Timber.e("create item: $item")
             try {
                 standardCall(api, HttpMethod.Post, path, parameters, item) { call ->
                     when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
