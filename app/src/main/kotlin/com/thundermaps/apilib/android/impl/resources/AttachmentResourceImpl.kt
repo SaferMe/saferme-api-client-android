@@ -181,7 +181,8 @@ data class AuthorizationFields(
     @Json(name = X_AMZ_CREDENTIAL) @SerializedName(X_AMZ_CREDENTIAL) @Expose val amzCredential: String,
     @Json(name = X_AMZ_ALGORITHM) @SerializedName(X_AMZ_ALGORITHM) @Expose val amzAlgorithm: String,
     @Json(name = X_AMZ_DATE) @SerializedName(X_AMZ_DATE) @Expose val amzDate: String,
-    @Json(name = X_AMZ_SIGNATURE) @SerializedName(X_AMZ_SIGNATURE) @Expose val amzSignature: String
+    @Json(name = X_AMZ_SIGNATURE) @SerializedName(X_AMZ_SIGNATURE) @Expose val amzSignature: String,
+    @Json(name = X_AMZ_SECURITY_TOKEN) @SerializedName(X_AMZ_SECURITY_TOKEN) @Expose val amzSecurityToken: String
 ) {
     companion object {
         const val SUCCESS_ACTION_STATUS = "success_action_status"
@@ -192,6 +193,7 @@ data class AuthorizationFields(
         private const val KEY = "key"
         private const val POLICY = "policy"
         const val X_AMZ_SIGNATURE = "x-amz-signature"
+        const val X_AMZ_SECURITY_TOKEN = "x-amz-security-token"
     }
 }
 
