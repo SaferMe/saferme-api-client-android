@@ -82,13 +82,7 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
 
     ) {
         val uuid = identifier.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
-        try {
-            val jsonBody =
-                AndroidClient.gsonSerializer.toJsonTree(identifier)
-            if (jsonBody != null) Timber.tag("send-body update:").e(jsonBody.toString())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        Timber.tag("send-body update:").e("task: $identifier")
         StandardMethods.delete(
             api = api,
             path = "tasks/$uuid",
