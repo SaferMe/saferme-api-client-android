@@ -1,12 +1,10 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import android.util.Log
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.impl.AndroidClient
-import java.lang.IllegalArgumentException
 import timber.log.Timber
 
 class TaskResourceImpl(val api: AndroidClient) : TaskResource {
@@ -51,9 +49,8 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
     ) {
         val uuid = item.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         try {
-            val jsonBody =
-                if (item != null) AndroidClient.gsonSerializer.toJsonTree(item) else null
-            if (jsonBody != null) Log.e("send-body update:", jsonBody.toString())
+            val jsonBody = AndroidClient.gsonSerializer.toJsonTree(item)
+            if (jsonBody != null) Timber.tag("send-body update:").e(jsonBody.toString())
         } catch (e: Exception) {
             e.printStackTrace()
         }
