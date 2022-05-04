@@ -13,6 +13,7 @@ import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.resources.ShapeResource
+import com.thundermaps.apilib.android.api.resources.TaskRequestResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
@@ -26,6 +27,7 @@ import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
+import com.thundermaps.apilib.android.impl.resources.TaskRequestResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TaskResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
@@ -49,6 +51,8 @@ class SaferMeClientImpl @Inject constructor(
     private val attachmentResourceImpl: AttachmentResourceImpl
 ) : SaferMeClient {
     override val taskResource: TaskResource get() = TaskResourceImpl(androidClient)
+
+    override val taskRequestResource: TaskRequestResource get() = TaskRequestResourceImpl(androidClient)
 
     override val reportResource: ReportResource = ReportImpl(androidClient)
 
