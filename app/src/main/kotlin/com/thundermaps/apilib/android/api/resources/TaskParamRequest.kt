@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 data class TaskParamRequest(
     @Expose
     @SerializedName("task")
-    val tasks: MutableList<Task>
+    val tasks: Task
 ) : SaferMeDatum
 
 interface TaskRequestResource : SaferMeResource<TaskParamRequest>,
