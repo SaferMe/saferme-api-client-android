@@ -33,7 +33,7 @@ class TaskRequestResourceImpl(val api: AndroidClient) : TaskRequestResource {
         success: (SaferMeApiResult<TaskParamRequest>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        val uuid = item.tasks[0].uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
+        val uuid = item.tasks.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         StandardMethods.read(
             api = api,
             path = "tasks/$uuid",
@@ -49,7 +49,7 @@ class TaskRequestResourceImpl(val api: AndroidClient) : TaskRequestResource {
         success: (SaferMeApiResult<TaskParamRequest>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        val uuid = item.tasks[0].uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
+        val uuid = item.tasks.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         try {
             val jsonBody =
                 if (item != null) AndroidClient.gsonSerializer.toJsonTree(item) else null
@@ -84,7 +84,7 @@ class TaskRequestResourceImpl(val api: AndroidClient) : TaskRequestResource {
         failure: (Exception) -> Unit
 
     ) {
-        val uuid = identifier.tasks[0].uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
+        val uuid = identifier.tasks.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         try {
             val jsonBody =
                 AndroidClient.gsonSerializer.toJsonTree(identifier)
