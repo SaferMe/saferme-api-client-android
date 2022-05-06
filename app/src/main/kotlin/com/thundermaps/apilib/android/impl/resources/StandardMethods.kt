@@ -339,7 +339,10 @@ class StandardMethods {
             result: (call: HttpClientCall) -> Unit
         ) {
             val (client, template) = api.client(params)
-            val jsonBody = payload?.let { gsonSerializer.toJsonTree(payload) }
+            val jsonBody = payload?.let {
+                gsonSerializer.toJsonTree(payload)
+            }
+            Log.e("jsonBody", "jsonBody: $jsonBody")
             val call = client.call(HttpRequestBuilder().takeFrom(template).apply {
                 method = requestMethod
                 url(AndroidClient.baseUrlBuilder(params).apply {

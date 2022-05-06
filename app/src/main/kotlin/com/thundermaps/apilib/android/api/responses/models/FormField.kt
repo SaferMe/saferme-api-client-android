@@ -79,6 +79,7 @@ class FieldTypeDecode : JsonDeserializer<FieldType>, JsonSerializer<FieldType> {
 open class DataValue(private val data: Any) {
     @ExcludeFromJacocoGeneratedReport
     data class DataJsonObject(val value: JsonObject) : DataValue(value)
+
     @ExcludeFromJacocoGeneratedReport
     data class DataString(val value: String) : DataValue(value)
 
@@ -160,13 +161,21 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
                             )
                         )
                     } catch (exception: Exception) {
-                        print(exception)
                         FormValue.ValueJsonArray(json.asJsonArray)
                     }
                 }
             }
             else -> {
-                null
+                try {
+                    FormValue.ValueFormFieldSignature(
+                        gsonSerializer.fromJson(
+                            json.asJsonArray,
+                            object : TypeToken<FormFieldSignature>() {}.type
+                        )
+                    )
+                } catch (exception: Exception) {
+                    null
+                }
             }
         }
     }
@@ -175,12 +184,15 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
         src: FormValue,
         typeOfSrc: Type,
         context: JsonSerializationContext
-    ): JsonElement = when (src) {
-        is FormValue.ValueInt -> JsonPrimitive(src.value)
-        is FormValue.ValueString -> JsonPrimitive(src.value)
-        is FormValue.ValueFormFieldImage -> gsonSerializer.toJsonTree(src.images)
-        is FormValue.ValueJsonArray -> src.value
-        else -> JsonObject()
+    ): JsonElement {
+        return when (src) {
+            is FormValue.ValueInt -> JsonPrimitive(src.value)
+            is FormValue.ValueString -> JsonPrimitive(src.value)
+            is FormValue.ValueFormFieldImage -> gsonSerializer.toJsonTree(src.images)
+            is FormValue.ValueJsonArray -> src.value
+            is FormValue.ValueFormFieldSignature -> gsonSerializer.toJsonTree(src.signature)
+            else -> JsonObject()
+        }
     }
 }
 
