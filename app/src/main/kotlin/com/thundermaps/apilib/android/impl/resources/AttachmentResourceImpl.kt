@@ -38,7 +38,6 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.coroutineScope
-import timber.log.Timber
 
 @KtorExperimentalAPI
 @Singleton
@@ -90,7 +89,6 @@ class AttachmentResourceImpl @Inject constructor(
             val fields = uploadAuthorization.fields.copy(key = "${uploadAuthorization.keyPrefix}$IMAGE_FILE_NAME")
             val map = fields.serializeToMap(gson)
 
-            Timber.e("fields in map: $map")
             map.forEach {
                 append(it.key, it.value)
             }
