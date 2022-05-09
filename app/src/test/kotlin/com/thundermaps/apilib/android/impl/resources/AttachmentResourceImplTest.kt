@@ -174,7 +174,8 @@ class AttachmentResourceImplTest {
                     amzCredential = "AKIAICPNAEAPUN54KXIA/20220410/us-east-1/s3/aws4_request",
                     amzSignature = amzSignature,
                     amzAlgorithm = "AWS4-HMAC-SHA256",
-                    amzDate = "20220410T233530Z"
+                    amzDate = "20220410T233530Z",
+                    amzSecurityToken = ""
                 )
             )
         )
@@ -194,7 +195,8 @@ class AttachmentResourceImplTest {
                   "x-amz-credential": "AKIAICPNAEAPUN54KXIA/20220410/us-east-1/s3/aws4_request",
                   "x-amz-algorithm": "AWS4-HMAC-SHA256",
                   "x-amz-date": "20220410T233530Z",
-                  "x-amz-signature": "$amzSignature"
+                  "x-amz-signature": "$amzSignature",
+                  "x-amz-security-token" : ""
                 },
                 "required_fields": [
                   "Content-Type",

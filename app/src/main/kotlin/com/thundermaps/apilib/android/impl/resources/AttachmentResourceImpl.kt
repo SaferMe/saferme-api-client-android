@@ -16,6 +16,7 @@ import com.thundermaps.apilib.android.api.resources.AttachmentResource
 import com.thundermaps.apilib.android.api.responses.models.FileAttachment
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
+import com.thundermaps.apilib.android.api.serializeToMap
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.HttpClient
 import io.ktor.client.call.call
@@ -30,12 +31,12 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.util.InternalAPI
 import io.ktor.util.KtorExperimentalAPI
 import java.io.File
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 @KtorExperimentalAPI
@@ -65,24 +66,19 @@ class AttachmentResourceImpl @Inject constructor(
 
         uploadAuthorizationResult.getNullableData()?.let { response ->
             val uploadAuthorization = response.uploadAuthorization
-            val uploadFileJob = scope.async {
-                uploadFile(client, filePath, uploadAuthorization)
-            }
-            val createFileAttachmentDeferred = scope.async {
-                createFileAttachment(
+            if (uploadFile(client, filePath, uploadAuthorization)) {
+                return@coroutineScope createFileAttachment(
                     parameters,
                     client,
                     requestBuilder,
                     uploadAuthorization.keyPrefix
                 )
             }
-            if (uploadFileJob.await()) {
-                return@coroutineScope createFileAttachmentDeferred.await()
-            }
         }
         return@coroutineScope resultHandler.handleException(UserNotAuthenticatedException("Error upload file"))
     }
 
+    @OptIn(InternalAPI::class)
     @ExcludeFromJacocoGeneratedReport
     private suspend fun uploadFile(
         client: HttpClient,
@@ -90,18 +86,12 @@ class AttachmentResourceImpl @Inject constructor(
         uploadAuthorization: UploadAuthorization
     ): Boolean {
         val formData = formData {
-            append(KEY, "${uploadAuthorization.keyPrefix}$IMAGE_FILE_NAME")
-            val fields = uploadAuthorization.fields
-            append(
-                AuthorizationFields.SUCCESS_ACTION_STATUS,
-                fields.successActionStatus
-            )
-            append(AuthorizationFields.CONTENT_TYPE, fields.contentType)
-            append(POLICY, fields.policy)
-            append(AuthorizationFields.X_AMZ_ALGORITHM, fields.amzAlgorithm)
-            append(AuthorizationFields.X_AMZ_DATE, fields.amzDate)
-            append(AuthorizationFields.X_AMZ_CREDENTIAL, fields.amzCredential)
-            append(AuthorizationFields.X_AMZ_SIGNATURE, fields.amzSignature)
+            val fields = uploadAuthorization.fields.copy(key = "${uploadAuthorization.keyPrefix}$IMAGE_FILE_NAME")
+            val map = fields.serializeToMap(gson)
+
+            map.forEach {
+                append(it.key, it.value)
+            }
 
             val file = File(filePath)
             append(FILE, file.readBytes(), Headers.build {
@@ -158,9 +148,6 @@ class AttachmentResourceImpl @Inject constructor(
         private const val IMAGE_PNG = "image/png"
         private const val FILE_ATTACHMENTS_PATH = "file_attachments"
         private const val FILE_AUTHORIZATION_PATH = "file_attachments/upload_authorization"
-
-        private const val KEY = "key"
-        private const val POLICY = "policy"
         private const val FILE = "file"
         private const val IMAGE_FILE_NAME = "image.png"
     }
@@ -185,14 +172,15 @@ data class UploadAuthorization(
 
 @JsonClass(generateAdapter = true)
 data class AuthorizationFields(
-    val key: String,
-    @Json(name = SUCCESS_ACTION_STATUS) val successActionStatus: String,
-    @Json(name = CONTENT_TYPE) val contentType: String,
-    val policy: String,
-    @Json(name = X_AMZ_CREDENTIAL) val amzCredential: String,
-    @Json(name = X_AMZ_ALGORITHM) val amzAlgorithm: String,
-    @Json(name = X_AMZ_DATE) val amzDate: String,
-    @Json(name = X_AMZ_SIGNATURE) val amzSignature: String
+    @SerializedName(KEY) @Expose val key: String,
+    @Json(name = SUCCESS_ACTION_STATUS) @SerializedName(SUCCESS_ACTION_STATUS) @Expose val successActionStatus: String,
+    @Json(name = CONTENT_TYPE) @SerializedName(CONTENT_TYPE) @Expose val contentType: String,
+    @SerializedName(POLICY) @Expose val policy: String,
+    @Json(name = X_AMZ_CREDENTIAL) @SerializedName(X_AMZ_CREDENTIAL) @Expose val amzCredential: String,
+    @Json(name = X_AMZ_ALGORITHM) @SerializedName(X_AMZ_ALGORITHM) @Expose val amzAlgorithm: String,
+    @Json(name = X_AMZ_DATE) @SerializedName(X_AMZ_DATE) @Expose val amzDate: String,
+    @Json(name = X_AMZ_SIGNATURE) @SerializedName(X_AMZ_SIGNATURE) @Expose val amzSignature: String,
+    @Json(name = X_AMZ_SECURITY_TOKEN) @SerializedName(X_AMZ_SECURITY_TOKEN) @Expose val amzSecurityToken: String
 ) {
     companion object {
         const val SUCCESS_ACTION_STATUS = "success_action_status"
@@ -200,7 +188,10 @@ data class AuthorizationFields(
         const val X_AMZ_CREDENTIAL = "x-amz-credential"
         const val X_AMZ_ALGORITHM = "x-amz-algorithm"
         const val X_AMZ_DATE = "x-amz-date"
+        private const val KEY = "key"
+        private const val POLICY = "policy"
         const val X_AMZ_SIGNATURE = "x-amz-signature"
+        const val X_AMZ_SECURITY_TOKEN = "x-amz-security-token"
     }
 }
 
