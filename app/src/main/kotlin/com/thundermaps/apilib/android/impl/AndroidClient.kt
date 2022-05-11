@@ -72,6 +72,7 @@ class AndroidClient @Inject constructor() {
         // Default GSON Configuration
         @VisibleForTesting
         val gsonBuilder = GsonBuilder().apply {
+            serializeNulls()
             disableHtmlEscaping()
             excludeFieldsWithoutExposeAnnotation()
             setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")

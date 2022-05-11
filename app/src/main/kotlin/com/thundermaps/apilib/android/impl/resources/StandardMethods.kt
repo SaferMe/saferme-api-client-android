@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.impl.resources
 
+import android.util.Log
 import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
 import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.SafermeException
 import com.thundermaps.apilib.android.api.fromJsonString
@@ -15,11 +16,13 @@ import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.url
+import io.ktor.client.response.readBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.util.toByteArray
 import io.ktor.util.toMap
+import timber.log.Timber
 
 class StandardMethods {
     companion object {
@@ -43,6 +46,7 @@ class StandardMethods {
             crossinline success: (SaferMeApiResult<T>) -> Unit,
             crossinline failure: (Exception) -> Unit
         ) {
+
             try {
                 standardCall(api, HttpMethod.Post, path, parameters, item) { call ->
                     when (val status = SaferMeApiStatus.statusForCode(call.response.status.value)) {
@@ -71,6 +75,7 @@ class StandardMethods {
                             )
                         )
                         SaferMeApiStatus.OTHER_400 -> {
+                            Log.e("sending error", call.response.readBytes().toString())
                             failure(
                                 SaferMeApiError(
                                     serverStatus = status,
@@ -295,6 +300,7 @@ class StandardMethods {
                             )
                         }
                         SaferMeApiStatus.OTHER_400 -> {
+                            Log.d("error", call.response.readBytes().toString())
                             failure(
                                 SaferMeApiError(
                                     serverStatus = status,
@@ -336,6 +342,7 @@ class StandardMethods {
             val jsonBody = payload?.let {
                 gsonSerializer.toJsonTree(payload)
             }
+            Timber.d("jsonBody: $jsonBody")
             val call = client.call(HttpRequestBuilder().takeFrom(template).apply {
                 method = requestMethod
                 url(AndroidClient.baseUrlBuilder(params).apply {
