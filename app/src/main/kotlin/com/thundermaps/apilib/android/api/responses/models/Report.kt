@@ -23,6 +23,7 @@ data class Report(
     @SerializedName(IS_HAZARD) @Expose val isHazard: Boolean? = false,
     @SerializedName(ISO_CREATED_AT) @Expose val isoCreatedAt: String? = null,
     @Expose val location: Location? = null,
+    @Expose val assignee: Assignee? = null,
     @SerializedName(REPORT_STATE) @Expose val reportState: ReportState? = null,
     @SerializedName(REPORT_STATE_ID) @Expose val reportStateId: Int? = null,
     @SerializedName(RISK_ASSESSMENT) @Expose val riskAssessment: RiskAssessment? = null,
