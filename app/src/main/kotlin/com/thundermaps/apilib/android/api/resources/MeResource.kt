@@ -6,7 +6,6 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
-import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
 
@@ -17,5 +16,4 @@ interface MeResource {
     suspend fun updateContactNumber(parameters: RequestParameters, updateContactNumberBody: UpdateContactNumberBody): Result<Unit>
     suspend fun updateEmail(parameters: RequestParameters, emailBody: EmailBody): Result<Unit>
     suspend fun updateName(parameters: RequestParameters, updateNameBody: UpdateNameBody): Result<Unit>
-    suspend fun getAssignedReports(parameters: RequestParameters): Result<List<Report>>
 }

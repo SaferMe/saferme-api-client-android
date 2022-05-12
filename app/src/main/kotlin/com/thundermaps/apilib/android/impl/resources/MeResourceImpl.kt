@@ -9,7 +9,6 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBod
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
-import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
@@ -101,22 +100,6 @@ class MeResourceImpl @Inject constructor(
         return resultHandler.processResult(call, gson)
     }
 
-    override suspend fun getAssignedReports(parameters: RequestParameters): Result<List<Report>> {
-        if (!parameters.host.isInternetAvailable()) {
-            return resultHandler.handleException(UnknownHostException())
-        }
-
-        val call = processCall(
-            parameters = parameters.copy(api_version = 3, parameters = mutableMapOf(
-                "Range" to "objects=0-100"
-            )),
-            methodType = HttpMethod.Get,
-            query = ASSIGNED_REPORTS_QUERY,
-            bodyRequest = null
-        )
-        return resultHandler.processResult(call, gson)
-    }
-
     private suspend fun <T : Any> processCall(
         parameters: RequestParameters,
         methodType: HttpMethod = HttpMethod.Patch,
@@ -135,10 +118,5 @@ class MeResourceImpl @Inject constructor(
             }
         })
         return call
-    }
-
-    companion object {
-        private const val ASSIGNED_REPORTS_QUERY =
-            "/assigned_reports?fields=state_is_editable_by,report_state,assignee,assigned_at,viewer_count,comment_count,categories_title,hidden_fields,is_hazard,risk_level&order%5Bcreated_at%5D=desc"
     }
 }
