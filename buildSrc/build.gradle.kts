@@ -4,7 +4,7 @@ plugins {
 
 // More info: https://docs.gradle.org/4.10.1/userguide/kotlin_dsl.html#sec:kotlin-dsl_plugin
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 // More info : https://stackoverflow.com/a/46440810/2085356
