@@ -3,10 +3,10 @@ package com.thundermaps.apilib.android.api.com.thundermaps.env
 sealed class Environment(val servers: List<String>)
 object Live : Environment(
     listOf(
-        "api1.thundermaps.com",
-        "api2.thundermaps.com",
-        "api3.thundermaps.com",
-        "api4.thundermaps.com"
+        "api1.prod.saferme.io",
+        "api2.prod.saferme.io",
+        "api3.prod.saferme.io",
+        "api4.prod.saferme.io"
     )
 )
 

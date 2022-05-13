@@ -10,7 +10,7 @@ class EnvironmentTest {
 
         assertEquals(4, live.servers.size)
         live.servers.forEachIndexed { index, value ->
-            assertEquals("api${index + 1}.thundermaps.com", value)
+            assertEquals("api${index + 1}.prod.saferme.io", value)
         }
     }
 
