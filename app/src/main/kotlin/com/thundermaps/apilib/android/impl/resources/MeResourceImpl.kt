@@ -6,6 +6,7 @@ import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
@@ -30,71 +31,111 @@ class MeResourceImpl @Inject constructor(
     private val resultHandler: ResultHandler,
     private val gson: Gson
 ) : MeResource {
-    override suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails> {
+    override suspend fun getUserDetails(
+        parameters: RequestParameters,
+        userId: String
+    ): Result<UserDetails> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
         val call = processCall<Unit>(
             parameters = parameters,
             methodType = HttpMethod.Get,
-            "?fields=personal_account_option"
+            query = "$userId?fields=personal_account_option"
         )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateAddress(
         parameters: RequestParameters,
+        userId: String,
         addressBody: UpdateAddressBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(parameters = parameters, bodyRequest = addressBody)
+        val call = processCall(
+            parameters = parameters, bodyRequest = addressBody,
+            query = userId
+        )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updatePassword(
         parameters: RequestParameters,
+        userId: String,
         updatePasswordBody: UpdatePasswordBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(parameters = parameters, bodyRequest = updatePasswordBody)
+        val call = processCall(
+            parameters = parameters,
+            bodyRequest = updatePasswordBody,
+            query = userId
+        )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateContactNumber(
         parameters: RequestParameters,
+        userId: String,
         updateContactNumberBody: UpdateContactNumberBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
         val call =
-            processCall(parameters = parameters, bodyRequest = updateContactNumberBody)
+            processCall(
+                parameters = parameters, bodyRequest = updateContactNumberBody,
+                query = userId
+            )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateEmail(
         parameters: RequestParameters,
+        userId: String,
         emailBody: EmailBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(parameters = parameters, bodyRequest = emailBody)
+        val call = processCall(
+            parameters = parameters, bodyRequest = emailBody,
+            query = userId
+        )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateName(
         parameters: RequestParameters,
+        userId: String,
         updateNameBody: UpdateNameBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(parameters = parameters, bodyRequest = updateNameBody)
+        val call = processCall(
+            parameters = parameters, bodyRequest = updateNameBody,
+            query = userId
+        )
+        return resultHandler.processResult(call, gson)
+    }
+
+    override suspend fun updateEmailNotificationEnabled(
+        parameters: RequestParameters,
+        userId: String,
+        updateEmailNotificationEnableBody: UpdateEmailNotificationEnableBody
+    ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+        val call =
+            processCall(
+                parameters = parameters, bodyRequest = updateEmailNotificationEnableBody,
+                query = userId
+            )
         return resultHandler.processResult(call, gson)
     }
 
@@ -108,7 +149,7 @@ class MeResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = methodType
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}users/me$query"
+                encodedPath = "${encodedPath}users/$query"
             }.build())
             bodyRequest?.let {
                 contentType(ContentType.Application.Json)

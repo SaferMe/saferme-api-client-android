@@ -14,6 +14,7 @@ import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
@@ -63,7 +64,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(addressBody), it)
             assertTrue(it.contains(addressBody.address))
         }) {
-            meResource.updateAddress(defaultParameters, addressBody)
+            meResource.updateAddress(defaultParameters, USER_ID, addressBody)
         }
     }
 
@@ -74,7 +75,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(addressBody), it)
             assertTrue(it.contains(addressBody.address))
         }) {
-            meResource.updateAddress(defaultParameters, addressBody)
+            meResource.updateAddress(defaultParameters, USER_ID, addressBody)
         }
     }
 
@@ -86,7 +87,7 @@ class MeResourceImplTest {
             assertTrue(it.contains(passwordBody.currentPassword))
             assertTrue(it.contains(passwordBody.newPassword))
         }) {
-            meResource.updatePassword(defaultParameters, passwordBody)
+            meResource.updatePassword(defaultParameters, USER_ID, passwordBody)
         }
     }
 
@@ -98,7 +99,7 @@ class MeResourceImplTest {
             assertTrue(it.contains(passwordBody.currentPassword))
             assertTrue(it.contains(passwordBody.newPassword))
         }) {
-            meResource.updatePassword(defaultParameters, passwordBody)
+            meResource.updatePassword(defaultParameters, USER_ID, passwordBody)
         }
     }
 
@@ -111,6 +112,7 @@ class MeResourceImplTest {
         }) {
             meResource.updateContactNumber(
                 defaultParameters,
+                USER_ID,
                 body
             )
         }
@@ -125,6 +127,7 @@ class MeResourceImplTest {
         }) {
             meResource.updateContactNumber(
                 defaultParameters,
+                USER_ID,
                 body
             )
         }
@@ -137,7 +140,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(body), it)
             assertTrue(it.contains(body.email))
         }) {
-            meResource.updateEmail(defaultParameters, body)
+            meResource.updateEmail(defaultParameters, USER_ID, body)
         }
     }
 
@@ -148,7 +151,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(body), it)
             assertTrue(it.contains(body.email))
         }) {
-            meResource.updateEmail(defaultParameters, body)
+            meResource.updateEmail(defaultParameters, USER_ID, body)
         }
     }
 
@@ -160,7 +163,7 @@ class MeResourceImplTest {
             assertTrue(it.contains(body.firstName))
             assertTrue(it.contains(body.lastName))
         }) {
-            meResource.updateName(defaultParameters, body)
+            meResource.updateName(defaultParameters, USER_ID, body)
         }
     }
 
@@ -172,7 +175,35 @@ class MeResourceImplTest {
             assertTrue(it.contains(body.firstName))
             assertTrue(it.contains(body.lastName))
         }) {
-            meResource.updateName(defaultParameters, body)
+            meResource.updateName(defaultParameters, USER_ID, body)
+        }
+    }
+
+    @Test
+    fun verifyUpdateEmailNotificationEnabled() {
+        val updateEmailNotificationEnableBody = UpdateEmailNotificationEnableBody(true)
+        verifyUpdatedType(true, verifyBody = {
+            assertEquals(gson.toJson(updateEmailNotificationEnableBody), it)
+        }) {
+            meResource.updateEmailNotificationEnabled(
+                defaultParameters,
+                USER_ID,
+                updateEmailNotificationEnableBody
+            )
+        }
+    }
+
+    @Test
+    fun verifyUpdateEmailNotificationEnabledError() {
+        val updateEmailNotificationEnableBody = UpdateEmailNotificationEnableBody(true)
+        verifyUpdatedType(false, {
+            assertEquals(gson.toJson(updateEmailNotificationEnableBody), it)
+        }) {
+            meResource.updateEmailNotificationEnabled(
+                defaultParameters,
+                USER_ID,
+                updateEmailNotificationEnableBody
+            )
         }
     }
 
@@ -187,7 +218,7 @@ class MeResourceImplTest {
             status = if (isSuccess) HttpStatusCode.NoContent else HttpStatusCode.Forbidden,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals(PATH, it.url.encodedPath)
+                assertEquals("$PATH$USER_ID", it.url.encodedPath)
                 assertEquals(HttpMethod.Patch, it.method)
                 verifyBody((it.body as TextContent).text)
                 inspectCalled = true
@@ -215,7 +246,7 @@ class MeResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("$PATH?fields=personal_account_option", it.url.encodedPath)
+                assertEquals("$PATH$USER_ID?fields=personal_account_option", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
@@ -223,7 +254,7 @@ class MeResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val userDetailsResult = meResource.getUserDetails(defaultParameters)
+        val userDetailsResult = meResource.getUserDetails(defaultParameters, USER_ID)
 
         verifyAndroidClient()
 
@@ -251,7 +282,7 @@ class MeResourceImplTest {
             status = HttpStatusCode.BadGateway,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("$PATH?fields=personal_account_option", it.url.encodedPath)
+                assertEquals("$PATH$USER_ID?fields=personal_account_option", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
@@ -259,7 +290,7 @@ class MeResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val userDetailsResult = meResource.getUserDetails(defaultParameters)
+        val userDetailsResult = meResource.getUserDetails(defaultParameters, USER_ID)
 
         verifyAndroidClient()
         assertTrue(userDetailsResult.isError)
@@ -278,12 +309,13 @@ class MeResourceImplTest {
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val PATH = "/api/v4/users/me"
+        private const val PATH = "/api/v4/users/"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID
         private const val TEST_TEAM = "Test Team"
-        private const val TEST_CLIENT_UUID = "client uuid"
+        private const val TEST_CLIENT_UUID = "Client UUID"
+        private const val USER_ID = "12345"
         private val saferMeCredentials =
             SaferMeCredentials(TEST_KEY, TEST_INSTALL, TEST_APP, TEST_TEAM, TEST_CLIENT_UUID)
         private val defaultParameters = RequestParameters(
