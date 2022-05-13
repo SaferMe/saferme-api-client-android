@@ -61,8 +61,7 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         success: (SaferMeApiResult<List<Report>>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        val extensionParams =
-            parameters.parameters?.let { map -> map.keys.joinToString("&") { "$it=${map[it]}" } }
+        val extensionParams = parameters.parameters?.toUriParameters()
         val path = extensionParams?.let { "$REPORT_PATH?$FIELDS_PARAM&$it" }
             ?: "$REPORT_PATH?$FIELDS_PARAM"
         StandardMethods.index(
