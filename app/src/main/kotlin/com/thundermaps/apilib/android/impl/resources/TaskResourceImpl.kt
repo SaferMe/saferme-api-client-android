@@ -2,6 +2,7 @@ package com.thundermaps.apilib.android.impl.resources
 
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
+import com.thundermaps.apilib.android.api.resources.MarkAsIncomplete
 import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.impl.AndroidClient
@@ -82,6 +83,22 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
             success = success,
             failure = failure,
             item = identifier
+        )
+    }
+
+    override suspend fun markAsInComplete(
+        parameters: RequestParameters,
+        uuid: String,
+        success: (SaferMeApiResult<MarkAsIncomplete>) -> Unit,
+        failure: (Exception) -> Unit
+    ) {
+        StandardMethods.update(
+            api = api,
+            path = "tasks/$uuid",
+            parameters = parameters,
+            item = MarkAsIncomplete(null, null),
+            success = success,
+            failure = failure
         )
     }
 }

@@ -2,6 +2,8 @@ package com.thundermaps.apilib.android.api.resources
 
 import com.google.gson.annotations.Expose
 import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
+import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -60,4 +62,11 @@ data class Task(
 }
 
 interface TaskResource : SaferMeResource<Task>,
-    Creatable<Task>, Readable<Task>, Indexable<Task>, Updatable<Task>, Deletable<Task>
+    Creatable<Task>, Readable<Task>, Indexable<Task>, Updatable<Task>, Deletable<Task> {
+    suspend fun markAsInComplete(
+        parameters: RequestParameters,
+        uuid: String,
+        success: (SaferMeApiResult<MarkAsIncomplete>) -> Unit,
+        failure: (Exception) -> Unit
+    )
+}
