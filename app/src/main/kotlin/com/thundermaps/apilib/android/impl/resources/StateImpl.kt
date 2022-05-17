@@ -5,17 +5,20 @@ import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.StateResource
 import com.thundermaps.apilib.android.api.responses.models.ReportState
 import com.thundermaps.apilib.android.impl.AndroidClient
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class StateImpl(val api: AndroidClient) : StateResource {
+@Singleton
+class StateImpl @Inject constructor(val api: AndroidClient) : StateResource {
     override suspend fun read(
         parameters: RequestParameters,
         item: ReportState,
         success: (SaferMeApiResult<ReportState>) -> Unit,
         failure: (Exception) -> Unit
     ) {
-        val stateId = parameters.parameters?.get("state_id")
-        if (stateId == null) {
-            failure(Exception("State id is null"))
+        val stateId = item.id
+        if (stateId == 0) {
+            failure(Exception("State id is invalid"))
         } else {
             StandardMethods.read(
                 api = api,
@@ -45,8 +48,6 @@ class StateImpl(val api: AndroidClient) : StateResource {
             )
         }
     }
-
-    private
 
     companion object {
         const val STATE_PATH = "report_states"

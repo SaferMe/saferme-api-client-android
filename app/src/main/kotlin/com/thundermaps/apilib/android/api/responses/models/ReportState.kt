@@ -23,4 +23,4 @@ data class ReportState(
     @Expose val timeout: Int? = null,
     @Expose val uuid: String? = null,
     @Expose val visibility: String? = null
-): SaferMeDatum
+) : SaferMeDatum
