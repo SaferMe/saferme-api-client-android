@@ -92,11 +92,12 @@ class TaskResourceImpl(val api: AndroidClient) : TaskResource {
         success: (SaferMeApiResult<MarkAsIncomplete>) -> Unit,
         failure: (Exception) -> Unit
     ) {
+        val requestObject = MarkAsIncomplete(uuid, "", "")
         StandardMethods.update(
             api = api,
             path = "tasks/$uuid",
             parameters = parameters,
-            item = MarkAsIncomplete(null, null),
+            item = requestObject,
             success = success,
             failure = failure
         )
