@@ -22,7 +22,7 @@ class StateImpl @Inject constructor(val api: AndroidClient) : StateResource {
         } else {
             StandardMethods.read(
                 api = api,
-                path = "$STATE_PATH/$stateId",
+                path = "$STATE_PATH/$stateId&$FIELDS",
                 parameters = parameters,
                 success = success,
                 failure = failure
@@ -41,7 +41,7 @@ class StateImpl @Inject constructor(val api: AndroidClient) : StateResource {
         } else {
             StandardMethods.index(
                 api = api,
-                path = "$STATE_PATH?$extensionParams",
+                path = "$STATE_PATH?$extensionParams&$FIELDS",
                 parameters = parameters,
                 success = success,
                 failure = failure
@@ -51,5 +51,7 @@ class StateImpl @Inject constructor(val api: AndroidClient) : StateResource {
 
     companion object {
         const val STATE_PATH = "report_states"
+        const val FIELDS = "fields=updated_at"
     }
 }
+

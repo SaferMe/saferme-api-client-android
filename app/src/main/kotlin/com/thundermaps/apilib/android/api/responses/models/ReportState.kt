@@ -22,5 +22,6 @@ data class ReportState(
     @Expose val slug: String? = null,
     @Expose val timeout: Int? = null,
     @Expose val uuid: String? = null,
-    @Expose val visibility: String? = null
+    @Expose val visibility: String? = null,
+    @Expose @SerializedName("updated_at") val updatedAt: String? = null
 ) : SaferMeDatum

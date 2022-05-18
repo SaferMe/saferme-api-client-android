@@ -50,7 +50,7 @@ class StateImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("/api/v4/${StateImpl.STATE_PATH}/$stateId", it.url.encodedPath)
+                assertEquals("/api/v4/${StateImpl.STATE_PATH}/$stateId&fields=updated_at", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
@@ -78,7 +78,7 @@ class StateImplTest {
             status = HttpStatusCode.Unauthorized,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("/api/v4/${StateImpl.STATE_PATH}/$stateId", it.url.encodedPath)
+                assertEquals("/api/v4/${StateImpl.STATE_PATH}/$stateId&fields=updated_at", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
