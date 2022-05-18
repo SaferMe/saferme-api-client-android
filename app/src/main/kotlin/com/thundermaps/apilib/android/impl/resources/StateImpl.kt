@@ -54,4 +54,3 @@ class StateImpl @Inject constructor(val api: AndroidClient) : StateResource {
         const val FIELDS = "fields=updated_at"
     }
 }
-
