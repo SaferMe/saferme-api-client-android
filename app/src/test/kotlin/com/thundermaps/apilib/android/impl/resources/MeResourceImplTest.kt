@@ -64,7 +64,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(addressBody), it)
             assertTrue(it.contains(addressBody.address))
         }) {
-            meResource.updateAddress(defaultParameters, USER_ID, addressBody)
+            meResource.updateAddress(defaultParameters, addressBody)
         }
     }
 
@@ -75,7 +75,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(addressBody), it)
             assertTrue(it.contains(addressBody.address))
         }) {
-            meResource.updateAddress(defaultParameters, USER_ID, addressBody)
+            meResource.updateAddress(defaultParameters, addressBody)
         }
     }
 
@@ -87,7 +87,7 @@ class MeResourceImplTest {
             assertTrue(it.contains(passwordBody.currentPassword))
             assertTrue(it.contains(passwordBody.newPassword))
         }) {
-            meResource.updatePassword(defaultParameters, USER_ID, passwordBody)
+            meResource.updatePassword(defaultParameters, passwordBody)
         }
     }
 
@@ -99,7 +99,7 @@ class MeResourceImplTest {
             assertTrue(it.contains(passwordBody.currentPassword))
             assertTrue(it.contains(passwordBody.newPassword))
         }) {
-            meResource.updatePassword(defaultParameters, USER_ID, passwordBody)
+            meResource.updatePassword(defaultParameters, passwordBody)
         }
     }
 
@@ -112,7 +112,7 @@ class MeResourceImplTest {
         }) {
             meResource.updateContactNumber(
                 defaultParameters,
-                USER_ID,
+
                 body
             )
         }
@@ -127,7 +127,7 @@ class MeResourceImplTest {
         }) {
             meResource.updateContactNumber(
                 defaultParameters,
-                USER_ID,
+
                 body
             )
         }
@@ -140,7 +140,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(body), it)
             assertTrue(it.contains(body.email))
         }) {
-            meResource.updateEmail(defaultParameters, USER_ID, body)
+            meResource.updateEmail(defaultParameters, body)
         }
     }
 
@@ -151,7 +151,7 @@ class MeResourceImplTest {
             assertEquals(gson.toJson(body), it)
             assertTrue(it.contains(body.email))
         }) {
-            meResource.updateEmail(defaultParameters, USER_ID, body)
+            meResource.updateEmail(defaultParameters, body)
         }
     }
 
@@ -163,7 +163,7 @@ class MeResourceImplTest {
             assertTrue(it.contains(body.firstName))
             assertTrue(it.contains(body.lastName))
         }) {
-            meResource.updateName(defaultParameters, USER_ID, body)
+            meResource.updateName(defaultParameters, body)
         }
     }
 
@@ -175,14 +175,14 @@ class MeResourceImplTest {
             assertTrue(it.contains(body.firstName))
             assertTrue(it.contains(body.lastName))
         }) {
-            meResource.updateName(defaultParameters, USER_ID, body)
+            meResource.updateName(defaultParameters, body)
         }
     }
 
     @Test
     fun verifyUpdateEmailNotificationEnabled() {
         val updateEmailNotificationEnableBody = UpdateEmailNotificationEnableBody(true)
-        verifyUpdatedType(true, verifyBody = {
+        verifyUpdatedTypeWithUserId(true, verifyBody = {
             assertEquals(gson.toJson(updateEmailNotificationEnableBody), it)
         }) {
             meResource.updateEmailNotificationEnabled(
@@ -196,7 +196,7 @@ class MeResourceImplTest {
     @Test
     fun verifyUpdateEmailNotificationEnabledError() {
         val updateEmailNotificationEnableBody = UpdateEmailNotificationEnableBody(true)
-        verifyUpdatedType(false, {
+        verifyUpdatedTypeWithUserId(false, {
             assertEquals(gson.toJson(updateEmailNotificationEnableBody), it)
         }) {
             meResource.updateEmailNotificationEnabled(
@@ -208,6 +208,37 @@ class MeResourceImplTest {
     }
 
     private fun verifyUpdatedType(
+        isSuccess: Boolean,
+        verifyBody: (body: String) -> Unit,
+        invoke: suspend () -> Result<Unit>
+    ) = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = "",
+            status = if (isSuccess) HttpStatusCode.NoContent else HttpStatusCode.Forbidden,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals("$PATH", it.url.encodedPath)
+                assertEquals(HttpMethod.Patch, it.method)
+                verifyBody((it.body as TextContent).text)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val result = invoke()
+
+        verifyAndroidClient()
+        if (isSuccess) {
+            assertTrue(result.isSuccess)
+        } else {
+            assertTrue(result.isError)
+        }
+        assertTrue(inspectCalled)
+    }
+
+    private fun verifyUpdatedTypeWithUserId(
         isSuccess: Boolean,
         verifyBody: (body: String) -> Unit,
         invoke: suspend () -> Result<Unit>
@@ -246,7 +277,7 @@ class MeResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("$PATH$USER_ID?fields=personal_account_option", it.url.encodedPath)
+                assertEquals("$PATH?fields=personal_account_option", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
@@ -254,7 +285,7 @@ class MeResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val userDetailsResult = meResource.getUserDetails(defaultParameters, USER_ID)
+        val userDetailsResult = meResource.getUserDetails(defaultParameters)
 
         verifyAndroidClient()
 
@@ -282,7 +313,7 @@ class MeResourceImplTest {
             status = HttpStatusCode.BadGateway,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("$PATH$USER_ID?fields=personal_account_option", it.url.encodedPath)
+                assertEquals("$PATH?fields=personal_account_option", it.url.encodedPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
@@ -290,7 +321,7 @@ class MeResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val userDetailsResult = meResource.getUserDetails(defaultParameters, USER_ID)
+        val userDetailsResult = meResource.getUserDetails(defaultParameters)
 
         verifyAndroidClient()
         assertTrue(userDetailsResult.isError)

@@ -34,8 +34,7 @@ class MeResourceImpl @Inject constructor(
     private val gson: Gson
 ) : MeResource {
     override suspend fun getUserDetails(
-        parameters: RequestParameters,
-        userId: String
+        parameters: RequestParameters
     ): Result<UserDetails> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
@@ -43,29 +42,26 @@ class MeResourceImpl @Inject constructor(
         val call = processCall<Unit>(
             parameters = parameters,
             methodType = HttpMethod.Get,
-            query = "$userId?fields=personal_account_option"
+            query = "?fields=personal_account_option"
         )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateAddress(
         parameters: RequestParameters,
-        userId: String,
         addressBody: UpdateAddressBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
         val call = processCall(
-            parameters = parameters, bodyRequest = addressBody,
-            query = userId
+            parameters = parameters, bodyRequest = addressBody
         )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updatePassword(
         parameters: RequestParameters,
-        userId: String,
         updatePasswordBody: UpdatePasswordBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
@@ -73,15 +69,13 @@ class MeResourceImpl @Inject constructor(
         }
         val call = processCall(
             parameters = parameters,
-            bodyRequest = updatePasswordBody,
-            query = userId
+            bodyRequest = updatePasswordBody
         )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateContactNumber(
         parameters: RequestParameters,
-        userId: String,
         updateContactNumberBody: UpdateContactNumberBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
@@ -89,38 +83,33 @@ class MeResourceImpl @Inject constructor(
         }
         val call =
             processCall(
-                parameters = parameters, bodyRequest = updateContactNumberBody,
-                query = userId
+                parameters = parameters, bodyRequest = updateContactNumberBody
             )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateEmail(
         parameters: RequestParameters,
-        userId: String,
         emailBody: EmailBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
         val call = processCall(
-            parameters = parameters, bodyRequest = emailBody,
-            query = userId
+            parameters = parameters, bodyRequest = emailBody
         )
         return resultHandler.processResult(call, gson)
     }
 
     override suspend fun updateName(
         parameters: RequestParameters,
-        userId: String,
         updateNameBody: UpdateNameBody
     ): Result<Unit> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
         val call = processCall(
-            parameters = parameters, bodyRequest = updateNameBody,
-            query = userId
+            parameters = parameters, bodyRequest = updateNameBody
         )
         return resultHandler.processResult(call, gson)
     }

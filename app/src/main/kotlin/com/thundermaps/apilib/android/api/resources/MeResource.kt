@@ -11,34 +11,29 @@ import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
 
 interface MeResource {
-    suspend fun getUserDetails(parameters: RequestParameters, userId: String): Result<UserDetails>
+    suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails>
     suspend fun updateAddress(
         parameters: RequestParameters,
-        userId: String,
         addressBody: UpdateAddressBody
     ): Result<Unit>
 
     suspend fun updatePassword(
         parameters: RequestParameters,
-        userId: String,
         updatePasswordBody: UpdatePasswordBody
     ): Result<Unit>
 
     suspend fun updateContactNumber(
         parameters: RequestParameters,
-        userId: String,
         updateContactNumberBody: UpdateContactNumberBody
     ): Result<Unit>
 
     suspend fun updateEmail(
         parameters: RequestParameters,
-        userId: String,
         emailBody: EmailBody
     ): Result<Unit>
 
     suspend fun updateName(
         parameters: RequestParameters,
-        userId: String,
         updateNameBody: UpdateNameBody
     ): Result<Unit>
 
