@@ -112,7 +112,6 @@ class MeResourceImplTest {
         }) {
             meResource.updateContactNumber(
                 defaultParameters,
-
                 body
             )
         }
@@ -127,7 +126,6 @@ class MeResourceImplTest {
         }) {
             meResource.updateContactNumber(
                 defaultParameters,
-
                 body
             )
         }
@@ -249,7 +247,7 @@ class MeResourceImplTest {
             status = if (isSuccess) HttpStatusCode.NoContent else HttpStatusCode.Forbidden,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals("$PATH$USER_ID", it.url.encodedPath)
+                assertEquals("$PATH_WITHOUT_ME$USER_ID", it.url.encodedPath)
                 assertEquals(HttpMethod.Patch, it.method)
                 verifyBody((it.body as TextContent).text)
                 inspectCalled = true
@@ -340,7 +338,8 @@ class MeResourceImplTest {
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val PATH = "/api/v4/users/"
+        private const val PATH = "/api/v4/users/me"
+        private const val PATH_WITHOUT_ME = "/api/v4/users/"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID
