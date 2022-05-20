@@ -1,3 +1,4 @@
+
 package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.Expose
