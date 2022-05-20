@@ -18,3 +18,5 @@ data class EmailBody(@Expose val email: String)
 data class UpdateContactNumberBody(@SerializedName("contact_number") @Expose val contactNumber: String)
 
 data class UpdateAddressBody(@Expose val address: String)
+
+data class UpdateEmailNotificationEnableBody(@SerializedName("email_notifications_enabled") @Expose val emailNotificationEnabled: Boolean)

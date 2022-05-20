@@ -14,6 +14,7 @@ import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.resources.MeResource
@@ -176,6 +177,34 @@ class MeResourceImplTest {
         }
     }
 
+    @Test
+    fun verifyUpdateEmailNotificationEnabled() {
+        val updateEmailNotificationEnableBody = UpdateEmailNotificationEnableBody(true)
+        verifyUpdatedTypeWithUserId(true, verifyBody = {
+            assertEquals(gson.toJson(updateEmailNotificationEnableBody), it)
+        }) {
+            meResource.updateEmailNotificationEnabled(
+                defaultParameters,
+                USER_ID,
+                updateEmailNotificationEnableBody
+            )
+        }
+    }
+
+    @Test
+    fun verifyUpdateEmailNotificationEnabledError() {
+        val updateEmailNotificationEnableBody = UpdateEmailNotificationEnableBody(true)
+        verifyUpdatedTypeWithUserId(false, {
+            assertEquals(gson.toJson(updateEmailNotificationEnableBody), it)
+        }) {
+            meResource.updateEmailNotificationEnabled(
+                defaultParameters,
+                USER_ID,
+                updateEmailNotificationEnableBody
+            )
+        }
+    }
+
     private fun verifyUpdatedType(
         isSuccess: Boolean,
         verifyBody: (body: String) -> Unit,
@@ -187,7 +216,38 @@ class MeResourceImplTest {
             status = if (isSuccess) HttpStatusCode.NoContent else HttpStatusCode.Forbidden,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals(PATH, it.url.encodedPath)
+                assertEquals("$PATH", it.url.encodedPath)
+                assertEquals(HttpMethod.Patch, it.method)
+                verifyBody((it.body as TextContent).text)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val result = invoke()
+
+        verifyAndroidClient()
+        if (isSuccess) {
+            assertTrue(result.isSuccess)
+        } else {
+            assertTrue(result.isError)
+        }
+        assertTrue(inspectCalled)
+    }
+
+    private fun verifyUpdatedTypeWithUserId(
+        isSuccess: Boolean,
+        verifyBody: (body: String) -> Unit,
+        invoke: suspend () -> Result<Unit>
+    ) = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = "",
+            status = if (isSuccess) HttpStatusCode.NoContent else HttpStatusCode.Forbidden,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals("$PATH_WITHOUT_ME$USER_ID", it.url.encodedPath)
                 assertEquals(HttpMethod.Patch, it.method)
                 verifyBody((it.body as TextContent).text)
                 inspectCalled = true
@@ -279,11 +339,13 @@ class MeResourceImplTest {
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private const val PATH = "/api/v4/users/me"
+        private const val PATH_WITHOUT_ME = "/api/v4/users/"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID
         private const val TEST_TEAM = "Test Team"
-        private const val TEST_CLIENT_UUID = "client uuid"
+        private const val TEST_CLIENT_UUID = "Client UUID"
+        private const val USER_ID = "12345"
         private val saferMeCredentials =
             SaferMeCredentials(TEST_KEY, TEST_INSTALL, TEST_APP, TEST_TEAM, TEST_CLIENT_UUID)
         private val defaultParameters = RequestParameters(
