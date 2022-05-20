@@ -33,16 +33,12 @@ class MeResourceImpl @Inject constructor(
     private val resultHandler: ResultHandler,
     private val gson: Gson
 ) : MeResource {
-    override suspend fun getUserDetails(
-        parameters: RequestParameters
-    ): Result<UserDetails> {
+    override suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall<Unit>(
-            parameters = parameters,
-            methodType = HttpMethod.Get,
-            query = "$USER_PATH$USER_ME_PATH?fields=personal_account_option"
+        val call = processCall<Unit>(parameters = parameters, methodType = HttpMethod.Get,
+            query = "?fields=personal_account_option"
         )
         return resultHandler.processResult(call, gson)
     }
@@ -54,10 +50,7 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(
-            parameters = parameters, bodyRequest = addressBody,
-            query = "$USER_PATH$USER_ME_PATH"
-        )
+        val call = processCall(parameters = parameters, bodyRequest = addressBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -68,11 +61,7 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(
-            parameters = parameters,
-            bodyRequest = updatePasswordBody,
-            query = "$USER_PATH$USER_ME_PATH"
-        )
+        val call = processCall(parameters = parameters, bodyRequest = updatePasswordBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -83,11 +72,7 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call =
-            processCall(
-                parameters = parameters, bodyRequest = updateContactNumberBody,
-                query = "$USER_PATH$USER_ME_PATH"
-            )
+        val call = processCall(parameters = parameters, bodyRequest = updateContactNumberBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -98,10 +83,7 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(
-            parameters = parameters, bodyRequest = emailBody,
-            query = "$USER_PATH$USER_ME_PATH"
-        )
+        val call = processCall(parameters = parameters, bodyRequest = emailBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -112,10 +94,7 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(
-            parameters = parameters, bodyRequest = updateNameBody,
-            query = "$USER_PATH$USER_ME_PATH"
-        )
+        val call = processCall(parameters = parameters, bodyRequest = updateNameBody)
         return resultHandler.processResult(call, gson)
     }
 
@@ -127,17 +106,15 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call =
-            processCall(
-                parameters = parameters, bodyRequest = updateEmailNotificationEnableBody,
-                query = "$USER_PATH/$userId"
-            )
+        val call = processCall(parameters = parameters, bodyRequest = updateEmailNotificationEnableBody,
+            path = USER_PATH, query = userId)
         return resultHandler.processResult(call, gson)
     }
 
     private suspend fun <T : Any> processCall(
         parameters: RequestParameters,
         methodType: HttpMethod = HttpMethod.Patch,
+        path: String = USER_ME_PATH,
         query: String = "",
         bodyRequest: T? = null
     ): HttpClientCall {
@@ -145,7 +122,7 @@ class MeResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = methodType
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}$query"
+                encodedPath = "${encodedPath}$path$query"
             }.build())
             bodyRequest?.let {
                 contentType(ContentType.Application.Json)
@@ -156,7 +133,7 @@ class MeResourceImpl @Inject constructor(
     }
 
     companion object {
-        const val USER_PATH = "users"
-        const val USER_ME_PATH = "/me"
+        const val USER_PATH = "users/"
+        const val USER_ME_PATH = "users/me"
     }
 }
