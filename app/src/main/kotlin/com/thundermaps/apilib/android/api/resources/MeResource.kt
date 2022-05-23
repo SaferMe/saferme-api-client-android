@@ -12,34 +12,10 @@ import com.thundermaps.apilib.android.api.responses.models.UserDetails
 
 interface MeResource {
     suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails>
-    suspend fun updateAddress(
-        parameters: RequestParameters,
-        addressBody: UpdateAddressBody
-    ): Result<Unit>
-
-    suspend fun updatePassword(
-        parameters: RequestParameters,
-        updatePasswordBody: UpdatePasswordBody
-    ): Result<Unit>
-
-    suspend fun updateContactNumber(
-        parameters: RequestParameters,
-        updateContactNumberBody: UpdateContactNumberBody
-    ): Result<Unit>
-
-    suspend fun updateEmail(
-        parameters: RequestParameters,
-        emailBody: EmailBody
-    ): Result<Unit>
-
-    suspend fun updateName(
-        parameters: RequestParameters,
-        updateNameBody: UpdateNameBody
-    ): Result<Unit>
-
-    suspend fun updateEmailNotificationEnabled(
-        parameters: RequestParameters,
-        userId: String,
-        updateEmailNotificationEnableBody: UpdateEmailNotificationEnableBody
-    ): Result<Unit>
+    suspend fun updateAddress(parameters: RequestParameters, addressBody: UpdateAddressBody): Result<Unit>
+    suspend fun updatePassword(parameters: RequestParameters, updatePasswordBody: UpdatePasswordBody): Result<Unit>
+    suspend fun updateContactNumber(parameters: RequestParameters, updateContactNumberBody: UpdateContactNumberBody): Result<Unit>
+    suspend fun updateEmail(parameters: RequestParameters, emailBody: EmailBody): Result<Unit>
+    suspend fun updateName(parameters: RequestParameters, updateNameBody: UpdateNameBody): Result<Unit>
+    suspend fun updateEmailNotificationEnabled(parameters: RequestParameters, userId: String, updateEmailNotificationEnableBody: UpdateEmailNotificationEnableBody): Result<Unit>
 }
