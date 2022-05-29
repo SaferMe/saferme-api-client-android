@@ -1,6 +1,5 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.mapbox.geojson.FeatureCollection
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
@@ -14,6 +13,7 @@ import com.thundermaps.apilib.android.api.resources.ShapeResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
+import io.github.dellisd.spatialk.geojson.FeatureCollection
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod

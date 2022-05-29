@@ -96,7 +96,7 @@ dependencies {
 
     implementation(Deps.awsAndroidS3)
 
-    implementation(Deps.mapboxGeoJson)
+    implementation(Deps.geojson)
 
     implementation(Deps.moshi)
     implementation(Deps.moshiKotlin)
