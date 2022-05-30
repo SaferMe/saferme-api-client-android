@@ -29,7 +29,7 @@ object Deps {
         val crayon: String = "0.1.0",
         val ktor: String = "1.2.5",
         val slf4j: String = "1.6.1",
-        val mapboxGeoJson: String = "5.8.0",
+        val geojson: String = "0.2.0",
         val awsAndroid: String = "2.44.0",
         val moshi: String = "1.13.0"
     )
@@ -41,7 +41,7 @@ object Deps {
     val gson = "com.google.code.gson:gson:${versions.gson}"
     val dagger2 = "com.google.dagger:dagger:${versions.dagger2}"
     val dagger2_annotation = "com.google.dagger:dagger-compiler:${versions.dagger2}"
-    val mapboxGeoJson = "com.mapbox.mapboxsdk:mapbox-sdk-geojson:${versions.mapboxGeoJson}"
+    val geojson = "io.github.dellisd.spatialk:geojson:${versions.geojson}"
     val awsAndroidS3 = "com.amazonaws:aws-android-sdk-s3:${versions.awsAndroid}"
     val moshi = "com.squareup.moshi:moshi:${versions.moshi}"
     val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${versions.moshi}"
@@ -80,6 +80,5 @@ object TestingDeps {
     val ktor_jvm = "io.ktor:ktor-client-mock-jvm:${versions.ktor}"
     val ktor_native = "io.ktor:ktor-client-mock-native:${versions.ktor}"
     val mockitoKotlin2 = "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin2}"
-    val kotlinCoroutineTest =
-        "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutine}"
+    val kotlinCoroutineTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutine}"
 }

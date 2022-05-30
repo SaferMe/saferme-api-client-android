@@ -1,7 +1,6 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import androidx.annotation.VisibleForTesting
-import com.mapbox.geojson.FeatureCollection
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.Constants
 import com.thundermaps.apilib.android.api.requests.RequestParameters
@@ -11,6 +10,7 @@ import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl.Companion.VALUE_BETWEEN_TAGS
+import io.github.dellisd.spatialk.geojson.FeatureCollection
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
@@ -87,7 +87,7 @@ class ShapeResourceImpl @Inject constructor(
             }
             try {
                 val featureCollection = FeatureCollection.fromJson(responseString)
-                if (featureCollection.features().isNullOrEmpty()) nextLink = null
+                if (featureCollection.features.isNullOrEmpty()) nextLink = null
                 resultHandler.handleSuccess(featureCollection)
             } catch (exception: Exception) {
                 nextLink = null
