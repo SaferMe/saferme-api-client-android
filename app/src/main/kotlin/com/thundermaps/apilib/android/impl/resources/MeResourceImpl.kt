@@ -9,6 +9,7 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBod
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
 import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -40,6 +41,19 @@ class MeResourceImpl @Inject constructor(
         val call = processCall<Unit>(parameters = parameters, methodType = HttpMethod.Get,
             query = "?fields=personal_account_option"
         )
+        return resultHandler.processResult(call, gson)
+    }
+
+    override suspend fun updateUserProfile(
+        parameters: RequestParameters,
+        userId: String,
+        updateProfileBody: UpdateProfileBody
+    ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+        val call = processCall(parameters = parameters, bodyRequest = updateProfileBody,
+            path = USER_PATH, query = userId)
         return resultHandler.processResult(call, gson)
     }
 
