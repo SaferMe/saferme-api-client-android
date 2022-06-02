@@ -18,6 +18,7 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificatio
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
+import com.thundermaps.apilib.android.api.requests.models.UserBody
 import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.responses.models.Avatar
 import com.thundermaps.apilib.android.api.responses.models.Result
@@ -180,13 +181,13 @@ class MeResourceImplTest {
 
     @Test
     fun verifyUpdateProfileSuccess() {
-        val body = UpdateProfileBody("First name", "last name", "email", "contact")
+        val body = UpdateProfileBody(UserBody("First name", "last name", "email", "contact"))
         verifyUpdatedTypeWithUserId(true, {
             assertEquals(gson.toJson(body), it)
-            assertTrue(it.contains(body.firstName))
-            assertTrue(it.contains(body.lastName))
-            assertTrue(it.contains(body.email))
-            assertTrue(it.contains(body.contactNumber))
+            assertTrue(it.contains(body.user.firstName))
+            assertTrue(it.contains(body.user.lastName))
+            assertTrue(it.contains(body.user.email))
+            assertTrue(it.contains(body.user.contactNumber))
         }) {
             meResource.updateUserProfile(defaultParameters, USER_ID, body)
         }
@@ -194,13 +195,13 @@ class MeResourceImplTest {
 
     @Test
     fun verifyUpdateProfileError() {
-        val body = UpdateProfileBody("First name", "last name", "email", "contact")
+        val body = UpdateProfileBody(UserBody("First name", "last name", "email", "contact"))
         verifyUpdatedTypeWithUserId(false, {
             assertEquals(gson.toJson(body), it)
-            assertTrue(it.contains(body.firstName))
-            assertTrue(it.contains(body.lastName))
-            assertTrue(it.contains(body.email))
-            assertTrue(it.contains(body.contactNumber))
+            assertTrue(it.contains(body.user.firstName))
+            assertTrue(it.contains(body.user.lastName))
+            assertTrue(it.contains(body.user.email))
+            assertTrue(it.contains(body.user.contactNumber))
         }) {
             meResource.updateUserProfile(defaultParameters, USER_ID, body)
         }
