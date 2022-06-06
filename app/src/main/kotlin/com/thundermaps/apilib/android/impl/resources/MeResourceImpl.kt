@@ -18,12 +18,20 @@ import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.url
-import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
+import io.ktor.client.response.HttpResponse
 import io.ktor.http.contentType
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.util.KtorExperimentalAPI
+import java.io.File
+import java.math.BigInteger
 import java.net.UnknownHostException
+import java.util.Random
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,7 +46,8 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall<Unit>(parameters = parameters, methodType = HttpMethod.Get,
+        val call = processCall<Unit>(
+            parameters = parameters, methodType = HttpMethod.Get,
             query = "?fields=personal_account_option"
         )
         return resultHandler.processResult(call, gson)
@@ -52,8 +61,10 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(parameters = parameters, bodyRequest = updateProfileBody,
-            path = USER_PATH, query = userId)
+        val call = processCall(
+            parameters = parameters, bodyRequest = updateProfileBody,
+            path = USER_PATH, query = userId
+        )
         return resultHandler.processResult(call, gson)
     }
 
@@ -120,8 +131,10 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(parameters = parameters, bodyRequest = updateEmailNotificationEnableBody,
-            path = USER_PATH, query = userId)
+        val call = processCall(
+            parameters = parameters, bodyRequest = updateEmailNotificationEnableBody,
+            path = USER_PATH, query = userId
+        )
         return resultHandler.processResult(call, gson)
     }
 
@@ -144,6 +157,29 @@ class MeResourceImpl @Inject constructor(
             }
         })
         return call
+    }
+
+    private suspend fun <T : Any> processCallForAvatar(
+        parameters: RequestParameters,
+        path: String = USER_PATH,
+        query: String = "",
+        file:File
+    ): HttpResponse {
+        val (client, requestBuilder) = androidClient.client(parameters)
+
+        val boundary: String = BigInteger(35, Random()).toString()
+        val response: HttpResponse = client.submitFormWithBinaryData(
+            url = AndroidClient.baseUrlBuilder(parameters).apply {
+                encodedPath = "${encodedPath}$path$query"
+            }.build().encodedPath,
+            formData = formData {
+                append("avatar", file.readBytes(), Headers.build {
+                    append(HttpHeaders.ContentType, "image/png")
+                    append(HttpHeaders.ContentDisposition, "filename=\"${file.name}\"")
+                })
+            }
+        )
+        return response
     }
 
     companion object {
