@@ -19,9 +19,9 @@ import io.ktor.client.call.HttpClientCall
 import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.url
-import io.ktor.http.contentType
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
+import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
 import java.net.UnknownHostException
 import javax.inject.Inject
