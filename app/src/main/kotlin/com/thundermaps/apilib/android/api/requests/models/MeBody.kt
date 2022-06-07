@@ -22,7 +22,7 @@ data class UpdateAddressBody(@Expose val address: String)
 data class UpdateEmailNotificationEnableBody(@SerializedName("email_notifications_enabled") @Expose val emailNotificationEnabled: Boolean)
 
 data class UpdateProfileBody(
-    @SerializedName("user") @Expose val user: UserBody
+    @Expose val user: UserBody
 )
 
 data class UserBody(

@@ -39,8 +39,9 @@ class MeResourceImpl @Inject constructor(
             return resultHandler.handleException(UnknownHostException())
         }
         val call = processCall<Unit>(
-            parameters = parameters, methodType = HttpMethod.Get,
-            query = "?fields=personal_account_option"
+            parameters = parameters,
+            methodType = HttpMethod.Get,
+            query = USER_DETAILS_QUERY
         )
         return resultHandler.processResult(call, gson)
     }
@@ -54,8 +55,10 @@ class MeResourceImpl @Inject constructor(
             return resultHandler.handleException(UnknownHostException())
         }
         val call = processCall(
-            parameters = parameters, bodyRequest = updateProfileBody,
-            path = USER_PATH, query = userId
+            parameters = parameters,
+            bodyRequest = updateProfileBody,
+            path = USER_PATH,
+            query = userId
         )
         return resultHandler.processResult(call, gson)
     }
@@ -124,8 +127,10 @@ class MeResourceImpl @Inject constructor(
             return resultHandler.handleException(UnknownHostException())
         }
         val call = processCall(
-            parameters = parameters, bodyRequest = updateEmailNotificationEnableBody,
-            path = USER_PATH, query = userId
+            parameters = parameters,
+            bodyRequest = updateEmailNotificationEnableBody,
+            path = USER_PATH,
+            query = userId
         )
         return resultHandler.processResult(call, gson)
     }
@@ -154,5 +159,6 @@ class MeResourceImpl @Inject constructor(
     companion object {
         const val USER_PATH = "users/"
         const val USER_ME_PATH = "users/me"
+        const val USER_DETAILS_QUERY = "?fields=personal_account_option"
     }
 }
