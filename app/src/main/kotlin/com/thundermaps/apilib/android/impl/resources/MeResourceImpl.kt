@@ -9,6 +9,7 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBod
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
 import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -37,8 +38,27 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall<Unit>(parameters = parameters, methodType = HttpMethod.Get,
-            query = "?fields=personal_account_option"
+        val call = processCall<Unit>(
+            parameters = parameters,
+            methodType = HttpMethod.Get,
+            query = USER_DETAILS_QUERY
+        )
+        return resultHandler.processResult(call, gson)
+    }
+
+    override suspend fun updateUserProfile(
+        parameters: RequestParameters,
+        userId: String,
+        updateProfileBody: UpdateProfileBody
+    ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+        val call = processCall(
+            parameters = parameters,
+            bodyRequest = updateProfileBody,
+            path = USER_PATH,
+            query = userId
         )
         return resultHandler.processResult(call, gson)
     }
@@ -106,8 +126,12 @@ class MeResourceImpl @Inject constructor(
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = processCall(parameters = parameters, bodyRequest = updateEmailNotificationEnableBody,
-            path = USER_PATH, query = userId)
+        val call = processCall(
+            parameters = parameters,
+            bodyRequest = updateEmailNotificationEnableBody,
+            path = USER_PATH,
+            query = userId
+        )
         return resultHandler.processResult(call, gson)
     }
 
@@ -135,5 +159,6 @@ class MeResourceImpl @Inject constructor(
     companion object {
         const val USER_PATH = "users/"
         const val USER_ME_PATH = "users/me"
+        const val USER_DETAILS_QUERY = "?fields=personal_account_option"
     }
 }

@@ -7,11 +7,13 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBod
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
 
 interface MeResource {
     suspend fun getUserDetails(parameters: RequestParameters): Result<UserDetails>
+    suspend fun updateUserProfile(parameters: RequestParameters, userId: String, updateProfileBody: UpdateProfileBody): Result<Unit>
     suspend fun updateAddress(parameters: RequestParameters, addressBody: UpdateAddressBody): Result<Unit>
     suspend fun updatePassword(parameters: RequestParameters, updatePasswordBody: UpdatePasswordBody): Result<Unit>
     suspend fun updateContactNumber(parameters: RequestParameters, updateContactNumberBody: UpdateContactNumberBody): Result<Unit>
