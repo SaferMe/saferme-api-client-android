@@ -117,6 +117,9 @@ open class FormValue {
     data class ValueInt(val value: Int = 0) : FormValue()
 
     @ExcludeFromJacocoGeneratedReport
+    data class ValueJsonObject(val value: JsonObject) : FormValue()
+
+    @ExcludeFromJacocoGeneratedReport
     data class ValueString(val value: String = "") : FormValue()
 
     @ExcludeFromJacocoGeneratedReport
@@ -146,6 +149,13 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
                     } catch (exception: Exception) {
                         null
                     }
+                }
+            }
+            json.isJsonObject -> {
+                try {
+                    FormValue.ValueJsonObject(json.asJsonObject)
+                } catch (exception: Exception) {
+                    null
                 }
             }
             json.isJsonArray -> {
@@ -186,6 +196,7 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
         context: JsonSerializationContext
     ): JsonElement {
         return when (src) {
+            is FormValue.ValueJsonObject -> gsonSerializer.toJsonTree(src.value)
             is FormValue.ValueInt -> JsonPrimitive(src.value)
             is FormValue.ValueString -> JsonPrimitive(src.value)
             is FormValue.ValueFormFieldImage -> gsonSerializer.toJsonTree(src.images)
