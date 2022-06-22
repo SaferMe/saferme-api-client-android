@@ -8,6 +8,7 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificatio
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
+import com.thundermaps.apilib.android.api.responses.models.Clients
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
 
@@ -20,4 +21,5 @@ interface MeResource {
     suspend fun updateEmail(parameters: RequestParameters, emailBody: EmailBody): Result<Unit>
     suspend fun updateName(parameters: RequestParameters, updateNameBody: UpdateNameBody): Result<Unit>
     suspend fun updateEmailNotificationEnabled(parameters: RequestParameters, userId: String, updateEmailNotificationEnableBody: UpdateEmailNotificationEnableBody): Result<Unit>
+    suspend fun getClients(parameters: RequestParameters): Result<Clients>
 }
