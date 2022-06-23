@@ -36,6 +36,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -356,6 +357,59 @@ class MeResourceImplTest {
         assertTrue(inspectCalled)
     }
 
+    @Test
+    fun verifyGetClientsSuccess() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = CLIENTS_RESPONSE,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(PATH_CLIENTS, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val clientsResult = meResource.getClients(defaultParameters)
+
+        verifyAndroidClient()
+        assertTrue(clientsResult.isSuccess)
+        val clients = clientsResult.getNullableData()
+        assertNotNull(clients)
+        assertTrue(clients!!.pushNotificationEnabled)
+        assertEquals(392.0f, clients.radius)
+        assertEquals(30, clients.badge)
+        assertFalse(clients.isPushCapable)
+        assertTrue(clients.channels.isNotEmpty())
+        assertTrue(inspectCalled)
+    }
+
+    @Test
+    fun verifyClientsError() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = "",
+            status = HttpStatusCode.BadGateway,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(PATH_CLIENTS, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val clientsResult = meResource.getClients(defaultParameters)
+
+        verifyAndroidClient()
+        assertTrue(clientsResult.isError)
+        assertTrue(inspectCalled)
+    }
+
     private fun verifyAndroidClient(expectedVersion: Int = 4) {
         val parameterCaptor = argumentCaptor<RequestParameters>()
         verify(androidClient).client(parameterCaptor.capture())
@@ -370,6 +424,7 @@ class MeResourceImplTest {
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private const val PATH = "/api/v4/users/me"
         private const val PATH_WITHOUT_ME = "/api/v4/users/"
+        private const val PATH_CLIENTS = "/api/v4/clients"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID
@@ -418,6 +473,22 @@ class MeResourceImplTest {
               },
               "contact_number": "32903290592",
               "accepted_terms_version": 4
+            }
+        """.trimIndent()
+
+        private val CLIENTS_RESPONSE = """
+            {
+              "push_notifications_enabled": true,
+              "radius": 392,
+              "badge": 30,
+              "channels": [
+                29968,
+                29969,
+                29970,
+                29971
+              ],
+              "is_push_capable": false,
+              "control_panel_url": "https://assets.saferme.io/control_panel/release_112"
             }
         """.trimIndent()
     }

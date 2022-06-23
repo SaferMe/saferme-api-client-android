@@ -11,6 +11,7 @@ import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
 import com.thundermaps.apilib.android.api.resources.MeResource
+import com.thundermaps.apilib.android.api.responses.models.Clients
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
@@ -135,6 +136,21 @@ class MeResourceImpl @Inject constructor(
         return resultHandler.processResult(call, gson)
     }
 
+    override suspend fun getClients(parameters: RequestParameters): Result<Clients> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+
+        val call = processCall(
+            parameters = parameters,
+            path = CLIENTS_PATH,
+            methodType = HttpMethod.Get,
+            bodyRequest = null
+        )
+
+        return resultHandler.processResult(call, gson)
+    }
+
     private suspend fun <T : Any> processCall(
         parameters: RequestParameters,
         methodType: HttpMethod = HttpMethod.Patch,
@@ -159,6 +175,7 @@ class MeResourceImpl @Inject constructor(
     companion object {
         const val USER_PATH = "users/"
         const val USER_ME_PATH = "users/me"
+        const val CLIENTS_PATH = "clients"
         const val USER_DETAILS_QUERY = "?fields=personal_account_option"
     }
 }
