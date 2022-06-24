@@ -34,7 +34,7 @@ class ChannelResourceImpl @Inject constructor(
             return resultHandler.handleException(UnknownHostException())
         }
 
-        val call = getChannelsCall(parameters, teamId, fields)
+        val call = getChannelsCall(parameters, teamId, fields,)
 
         return resultHandler.processResult(call, gson)
     }
@@ -42,13 +42,14 @@ class ChannelResourceImpl @Inject constructor(
     private suspend fun getChannelsCall(
         parameters: RequestParameters,
         teamId: Long,
-        fields: String
+        fields: String,
+        updatedAfter: String
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}teams/$teamId/channels?fields=$fields"
+                encodedPath = "${encodedPath}teams/$teamId/channels?updated_after=$updatedAfter&fields=$fields"
             }.build())
         })
         return call
