@@ -69,7 +69,7 @@ class ChannelResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val result = channelResource.getChannels(defaultParameters, TEAM_ID)
+        val result = channelResource.getChannels(defaultParameters, TEAM_ID, updatedAfter = UPDATED_AFTER)
 
         verifyAndroidClient(4)
         assertTrue(result.isSuccess)
@@ -136,7 +136,7 @@ class ChannelResourceImplTest {
         ) doReturn Pair(client, HttpRequestBuilder())
 
         val result =
-            channelResource.getChannels(defaultParameters, teamId = TEAM_ID)
+            channelResource.getChannels(defaultParameters, teamId = TEAM_ID, updatedAfter = UPDATED_AFTER)
 
         verifyAndroidClient(4)
         assertTrue(result.isError)
@@ -165,11 +165,12 @@ class ChannelResourceImplTest {
 
     companion object {
         private const val TEAM_ID = 6688L
+        private const val UPDATED_AFTER = "2022-06-28T10:45:35.081+13:00"
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private const val CHANNELS_PATH =
-            "/api/v4/teams/$TEAM_ID/channels?fields=${ChannelResource.DEFAULT_FIELDS}"
+            "/api/v4/teams/$TEAM_ID/channels?updated_after=${UPDATED_AFTER}&fields=${ChannelResource.DEFAULT_FIELDS}"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID

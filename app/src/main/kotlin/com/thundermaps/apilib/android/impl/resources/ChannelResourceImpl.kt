@@ -28,13 +28,14 @@ class ChannelResourceImpl @Inject constructor(
     override suspend fun getChannels(
         parameters: RequestParameters,
         teamId: Long,
-        fields: String
+        fields: String,
+        updatedAfter: String
     ): Result<List<Channel>> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
 
-        val call = getChannelsCall(parameters, teamId, fields,)
+        val call = getChannelsCall(parameters, teamId, fields, updatedAfter)
 
         return resultHandler.processResult(call, gson)
     }

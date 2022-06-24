@@ -8,7 +8,8 @@ interface ChannelResource {
     suspend fun getChannels(
         parameters: RequestParameters,
         teamId: Long,
-        fields: String = DEFAULT_FIELDS
+        fields: String = DEFAULT_FIELDS,
+        updatedAfter: String
     ): Result<List<Channel>>
 
     companion object {
