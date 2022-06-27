@@ -14,6 +14,7 @@ data class Channel(
     @SerializedName(FORM_LOCKED) @Expose val isFormLocked: Boolean?,
     @SerializedName(HAZARD_CHANNEL) @Expose val isHazardChannel: Boolean?,
     @Expose val id: Long,
+    @Expose val uuid: String,
     @SerializedName(IS_ADDON_CHANNEL) @Expose val isAddonChannel: Boolean,
     @SerializedName(IS_DELETABLE_BY) @Expose val isDeletableBy: Boolean?,
     @SerializedName(IS_MANAGEABLE_BY) @Expose val isManageableBy: Boolean,

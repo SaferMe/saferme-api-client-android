@@ -83,6 +83,7 @@ class ChannelResourceImplTest {
 
         assertEquals(channel, firstChannel)
         assertEquals(channel.id, firstChannel?.id)
+        assertEquals(channel.uuid, firstChannel?.uuid)
         assertFalse(firstChannel?.allowPublicViewers!!)
         assertTrue(firstChannel.allowPublicComments)
         assertFalse(firstChannel.allowUserDeleteOwnReports)
@@ -212,7 +213,8 @@ class ChannelResourceImplTest {
             standardChannel = true,
             teamId = TEAM_ID,
             tuneInCount = 1,
-            pinUrls = null
+            pinUrls = null,
+            uuid = ""
         )
 
         private val CHANNELS_SUCCESS_RESPONSE =

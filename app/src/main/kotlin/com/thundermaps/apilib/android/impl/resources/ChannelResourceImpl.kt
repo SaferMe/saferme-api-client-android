@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.ChannelResource
+import com.thundermaps.apilib.android.api.resources.DeletedChannelList
 import com.thundermaps.apilib.android.api.responses.models.Channel
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -51,6 +52,33 @@ class ChannelResourceImpl @Inject constructor(
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
                 encodedPath = "${encodedPath}teams/$teamId/channels?updated_after=$updatedAfter&fields=$fields"
+            }.build())
+        })
+        return call
+    }
+
+    override suspend fun getChannelsDeletedAfter(
+        parameters: RequestParameters,
+        deletedAfter: String
+    ): Result<DeletedChannelList> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+
+        val call = getChannelsCallDeletedAfter(parameters, deletedAfter)
+
+        return resultHandler.processResult(call, gson)
+    }
+
+    private suspend fun getChannelsCallDeletedAfter(
+        parameters: RequestParameters,
+        deletedAfter: String
+    ): HttpClientCall {
+        val (client, requestBuilder) = androidClient.client(parameters)
+        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
+            method = HttpMethod.Get
+            url(AndroidClient.baseUrlBuilder(parameters).apply {
+                encodedPath = "${encodedPath}deleted_resources?type=account&deleted_after=$deletedAfter"
             }.build())
         })
         return call
