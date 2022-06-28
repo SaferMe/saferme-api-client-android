@@ -150,6 +150,37 @@ class ChannelResourceImplTest {
         assertTrue(inspectCalled)
     }
 
+    @Test
+    fun verifyGetChannelsDeletedSuccess() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = CHANNELS_DELETED_SUCCESS_RESPONSE,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(CHANNELS_DELETED_PATH, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val result = channelResource.getChannelsDeletedAfter(defaultParameters, deletedAfter =  UPDATED_AFTER)
+
+        verifyAndroidClient(4)
+        assertTrue(result.isSuccess)
+        assertTrue(inspectCalled)
+
+        val channels = result.getNullableData()
+        assertNotNull(channels)
+        assertEquals(2, channels?.deletedResource?.size)
+
+        val firstChannel = channels?.deletedResource?.first()?.uuid
+
+        assertEquals(channel.uuid, firstChannel)
+    }
+
     private fun verifyAndroidClient(expectedVersion: Int) {
         val parameterCaptor = argumentCaptor<RequestParameters>()
         verify(androidClient).client(parameterCaptor.capture())
@@ -172,6 +203,8 @@ class ChannelResourceImplTest {
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private const val CHANNELS_PATH =
             "/api/v4/teams/$TEAM_ID/channels?updated_after=$UPDATED_AFTER&fields=${ChannelResource.DEFAULT_FIELDS}"
+        private const val CHANNELS_DELETED_PATH =
+            "/api/v4/deleted_resources?type=account&deleted_after=$UPDATED_AFTER"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID
@@ -310,6 +343,20 @@ class ChannelResourceImplTest {
                       ]
                    }
                 }
+            """.trimIndent()
+
+        private val CHANNELS_DELETED_SUCCESS_RESPONSE =
+            """
+               {
+                    "deleted_resources": [
+                    {
+                      "uuid": "test-uuid"
+                    },
+                    {
+                      "uuid": "test-uuid-2"
+                    }
+                  ]
+               }
             """.trimIndent()
     }
 }
