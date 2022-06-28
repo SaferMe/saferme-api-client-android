@@ -214,7 +214,7 @@ class ChannelResourceImplTest {
             teamId = TEAM_ID,
             tuneInCount = 1,
             pinUrls = null,
-            uuid = ""
+            uuid = "test-uuid"
         )
 
         private val CHANNELS_SUCCESS_RESPONSE =
@@ -222,6 +222,7 @@ class ChannelResourceImplTest {
                 [
                   {
                     "id": 30108,
+                    "uuid": "test-uuid",
                     "allow_public_comments": true,
                     "allow_public_viewers": false,
                     "allow_user_delete_own_reports": false,
