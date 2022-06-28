@@ -166,7 +166,7 @@ class ChannelResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val result = channelResource.getChannelsDeletedAfter(defaultParameters, deletedAfter =  UPDATED_AFTER)
+        val result = channelResource.getChannelsDeletedAfter(defaultParameters, deletedAfter = UPDATED_AFTER)
 
         verifyAndroidClient(4)
         assertTrue(result.isSuccess)
