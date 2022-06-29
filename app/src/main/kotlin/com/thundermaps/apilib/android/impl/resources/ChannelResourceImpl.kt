@@ -29,14 +29,13 @@ class ChannelResourceImpl @Inject constructor(
     override suspend fun getChannels(
         parameters: RequestParameters,
         teamId: Long,
-        fields: String,
-        updatedAfter: String
+        fields: String
     ): Result<List<Channel>> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
 
-        val call = getChannelsCall(parameters, teamId, fields, updatedAfter)
+        val call = getChannelsCall(parameters, teamId, fields)
 
         return resultHandler.processResult(call, gson)
     }
@@ -44,41 +43,44 @@ class ChannelResourceImpl @Inject constructor(
     private suspend fun getChannelsCall(
         parameters: RequestParameters,
         teamId: Long,
-        fields: String,
-        updatedAfter: String
+        fields: String
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}teams/$teamId/channels?updated_after=$updatedAfter&fields=$fields"
+                val extensionParams = parameters.parameters?.toUriParameters()
+                encodedPath =
+                    extensionParams?.let { "${encodedPath}teams/$teamId/channels?$it&fields=$fields" }
+                        ?: "${encodedPath}teams/$teamId/channels?fields=$fields"
             }.build())
         })
         return call
     }
 
     override suspend fun getChannelsDeletedAfter(
-        parameters: RequestParameters,
-        deletedAfter: String
+        parameters: RequestParameters
     ): Result<DeletedChannelList> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
 
-        val call = getChannelsCallDeletedAfter(parameters, deletedAfter)
+        val call = getChannelsCallDeletedAfter(parameters)
 
         return resultHandler.processResult(call, gson)
     }
 
     private suspend fun getChannelsCallDeletedAfter(
-        parameters: RequestParameters,
-        deletedAfter: String
+        parameters: RequestParameters
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}deleted_resources?type=account&deleted_after=$deletedAfter"
+                val extensionParams = parameters.parameters?.toUriParameters()
+                encodedPath =
+                    extensionParams?.let { "${encodedPath}deleted_resources?$it" }
+                        ?: "${encodedPath}deleted_resources/type=account"
             }.build())
         })
         return call

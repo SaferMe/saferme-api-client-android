@@ -8,8 +8,7 @@ interface ChannelResource {
     suspend fun getChannels(
         parameters: RequestParameters,
         teamId: Long,
-        fields: String = DEFAULT_FIELDS,
-        updatedAfter: String
+        fields: String = DEFAULT_FIELDS
     ): Result<List<Channel>>
 
     companion object {
@@ -17,7 +16,6 @@ interface ChannelResource {
     }
 
     suspend fun getChannelsDeletedAfter(
-        parameters: RequestParameters,
-        deletedAfter: String
+        parameters: RequestParameters
     ): Result<DeletedChannelList>
 }
