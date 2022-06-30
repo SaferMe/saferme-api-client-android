@@ -69,7 +69,7 @@ class ChannelResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val result = channelResource.getChannels(defaultParameters, TEAM_ID, updatedAfter = UPDATED_AFTER)
+        val result = channelResource.getChannels(defaultParameters.copy(parameters = mapOf("updated_after" to UPDATED_AFTER)), TEAM_ID)
 
         verifyAndroidClient(4)
         assertTrue(result.isSuccess)
@@ -137,7 +137,7 @@ class ChannelResourceImplTest {
         ) doReturn Pair(client, HttpRequestBuilder())
 
         val result =
-            channelResource.getChannels(defaultParameters, teamId = TEAM_ID, updatedAfter = UPDATED_AFTER)
+            channelResource.getChannels(defaultParameters.copy(parameters = mapOf("updated_after" to UPDATED_AFTER)), teamId = TEAM_ID)
 
         verifyAndroidClient(4)
         assertTrue(result.isError)
@@ -166,7 +166,7 @@ class ChannelResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val result = channelResource.getChannelsDeletedAfter(defaultParameters, deletedAfter = UPDATED_AFTER)
+        val result = channelResource.getChannelsDeletedAfter(defaultParameters.copy(parameters = mapOf("type" to "account","deleted_after" to UPDATED_AFTER)))
 
         verifyAndroidClient(4)
         assertTrue(result.isSuccess)
