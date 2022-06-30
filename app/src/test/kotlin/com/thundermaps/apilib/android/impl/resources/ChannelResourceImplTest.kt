@@ -69,7 +69,7 @@ class ChannelResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val result = channelResource.getChannels(defaultParameters, TEAM_ID)
+        val result = channelResource.getChannels(defaultParameters.copy(parameters = mapOf("updated_after" to UPDATED_AFTER)), TEAM_ID)
 
         verifyAndroidClient(4)
         assertTrue(result.isSuccess)
@@ -83,6 +83,7 @@ class ChannelResourceImplTest {
 
         assertEquals(channel, firstChannel)
         assertEquals(channel.id, firstChannel?.id)
+        assertEquals(channel.uuid, firstChannel?.uuid)
         assertFalse(firstChannel?.allowPublicViewers!!)
         assertTrue(firstChannel.allowPublicComments)
         assertFalse(firstChannel.allowUserDeleteOwnReports)
@@ -136,7 +137,7 @@ class ChannelResourceImplTest {
         ) doReturn Pair(client, HttpRequestBuilder())
 
         val result =
-            channelResource.getChannels(defaultParameters, teamId = TEAM_ID)
+            channelResource.getChannels(defaultParameters.copy(parameters = mapOf("updated_after" to UPDATED_AFTER)), teamId = TEAM_ID)
 
         verifyAndroidClient(4)
         assertTrue(result.isError)
@@ -147,6 +148,37 @@ class ChannelResourceImplTest {
             error.errorCodes?.base?.firstOrNull()?.error
         )
         assertTrue(inspectCalled)
+    }
+
+    @Test
+    fun verifyGetChannelsDeletedSuccess() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = CHANNELS_DELETED_SUCCESS_RESPONSE,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(CHANNELS_DELETED_PATH, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val result = channelResource.getChannelsDeletedAfter(defaultParameters.copy(parameters = mapOf("type" to "account", "deleted_after" to UPDATED_AFTER)))
+
+        verifyAndroidClient(4)
+        assertTrue(result.isSuccess)
+        assertTrue(inspectCalled)
+
+        val channels = result.getNullableData()
+        assertNotNull(channels)
+        assertEquals(2, channels?.deletedResource?.size)
+
+        val firstChannel = channels?.deletedResource?.first()?.uuid
+
+        assertEquals(channel.uuid, firstChannel)
     }
 
     private fun verifyAndroidClient(expectedVersion: Int) {
@@ -165,11 +197,14 @@ class ChannelResourceImplTest {
 
     companion object {
         private const val TEAM_ID = 6688L
+        private const val UPDATED_AFTER = "2022-06-28T10:45:35.081+13:00"
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private const val CHANNELS_PATH =
-            "/api/v4/teams/$TEAM_ID/channels?fields=${ChannelResource.DEFAULT_FIELDS}"
+            "/api/v4/teams/$TEAM_ID/channels?updated_after=$UPDATED_AFTER&fields=${ChannelResource.DEFAULT_FIELDS}"
+        private const val CHANNELS_DELETED_PATH =
+            "/api/v4/deleted_resources?type=account&deleted_after=$UPDATED_AFTER"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID
@@ -211,7 +246,8 @@ class ChannelResourceImplTest {
             standardChannel = true,
             teamId = TEAM_ID,
             tuneInCount = 1,
-            pinUrls = null
+            pinUrls = null,
+            uuid = "test-uuid"
         )
 
         private val CHANNELS_SUCCESS_RESPONSE =
@@ -219,6 +255,7 @@ class ChannelResourceImplTest {
                 [
                   {
                     "id": 30108,
+                    "uuid": "test-uuid",
                     "allow_public_comments": true,
                     "allow_public_viewers": false,
                     "allow_user_delete_own_reports": false,
@@ -306,6 +343,20 @@ class ChannelResourceImplTest {
                       ]
                    }
                 }
+            """.trimIndent()
+
+        private val CHANNELS_DELETED_SUCCESS_RESPONSE =
+            """
+               {
+                    "deleted_resources": [
+                    {
+                      "uuid": "test-uuid"
+                    },
+                    {
+                      "uuid": "test-uuid-2"
+                    }
+                  ]
+               }
             """.trimIndent()
     }
 }

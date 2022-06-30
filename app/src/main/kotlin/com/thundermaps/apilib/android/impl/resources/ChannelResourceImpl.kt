@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.ChannelResource
+import com.thundermaps.apilib.android.api.resources.DeletedChannelList
 import com.thundermaps.apilib.android.api.responses.models.Channel
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -48,7 +49,38 @@ class ChannelResourceImpl @Inject constructor(
         val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
             method = HttpMethod.Get
             url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}teams/$teamId/channels?fields=$fields"
+                val extensionParams = parameters.parameters?.toUriParameters()
+                encodedPath =
+                    extensionParams?.let { "${encodedPath}teams/$teamId/channels?$it&fields=$fields" }
+                        ?: "${encodedPath}teams/$teamId/channels?fields=$fields"
+            }.build())
+        })
+        return call
+    }
+
+    override suspend fun getChannelsDeletedAfter(
+        parameters: RequestParameters
+    ): Result<DeletedChannelList> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+
+        val call = getChannelsCallDeletedAfter(parameters)
+
+        return resultHandler.processResult(call, gson)
+    }
+
+    private suspend fun getChannelsCallDeletedAfter(
+        parameters: RequestParameters
+    ): HttpClientCall {
+        val (client, requestBuilder) = androidClient.client(parameters)
+        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
+            method = HttpMethod.Get
+            url(AndroidClient.baseUrlBuilder(parameters).apply {
+                val extensionParams = parameters.parameters?.toUriParameters()
+                encodedPath =
+                    extensionParams?.let { "${encodedPath}deleted_resources?$it" }
+                        ?: "${encodedPath}deleted_resources/type=account"
             }.build())
         })
         return call
