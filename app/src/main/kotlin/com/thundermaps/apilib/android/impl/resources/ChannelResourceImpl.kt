@@ -51,7 +51,7 @@ class ChannelResourceImpl @Inject constructor(
             url(AndroidClient.baseUrlBuilder(parameters).apply {
                 val extensionParams = parameters.parameters?.toUriParameters()
                 encodedPath =
-                    extensionParams?.let { "${encodedPath}teams/$teamId/channels?$it&fields=$fields" }
+                    extensionParams?.let { "${encodedPath}channels?team_id=$teamId&$it&fields=$fields" }
                         ?: "${encodedPath}teams/$teamId/channels?fields=$fields"
             }.build())
         })
