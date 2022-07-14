@@ -1,6 +1,8 @@
 package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.thundermaps.apilib.android.api.resources.Location
@@ -8,7 +10,7 @@ import com.thundermaps.apilib.android.api.resources.SaferMeDatum
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 
 data class Report(
-    @Expose val uuid: String = "",
+    @Expose val uuid: String? = null,
     @Expose val id: Int? = 0,
     @Expose val title: String? = null,
     @SerializedName(ACCOUNT_ID) @Expose val accountId: Int? = null,
