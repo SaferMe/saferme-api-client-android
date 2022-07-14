@@ -1,8 +1,6 @@
 package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.thundermaps.apilib.android.api.resources.Location
