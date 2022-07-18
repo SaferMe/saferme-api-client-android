@@ -8,7 +8,7 @@ import com.thundermaps.apilib.android.api.resources.SaferMeDatum
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 
 data class Report(
-    @Expose val uuid: String? = null,
+    @Expose val uuid: String = "",
     @Expose val id: Int? = 0,
     @Expose val title: String? = null,
     @SerializedName(ACCOUNT_ID) @Expose val accountId: Int? = null,

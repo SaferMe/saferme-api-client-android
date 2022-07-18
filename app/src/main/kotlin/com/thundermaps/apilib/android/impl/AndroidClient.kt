@@ -20,6 +20,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import javax.inject.Inject
+import timber.log.Timber
 
 class AndroidClient @Inject constructor() {
     // Reusable / Shared Components (Singleton)
@@ -39,7 +40,9 @@ class AndroidClient @Inject constructor() {
     @io.ktor.util.KtorExperimentalAPI
     fun client(params: RequestParameters): Pair<HttpClient, HttpRequestBuilder> {
         // Reinitialize if users credentials have changed
-        if (currentCredentials != params.credentials) {
+//        if (currentCredentials != params.credentials) {
+            Timber.e("=== Meet User credentials have changed")
+            Timber.e("=== Meet Before ${params.customRequestHeaders}")
             requestBuilderTemplate = HttpRequestBuilder().apply {
                 val creds = params.credentials
                 currentCredentials = creds
@@ -54,14 +57,18 @@ class AndroidClient @Inject constructor() {
                 params.customRequestHeaders.forEach { (key, value) ->
                     headers[key] = value
                 }
+                Timber.e("=== Meet After ${headers.entries()}")
             }
-        } else if (currentCredentials == null) {
-            requestBuilderTemplate.apply {
-                params.customRequestHeaders.forEach { (key, value) ->
-                    headers[key] = value
-                }
-            }
-        }
+//        } else if (currentCredentials == null) {
+//            Timber.e("=== Meet User credentials not changed")
+//            Timber.e("=== Meet not changed Before ${params.customRequestHeaders}")
+//            requestBuilderTemplate.apply {
+//                params.customRequestHeaders.forEach { (key, value) ->
+//                    headers[key] = value
+//                }
+//                Timber.e("=== Meet not changed After ${headers.entries()}")
+//            }
+//        }
 
         return Pair(currentClient, requestBuilderTemplate)
     }
