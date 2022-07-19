@@ -41,8 +41,6 @@ class AndroidClient @Inject constructor() {
     fun client(params: RequestParameters): Pair<HttpClient, HttpRequestBuilder> {
         // Reinitialize if users credentials have changed
 //        if (currentCredentials != params.credentials) {
-            Timber.e("=== Meet User credentials have changed")
-            Timber.e("=== Meet Before ${params.customRequestHeaders}")
             requestBuilderTemplate = HttpRequestBuilder().apply {
                 val creds = params.credentials
                 currentCredentials = creds
@@ -57,7 +55,6 @@ class AndroidClient @Inject constructor() {
                 params.customRequestHeaders.forEach { (key, value) ->
                     headers[key] = value
                 }
-                Timber.e("=== Meet After ${headers.entries()}")
             }
 //        } else if (currentCredentials == null) {
 //            Timber.e("=== Meet User credentials not changed")

@@ -132,6 +132,7 @@ class ReportImpl @Inject constructor(
 
     companion object {
         private const val REPORT_PATH = "reports"
+        const val DELETED_AFTER = "type=report"
 
         @VisibleForTesting
         const val FIELDS_PARAM =
