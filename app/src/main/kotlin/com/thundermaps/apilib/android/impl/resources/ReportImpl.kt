@@ -20,7 +20,6 @@ import io.ktor.util.KtorExperimentalAPI
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
-import timber.log.Timber
 
 @KtorExperimentalAPI
 @Singleton
