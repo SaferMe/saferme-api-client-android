@@ -83,8 +83,11 @@ class TaskResourceImpl @Inject constructor(
         success: (SaferMeApiResult<List<Task>>) -> Unit,
         failure: (Exception) -> Unit
     ) {
+
+        val extensionParams = parameters.parameters?.toUriParameters()
+        val path = extensionParams?.let { "$PATH?$it" } ?: PATH
         StandardMethods.index(
-            api = api, path = "tasks", parameters = parameters, success = success, failure = failure
+            api = api, path = path, parameters = parameters, success = success, failure = failure
         )
     }
 
@@ -98,7 +101,7 @@ class TaskResourceImpl @Inject constructor(
         val uuid = identifier.uuid ?: throw IllegalArgumentException("Item MUST have a UUID")
         StandardMethods.delete(
             api = api,
-            path = "tasks/$uuid",
+            path = "$PATH/$uuid",
             parameters = parameters,
             success = success,
             failure = failure,
@@ -115,7 +118,7 @@ class TaskResourceImpl @Inject constructor(
         val requestObject = MarkAsIncomplete(uuid, "", "")
         StandardMethods.update(
             api = api,
-            path = "tasks/$uuid",
+            path = "$PATH/$uuid",
             parameters = parameters,
             item = requestObject,
             success = success,
@@ -146,5 +149,9 @@ class TaskResourceImpl @Inject constructor(
             }.build())
         })
         return call
+    }
+
+    companion object {
+        private const val PATH = "tasks"
     }
 }

@@ -84,7 +84,6 @@ class ReportImpl @Inject constructor(
         val extensionParams = parameters.parameters?.toUriParameters()
         val path = extensionParams?.let { "$REPORT_PATH?$FIELDS_PARAM&$it" }
             ?: "$REPORT_PATH?$FIELDS_PARAM"
-        Timber.e("Custom Parameters: ${parameters.customRequestHeaders}")
         StandardMethods.index(
             api = api, path = path, parameters = parameters, success = success, failure = failure
         )
