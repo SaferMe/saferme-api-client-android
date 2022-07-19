@@ -1,14 +1,34 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import androidx.annotation.VisibleForTesting
+import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
+import com.thundermaps.apilib.android.api.resources.DeletedResourcelList
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.responses.models.Report
+import com.thundermaps.apilib.android.api.responses.models.Result
+import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
+import io.ktor.client.call.HttpClientCall
+import io.ktor.client.call.call
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.url
+import io.ktor.http.HttpMethod
+import io.ktor.util.KtorExperimentalAPI
+import java.net.UnknownHostException
+import javax.inject.Inject
+import javax.inject.Singleton
+import timber.log.Timber
 
-class ReportImpl(val api: AndroidClient) : ReportResource {
-
+@KtorExperimentalAPI
+@Singleton
+class ReportImpl @Inject constructor(
+    val api: AndroidClient,
+    private val resultHandler: ResultHandler,
+    private val gson: Gson
+) : ReportResource {
     override suspend fun create(
         parameters: RequestParameters,
         item: Report,
@@ -64,6 +84,7 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
         val extensionParams = parameters.parameters?.toUriParameters()
         val path = extensionParams?.let { "$REPORT_PATH?$FIELDS_PARAM&$it" }
             ?: "$REPORT_PATH?$FIELDS_PARAM"
+        Timber.e("Custom Parameters: ${parameters.customRequestHeaders}")
         StandardMethods.index(
             api = api, path = path, parameters = parameters, success = success, failure = failure
         )
@@ -84,6 +105,31 @@ class ReportImpl(val api: AndroidClient) : ReportResource {
             failure = failure,
             item = identifier
         )
+    }
+
+    override suspend fun getReportsDeletedAfter(parameters: RequestParameters): Result<DeletedResourcelList> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+        val call = getReportsCallDeletedAfter(parameters)
+
+        return resultHandler.processResult(call, gson)
+    }
+
+    private suspend fun getReportsCallDeletedAfter(
+        parameters: RequestParameters
+    ): HttpClientCall {
+        val (client, requestBuilder) = api.client(parameters)
+        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
+            method = HttpMethod.Get
+            url(AndroidClient.baseUrlBuilder(parameters).apply {
+                val extensionParams = parameters.parameters?.toUriParameters()
+                encodedPath =
+                    extensionParams?.let { "${encodedPath}deleted_resources?$it" }
+                        ?: "${encodedPath}deleted_resources?type=report"
+            }.build())
+        })
+        return call
     }
 
     companion object {
