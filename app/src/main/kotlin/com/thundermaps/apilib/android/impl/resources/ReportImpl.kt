@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
-import com.thundermaps.apilib.android.api.resources.DeletedResourcelList
+import com.thundermaps.apilib.android.api.resources.DeletedResourceList
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.Result
@@ -107,7 +107,7 @@ class ReportImpl @Inject constructor(
         )
     }
 
-    override suspend fun getReportsDeletedAfter(parameters: RequestParameters): Result<DeletedResourcelList> {
+    override suspend fun getReportsDeletedAfter(parameters: RequestParameters): Result<DeletedResourceList> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }

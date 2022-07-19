@@ -9,5 +9,5 @@ interface ReportResource : SaferMeResource<Report>,
 
     suspend fun getReportsDeletedAfter(
         parameters: RequestParameters
-    ): Result<DeletedResourcelList>
+    ): Result<DeletedResourceList>
 }

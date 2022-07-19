@@ -1,7 +1,9 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
+import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.resources.Task
+import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
@@ -24,6 +26,12 @@ class TaskResourceImplTest {
     @MockK
     lateinit var defaultAPI: AndroidClient
 
+    @MockK
+    lateinit var resultHandler: ResultHandler
+
+    @MockK
+    lateinit var gson: Gson
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
@@ -44,7 +52,8 @@ class TaskResourceImplTest {
     fun testCreateSuccess() {
         val uuid = "test-uuid"
         val returnObject = "{\"uuid\":\"$uuid\"}"
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks"
@@ -67,11 +76,13 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).create(TestHelpers.defaultParams, Task(),
+            TaskResourceImpl(defaultAPI, resultHandler, gson).create(TestHelpers.defaultParams,
+                Task(),
                 {
                     assertEquals(it.data.uuid, uuid)
                     synchronized(count) { count++ }
-                }, {
+                },
+                {
                     fail("Failure block should not be called")
                 })
         }
@@ -90,7 +101,8 @@ class TaskResourceImplTest {
     fun testReadSuccess() {
         val uuid = "test-uuid"
         val returnObject = "{\"uuid\":\"$uuid\"}"
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks/$uuid"
@@ -112,11 +124,13 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).read(TestHelpers.defaultParams, Task(uuid = uuid),
+            TaskResourceImpl(defaultAPI, resultHandler, gson).read(TestHelpers.defaultParams,
+                Task(uuid = uuid),
                 {
                     assertEquals(it.data.uuid, uuid)
                     synchronized(count) { count++ }
-                }, {
+                },
+                {
                     fail("Failure block should not be called")
                 })
         }
@@ -135,7 +149,8 @@ class TaskResourceImplTest {
     fun testUpdateSuccess() {
         val requestItem = Task(uuid = "Random-Task")
         val returnContent = "{}" // V4 Task API returns an empty object on success
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks/${requestItem.uuid}"
@@ -158,12 +173,14 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).update(TestHelpers.defaultParams, requestItem,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).update(TestHelpers.defaultParams,
+                requestItem,
                 {
                     // return value should be the same object
                     assertTrue(it.data === requestItem)
                     synchronized(count) { count++ }
-                }, {
+                },
+                {
                     fail("Failure block should not be called")
                 })
         }
@@ -181,7 +198,8 @@ class TaskResourceImplTest {
     @Test
     fun testIndexSuccess() {
         val returnJson = "[{\"uuid\": \"test-one\"},{\"uuid\":\"test-two\"}]"
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks"
@@ -204,7 +222,7 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).index(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).index(TestHelpers.defaultParams,
                 {
                     val actualList = it.data
                     assertEquals(2, actualList.size)

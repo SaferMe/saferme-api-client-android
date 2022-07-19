@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.ChannelResource
-import com.thundermaps.apilib.android.api.resources.DeletedResourcelList
+import com.thundermaps.apilib.android.api.resources.DeletedResourceList
 import com.thundermaps.apilib.android.api.responses.models.Channel
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -60,7 +60,7 @@ class ChannelResourceImpl @Inject constructor(
 
     override suspend fun getChannelsDeletedAfter(
         parameters: RequestParameters
-    ): Result<DeletedResourcelList> {
+    ): Result<DeletedResourceList> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }

@@ -17,5 +17,5 @@ interface ChannelResource {
 
     suspend fun getChannelsDeletedAfter(
         parameters: RequestParameters
-    ): Result<DeletedResourcelList>
+    ): Result<DeletedResourceList>
 }

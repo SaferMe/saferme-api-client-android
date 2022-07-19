@@ -30,8 +30,12 @@ class ReportImplTest {
 
     @MockK
     lateinit var defaultAPI: AndroidClient
-    private val resultHandler: ResultHandler = ResultHandler()
-    private val gson = Gson()
+
+    @MockK
+    lateinit var resultHandler: ResultHandler
+
+    @MockK
+    lateinit var gson: Gson
 
     @Before
     fun setUp() {
