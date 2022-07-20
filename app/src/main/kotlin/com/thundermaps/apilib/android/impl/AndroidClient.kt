@@ -39,7 +39,7 @@ class AndroidClient @Inject constructor() {
     @io.ktor.util.KtorExperimentalAPI
     fun client(params: RequestParameters): Pair<HttpClient, HttpRequestBuilder> {
         // Reinitialize if users credentials have changed
-//        if (currentCredentials != params.credentials) {
+        if (currentCredentials != params.credentials) {
             requestBuilderTemplate = HttpRequestBuilder().apply {
                 val creds = params.credentials
                 currentCredentials = creds
@@ -55,17 +55,13 @@ class AndroidClient @Inject constructor() {
                     headers[key] = value
                 }
             }
-//        } else if (currentCredentials == null) {
-//            Timber.e("=== Meet User credentials not changed")
-//            Timber.e("=== Meet not changed Before ${params.customRequestHeaders}")
-//            requestBuilderTemplate.apply {
-//                params.customRequestHeaders.forEach { (key, value) ->
-//                    headers[key] = value
-//                }
-//                Timber.e("=== Meet not changed After ${headers.entries()}")
-//            }
-//        }
-
+        } else if (currentCredentials == null || currentCredentials == params.credentials) {
+            requestBuilderTemplate.apply {
+                params.customRequestHeaders.forEach { (key, value) ->
+                    headers[key] = value
+                }
+            }
+        }
         return Pair(currentClient, requestBuilderTemplate)
     }
 

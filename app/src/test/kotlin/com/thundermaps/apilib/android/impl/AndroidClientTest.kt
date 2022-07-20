@@ -39,7 +39,7 @@ class AndroidClientTest {
         // Calls to client with the same credentials should return the same object
         val (client2, request2) = androidClient.client(initialParams)
         assertEquals(client1, client2)
-        assertNotEquals(request1, request2)
+        assertEquals(request1, request2)
 
         // Calls to client with different credentials should return a different object
         val (client3, request3) = androidClient.client(subsequentParams)
