@@ -174,11 +174,37 @@ class TeamResourceImplTest {
         assertEquals(saferMeCredentials, requestParameters.credentials)
     }
 
+    @Test
+    fun verifyGetTeamsUsers() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = TEAMS_SUCCESS_RESPONSE,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(TEAMS_USER_PATH, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val result = teamResource.getTeamUsers(defaultParameters, "6141")
+
+        verifyAndroidClient(4)
+        assertTrue(result.isSuccess)
+        assertTrue(inspectCalled)
+    }
+
     companion object {
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val TEAMS_PATH = "/api/v4/teams?fields=mapbox_username,mapbox_dataset_id,mapbox_access_token"
+        private const val TEAMS_PATH =
+            "/api/v4/teams?fields=mapbox_username,mapbox_dataset_id,mapbox_access_token"
+        private const val TEAMS_USER_PATH =
+            "/api/v4/teams/6141/team_users?fields=first_name,last_name,email"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID

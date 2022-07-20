@@ -20,7 +20,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import javax.inject.Inject
-import timber.log.Timber
 
 class AndroidClient @Inject constructor() {
     // Reusable / Shared Components (Singleton)
