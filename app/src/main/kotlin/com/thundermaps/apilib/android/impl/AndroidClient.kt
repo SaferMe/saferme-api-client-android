@@ -55,14 +55,13 @@ class AndroidClient @Inject constructor() {
                     headers[key] = value
                 }
             }
-        } else if (currentCredentials == null) {
+        } else if (currentCredentials == null || currentCredentials == params.credentials) {
             requestBuilderTemplate.apply {
                 params.customRequestHeaders.forEach { (key, value) ->
                     headers[key] = value
                 }
             }
         }
-
         return Pair(currentClient, requestBuilderTemplate)
     }
 

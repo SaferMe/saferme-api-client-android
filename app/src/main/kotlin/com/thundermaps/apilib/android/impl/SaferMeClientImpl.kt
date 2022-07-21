@@ -49,11 +49,13 @@ class SaferMeClientImpl @Inject constructor(
     private val categoryResourceImpl: CategoryResourceImpl,
     private val formResourceImpl: FormResourceImpl,
     private val attachmentResourceImpl: AttachmentResourceImpl,
-    private val stateImpl: StateImpl
+    private val stateImpl: StateImpl,
+    private val reportImpl: ReportImpl,
+    private val taskResourceImpl: TaskResourceImpl
 ) : SaferMeClient {
-    override val taskResource: TaskResource get() = TaskResourceImpl(androidClient)
+    override val taskResource: TaskResource get() = taskResourceImpl
 
-    override val reportResource: ReportResource = ReportImpl(androidClient)
+    override val reportResource: ReportResource get() = reportImpl
 
     override val tracedContacts: TracedContactsResource = TracedContactsImpl(androidClient)
 

@@ -45,6 +45,8 @@ internal class SaferMeClientTest {
     private val formResourceImpl = mock<FormResourceImpl>()
     private val attachmentResourceImpl = mock<AttachmentResourceImpl>()
     private val stateImpl = mock<StateImpl>()
+    private val reportImpl = mock<ReportImpl>()
+    private val taskResourceImpl = mock<TaskResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -61,7 +63,9 @@ internal class SaferMeClientTest {
             categoryResourceImpl,
             formResourceImpl,
             attachmentResourceImpl,
-            stateImpl
+            stateImpl,
+            reportImpl,
+            taskResourceImpl
         )
     }
 
@@ -76,7 +80,9 @@ internal class SaferMeClientTest {
             brandResourceImpl,
             formResourceImpl,
             attachmentResourceImpl,
-            stateImpl
+            stateImpl,
+            reportImpl,
+            taskResourceImpl
         )
     }
 
@@ -95,7 +101,7 @@ internal class SaferMeClientTest {
         val taskResource = saferMeClient.taskResource
         assertNotNull(taskResource)
         assertTrue(taskResource is TaskResourceImpl)
-        assertEquals(androidClient, (taskResource as TaskResourceImpl).api)
+        assertEquals(taskResourceImpl, taskResource)
     }
 
     @Test
@@ -103,7 +109,7 @@ internal class SaferMeClientTest {
         val reportResource = saferMeClient.reportResource
         assertNotNull(reportResource)
         assertTrue(reportResource is ReportImpl)
-        assertEquals(androidClient, (reportResource as ReportImpl).api)
+        assertEquals(reportImpl, reportResource)
     }
 
     @Test

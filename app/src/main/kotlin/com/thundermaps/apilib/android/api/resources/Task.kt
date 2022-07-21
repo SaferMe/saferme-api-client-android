@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose
 import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
+import com.thundermaps.apilib.android.api.responses.models.Result
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -69,4 +70,8 @@ interface TaskResource : SaferMeResource<Task>,
         success: (SaferMeApiResult<MarkAsIncomplete>) -> Unit,
         failure: (Exception) -> Unit
     )
+
+    suspend fun getTasksDeletedAfter(
+        parameters: RequestParameters
+    ): Result<DeletedResourceList>
 }

@@ -1,7 +1,9 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
+import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.resources.Task
+import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
@@ -16,6 +18,8 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -23,6 +27,12 @@ class TaskResourceImplTest {
 
     @MockK
     lateinit var defaultAPI: AndroidClient
+
+    @MockK
+    lateinit var resultHandler: ResultHandler
+
+    @MockK
+    lateinit var gson: Gson
 
     @Before
     fun setUp() {
@@ -44,7 +54,8 @@ class TaskResourceImplTest {
     fun testCreateSuccess() {
         val uuid = "test-uuid"
         val returnObject = "{\"uuid\":\"$uuid\"}"
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks"
@@ -67,11 +78,13 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).create(TestHelpers.defaultParams, Task(),
+            TaskResourceImpl(defaultAPI, resultHandler, gson).create(TestHelpers.defaultParams,
+                Task(),
                 {
                     assertEquals(it.data.uuid, uuid)
                     synchronized(count) { count++ }
-                }, {
+                },
+                {
                     fail("Failure block should not be called")
                 })
         }
@@ -90,7 +103,8 @@ class TaskResourceImplTest {
     fun testReadSuccess() {
         val uuid = "test-uuid"
         val returnObject = "{\"uuid\":\"$uuid\"}"
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks/$uuid"
@@ -112,11 +126,13 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).read(TestHelpers.defaultParams, Task(uuid = uuid),
+            TaskResourceImpl(defaultAPI, resultHandler, gson).read(TestHelpers.defaultParams,
+                Task(uuid = uuid),
                 {
                     assertEquals(it.data.uuid, uuid)
                     synchronized(count) { count++ }
-                }, {
+                },
+                {
                     fail("Failure block should not be called")
                 })
         }
@@ -135,7 +151,8 @@ class TaskResourceImplTest {
     fun testUpdateSuccess() {
         val requestItem = Task(uuid = "Random-Task")
         val returnContent = "{}" // V4 Task API returns an empty object on success
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks/${requestItem.uuid}"
@@ -158,12 +175,14 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).update(TestHelpers.defaultParams, requestItem,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).update(TestHelpers.defaultParams,
+                requestItem,
                 {
                     // return value should be the same object
                     assertTrue(it.data === requestItem)
                     synchronized(count) { count++ }
-                }, {
+                },
+                {
                     fail("Failure block should not be called")
                 })
         }
@@ -181,7 +200,8 @@ class TaskResourceImplTest {
     @Test
     fun testIndexSuccess() {
         val returnJson = "[{\"uuid\": \"test-one\"},{\"uuid\":\"test-two\"}]"
-        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
         val expectedPath = "/api/v0/tasks"
@@ -204,7 +224,7 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI).index(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).index(TestHelpers.defaultParams,
                 {
                     val actualList = it.data
                     assertEquals(2, actualList.size)
@@ -212,6 +232,95 @@ class TaskResourceImplTest {
                     assertEquals("test-two", actualList[1].uuid)
                     synchronized(count) { count++ }
                 }, {
+                    fail("Failure block should not be called")
+                })
+        }
+
+        assertEquals(1, count)
+        assertTrue(inspectCalled)
+    }
+
+    @KtorExperimentalAPI
+    @Test
+    fun testDeleteSuccess() {
+        val requestItem = Task(uuid = "123")
+        val returnContent = "{}" // V4 Task API returns an empty object on success
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        var count = 0
+        var inspectCalled = false
+        val expectedPath = "/api/v0/tasks/${requestItem.uuid}"
+
+        val client = TestHelpers.testClient(
+            content = returnContent,
+            status = HttpStatusCode.Accepted,
+            headers = responseHeaders,
+            // ensure the correct path is used
+            requestInspector = {
+                Assert.assertEquals(it.url.encodedPath, expectedPath)
+                inspectCalled = true
+            }
+        )
+
+        every {
+            defaultAPI.client(any())
+        } answers {
+            Pair(client, HttpRequestBuilder())
+        }
+
+        runBlockingTest {
+            TaskResourceImpl(defaultAPI, resultHandler, gson).delete(TestHelpers.defaultParams,
+                requestItem,
+                {
+                    // return value should be the same object
+                    Assert.assertTrue(it.data === requestItem)
+                    synchronized(count) { count++ }
+                },
+                {
+                    Assert.fail("Failure block should not be called")
+                })
+        }
+
+        Assert.assertEquals(1, count)
+        Assert.assertTrue(inspectCalled)
+    }
+
+    @KtorExperimentalAPI
+    @Test
+    fun testMarkAsIncomplete() {
+        val requestItem = Task(uuid = "Random-Task")
+        val returnContent = "{}" // V4 Task API returns an empty object on success
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        var count = 0
+        var inspectCalled = false
+        val expectedPath = "/api/v0/tasks/${requestItem.uuid}"
+
+        val client = TestHelpers.testClient(
+            content = returnContent,
+            status = HttpStatusCode.Accepted,
+            headers = responseHeaders,
+            // ensure the correct path is used
+            requestInspector = {
+                assertEquals(it.url.encodedPath, expectedPath)
+                inspectCalled = true
+            }
+        )
+
+        every {
+            defaultAPI.client(any())
+        } answers {
+            Pair(client, HttpRequestBuilder())
+        }
+
+        runBlocking {
+            TaskResourceImpl(defaultAPI, resultHandler, gson).markAsInComplete(TestHelpers.defaultParams,
+                "Random-Task",
+                {
+                    // return value should be the same object
+                    synchronized(count) { count++ }
+                },
+                {
                     fail("Failure block should not be called")
                 })
         }

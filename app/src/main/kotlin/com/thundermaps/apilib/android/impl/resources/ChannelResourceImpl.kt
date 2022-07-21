@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.ChannelResource
-import com.thundermaps.apilib.android.api.resources.DeletedChannelList
+import com.thundermaps.apilib.android.api.resources.DeletedResourceList
 import com.thundermaps.apilib.android.api.responses.models.Channel
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -60,7 +60,7 @@ class ChannelResourceImpl @Inject constructor(
 
     override suspend fun getChannelsDeletedAfter(
         parameters: RequestParameters
-    ): Result<DeletedChannelList> {
+    ): Result<DeletedResourceList> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
@@ -80,7 +80,7 @@ class ChannelResourceImpl @Inject constructor(
                 val extensionParams = parameters.parameters?.toUriParameters()
                 encodedPath =
                     extensionParams?.let { "${encodedPath}deleted_resources?$it" }
-                        ?: "${encodedPath}deleted_resources/type=account"
+                        ?: "${encodedPath}deleted_resources?type=account"
             }.build())
         })
         return call
