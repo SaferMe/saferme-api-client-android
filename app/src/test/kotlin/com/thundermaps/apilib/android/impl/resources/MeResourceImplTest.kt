@@ -15,6 +15,7 @@ import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateFirebaseTokenBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
@@ -407,6 +408,61 @@ class MeResourceImplTest {
 
         verifyAndroidClient()
         assertTrue(clientsResult.isError)
+        assertTrue(inspectCalled)
+    }
+
+    @Test
+    fun verifyUpdateFirebaseTokenSuccess() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = CLIENTS_RESPONSE,
+            status = HttpStatusCode.BadGateway,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(PATH_CLIENTS, it.url.encodedPath)
+                assertEquals(HttpMethod.Patch, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val updateFirebaseTokenBody = UpdateFirebaseTokenBody("Firebase Token")
+        val clientsResult = meResource.updateFirebaseToken(defaultParameters, updateFirebaseTokenBody)
+
+        verifyAndroidClient()
+        assertTrue(clientsResult.isError)
+        assertTrue(inspectCalled)
+    }
+
+    @Test
+    fun verifyUpdateFirebaseTokenFailure() = runBlockingTest {
+        var inspectCalled = false
+        val client = TestHelpers.testClient(
+            content = CLIENTS_RESPONSE,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(PATH_CLIENTS, it.url.encodedPath)
+                assertEquals(HttpMethod.Patch, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val updateFirebaseTokenBody = UpdateFirebaseTokenBody("Firebase Token")
+        val clientsResult = meResource.updateFirebaseToken(defaultParameters, updateFirebaseTokenBody)
+
+        verifyAndroidClient()
+        assertTrue(clientsResult.isSuccess)
+        val clients = clientsResult.getNullableData()
+        assertNotNull(clients)
+        assertTrue(clients!!.pushNotificationEnabled)
+        assertEquals(392.0f, clients.radius)
+        assertEquals(30, clients.badge)
+        assertFalse(clients.isPushCapable)
+        assertTrue(clients.channels.isNotEmpty())
         assertTrue(inspectCalled)
     }
 
