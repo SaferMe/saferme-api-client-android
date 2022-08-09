@@ -15,7 +15,7 @@ import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
-import com.thundermaps.apilib.android.api.requests.models.UpdateFirebaseTokenBody
+import com.thundermaps.apilib.android.api.requests.models.FirebaseTokenBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
@@ -412,7 +412,7 @@ class MeResourceImplTest {
     }
 
     @Test
-    fun verifyUpdateFirebaseTokenSuccess() = runBlockingTest {
+    fun verifyUpdateFirebaseTokenFailure() = runBlockingTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = CLIENTS_RESPONSE,
@@ -427,7 +427,7 @@ class MeResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val updateFirebaseTokenBody = UpdateFirebaseTokenBody("Firebase Token")
+        val updateFirebaseTokenBody = FirebaseTokenBody("Firebase Token")
         val clientsResult = meResource.updateFirebaseToken(defaultParameters, updateFirebaseTokenBody)
 
         verifyAndroidClient()
@@ -436,7 +436,7 @@ class MeResourceImplTest {
     }
 
     @Test
-    fun verifyUpdateFirebaseTokenFailure() = runBlockingTest {
+    fun verifyUpdateFirebaseTokenSuccess() = runBlockingTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = CLIENTS_RESPONSE,
@@ -451,7 +451,7 @@ class MeResourceImplTest {
 
         whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
 
-        val updateFirebaseTokenBody = UpdateFirebaseTokenBody("Firebase Token")
+        val updateFirebaseTokenBody = FirebaseTokenBody("Firebase Token")
         val clientsResult = meResource.updateFirebaseToken(defaultParameters, updateFirebaseTokenBody)
 
         verifyAndroidClient()

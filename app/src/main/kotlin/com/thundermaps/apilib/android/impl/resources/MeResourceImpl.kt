@@ -7,7 +7,7 @@ import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
-import com.thundermaps.apilib.android.api.requests.models.UpdateFirebaseTokenBody
+import com.thundermaps.apilib.android.api.requests.models.FirebaseTokenBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
@@ -154,7 +154,7 @@ class MeResourceImpl @Inject constructor(
 
     override suspend fun updateFirebaseToken(
         parameters: RequestParameters,
-        updateFirebaseTokenBody: UpdateFirebaseTokenBody
+        firebaseTokenBody: FirebaseTokenBody
     ): Result<Clients> {
         if (!parameters.host.isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
@@ -164,7 +164,7 @@ class MeResourceImpl @Inject constructor(
             parameters = parameters,
             path = CLIENTS_PATH,
             methodType = HttpMethod.Patch,
-            bodyRequest = updateFirebaseTokenBody
+            bodyRequest = firebaseTokenBody
         )
 
         return resultHandler.processResult(call, gson)
