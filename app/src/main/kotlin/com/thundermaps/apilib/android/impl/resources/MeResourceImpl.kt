@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
+import com.thundermaps.apilib.android.api.requests.models.FirebaseTokenBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
@@ -146,6 +147,24 @@ class MeResourceImpl @Inject constructor(
             path = CLIENTS_PATH,
             methodType = HttpMethod.Get,
             bodyRequest = null
+        )
+
+        return resultHandler.processResult(call, gson)
+    }
+
+    override suspend fun updateFirebaseToken(
+        parameters: RequestParameters,
+        firebaseTokenBody: FirebaseTokenBody
+    ): Result<Clients> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+
+        val call = processCall(
+            parameters = parameters,
+            path = CLIENTS_PATH,
+            methodType = HttpMethod.Patch,
+            bodyRequest = firebaseTokenBody
         )
 
         return resultHandler.processResult(call, gson)

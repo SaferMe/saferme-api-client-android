@@ -2,6 +2,7 @@ package com.thundermaps.apilib.android.api.resources
 
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
+import com.thundermaps.apilib.android.api.requests.models.FirebaseTokenBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
@@ -22,4 +23,5 @@ interface MeResource {
     suspend fun updateName(parameters: RequestParameters, updateNameBody: UpdateNameBody): Result<Unit>
     suspend fun updateEmailNotificationEnabled(parameters: RequestParameters, userId: String, updateEmailNotificationEnableBody: UpdateEmailNotificationEnableBody): Result<Unit>
     suspend fun getClients(parameters: RequestParameters): Result<Clients>
+    suspend fun updateFirebaseToken(parameters: RequestParameters, firebaseTokenBody: FirebaseTokenBody): Result<Clients>
 }

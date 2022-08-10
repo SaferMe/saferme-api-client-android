@@ -25,6 +25,8 @@ data class UpdateProfileBody(
     @Expose val user: UserBody
 )
 
+data class FirebaseTokenBody(@SerializedName("fcm_registration_id") @Expose val firebaseToken: String)
+
 data class UserBody(
     @SerializedName("first_name") @Expose val firstName: String,
     @SerializedName("last_name") @Expose val lastName: String,
