@@ -20,13 +20,13 @@ jobs:
       - run:
           name: Inject user to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.user=$GPR_USER" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.user=$GPR_USER" >> buildSrc/local.properties
       - run:
           name: Inject key to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.key=$GPR_KEY" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.key=$GPR_KEY" >> buildSrc/local.properties
       - run:
           name: Lint
           command: ./gradlew clean ktlintCheck --continue
@@ -42,13 +42,13 @@ jobs:
       - run:
           name: Inject user to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.user=$GPR_USER" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.user=$GPR_USER" >> buildSrc/local.properties
       - run:
           name: Inject key to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.key=$GPR_KEY" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.key=$GPR_KEY" >> buildSrc/local.properties
       - run:
           name: report
           command: ./gradlew jacocoTestReport createDist
@@ -85,23 +85,23 @@ jobs:
       - run:
           name: Inject user to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.user=$GPR_USER" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.user=$GPR_USER" >> buildSrc/local.properties
       - run:
           name: Inject key to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.key=$GPR_KEY" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.key=$GPR_KEY" >> buildSrc/local.properties
       - run:
           name: Inject version to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "version.version=$VERSION" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "version.version=${CIRCLE_TAG}" >> buildSrc/local.properties
       - run:
           name: Inject build to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "version.build=${100+CIRCLE_BUILD_NUM}" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "version.build=<<pipeline.number>>" >> buildSrc/local.properties
       - run:
           name: Build
           command: ./gradlew clean ktlintCheck build assemble publishTestReleasePublicationToGitHubRepository
@@ -114,23 +114,23 @@ jobs:
       - run:
           name: Inject user to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.user=$GPR_USER" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.user=$GPR_USER" >> buildSrc/local.properties
       - run:
           name: Inject key to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "gpr.key=$GPR_KEY" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "gpr.key=$GPR_KEY" >> buildSrc/local.properties
       - run:
           name: Inject version to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "version.version=$VERSION" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "version.version=${CIRCLE_TAG}" >> buildSrc/local.properties
       - run:
           name: Inject build to local.properties
           command: |
-            echo '\\n' >> local.properties
-            echo "version.build=${100+CIRCLE_BUILD_NUM}" >> local.properties
+            echo '\\n' >> buildSrc/local.properties
+            echo "version.build=<<pipeline.number>>" >> buildSrc/local.properties
       - run:
           name: Build
           command: ./gradlew clean ktlintCheck build assemble publishProductionReleasePublicationToGitHubRepository
@@ -143,17 +143,17 @@ workflows:
       - test:
           requires:
             - build
+  build-and-deploy:
+    jobs:
       - devRelease:
-          requires:
-            - build
-            - test
           filters:
             branches:
-              only: develop
+              ignore: /.*/
+            tags:
+              only: /^v.*/
       - prodRelease:
-          requires:
-            - build
-            - test
           filters:
             branches:
-              only: master
+              ignore: /.*/
+            tags:
+              only: /^v.*/
