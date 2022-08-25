@@ -2,6 +2,8 @@ package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.env.Live
+import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
@@ -14,6 +16,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
+import junit.framework.Assert.assertNotNull
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
@@ -28,11 +31,8 @@ class TaskResourceImplTest {
     @MockK
     lateinit var defaultAPI: AndroidClient
 
-    @MockK
-    lateinit var resultHandler: ResultHandler
-
-    @MockK
-    lateinit var gson: Gson
+    private val resultHandler: ResultHandler = ResultHandler()
+    private val gson = Gson()
 
     @Before
     fun setUp() {
@@ -314,7 +314,11 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI, resultHandler, gson).markAsInComplete(TestHelpers.defaultParams,
+            TaskResourceImpl(
+                defaultAPI,
+                resultHandler,
+                gson
+            ).markAsInComplete(TestHelpers.defaultParams,
                 "Random-Task",
                 {
                     // return value should be the same object
@@ -326,6 +330,51 @@ class TaskResourceImplTest {
         }
 
         assertEquals(1, count)
+        assertTrue(inspectCalled)
+    }
+
+    @KtorExperimentalAPI
+    @Test
+    fun testReadDeletedResourceSuccess() {
+        val uuid = "test-uuid"
+        val type = "type"
+        val typeTask = "task"
+        val deletedAfter = "deleted_after"
+        val deletedAfterDate = "2022-08-25T10:45:35.081+13:00"
+        val returnObject = "{\"deleted_resources\":[{\"uuid\":\"test-uuid\"}]}"
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        var inspectCalled = false
+        val expectedPath = "/api/v0/deleted_resources?$type=$typeTask"
+
+        val client = TestHelpers.testClient(
+            content = returnObject,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(it.url.encodedPath, expectedPath)
+                inspectCalled = true
+            }
+        )
+
+        every {
+            defaultAPI.client(any())
+        } answers {
+            Pair(client, HttpRequestBuilder())
+        }
+
+        runBlocking {
+            val clientsResult = TaskResourceImpl(defaultAPI, resultHandler, gson).getTasksDeletedAfter(
+                TestHelpers.defaultParams.copy(
+                    host = Staging.servers.first(),
+                    customRequestHeaders = mapOf(type to typeTask, deletedAfter to deletedAfterDate)
+                )
+            )
+            Assert.assertTrue(clientsResult.isSuccess)
+            val clients = clientsResult.getNullableData()
+            assertNotNull(clients)
+            assertEquals(clients!!.deletedResource[0].uuid, uuid)
+        }
         assertTrue(inspectCalled)
     }
 }

@@ -2,6 +2,7 @@ package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
@@ -15,7 +16,10 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
+import junit.framework.Assert.assertNotNull
+import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -31,9 +35,7 @@ class ReportImplTest {
     @MockK
     lateinit var defaultAPI: AndroidClient
 
-    @MockK
-    lateinit var resultHandler: ResultHandler
-
+    private val resultHandler: ResultHandler = ResultHandler()
     private val gson = Gson()
 
     @Before
@@ -289,49 +291,48 @@ class ReportImplTest {
         assertTrue(inspectCalled)
     }
 
-//    @KtorExperimentalAPI
-//    @Test
-//    fun testGetReportsDeletedAfterSuccess() {
-//        val returnJson =
-//            "{\"deleted_resources\":[{\"uuid\":\"97a34443-0c5e-4545-a1d6-f15f1e72aa53\"},{\"uuid\":\"6b4c96f7-9c04-4ac5-add3-4e24fab4074a\"}]}"
-//        val responseHeaders =
-//            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-//        val expectedPath = "/api/v0/deleted_resources?$DELETED_AFTER"
-//
-//        val client = TestHelpers.testClient(
-//            content = returnJson,
-//            status = HttpStatusCode.OK,
-//            headers = responseHeaders,
-//            requestInspector = {
-//                assertEquals(it.url.encodedPath, expectedPath)
-//            }
-//        )
-//
-//        every {
-//            defaultAPI.client(any())
-//        } answers {
-//            Pair(client, HttpRequestBuilder())
-//        }
-//
-//        every {
-//            runBlockingTest {
-//                ReportImpl(
-//                    defaultAPI,
-//                    resultHandler,
-//                    gson
-//                ).getReportsDeletedAfter(TestHelpers.defaultParams)
-//            }
-//        } answers {
-//            gson.toJson(returnJson)
-//        }
-//
-//        runBlockingTest {
-//            val response = ReportImpl(
-//                defaultAPI,
-//                resultHandler,
-//                gson
-//            ).getReportsDeletedAfter(TestHelpers.defaultParams)
-//            assert(response.isSuccess)
-//        }
-//    }
+    @KtorExperimentalAPI
+    @Test
+    fun testReadDeletedResourceSuccess() {
+        val uuid = "test-uuid"
+        val type = "type"
+        val typeReport = "report"
+        val deletedAfter = "deleted_after"
+        val deletedAfterDate = "2022-08-25T10:45:35.081+13:00"
+        val returnObject = "{\"deleted_resources\":[{\"uuid\":\"test-uuid\"}]}"
+        val responseHeaders =
+            headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+        var inspectCalled = false
+        val expectedPath = "/api/v0/deleted_resources?$type=$typeReport"
+
+        val client = TestHelpers.testClient(
+            content = returnObject,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                TestCase.assertEquals(it.url.encodedPath, expectedPath)
+                inspectCalled = true
+            }
+        )
+
+        every {
+            defaultAPI.client(any())
+        } answers {
+            Pair(client, HttpRequestBuilder())
+        }
+
+        runBlocking {
+            val clientsResult = ReportImpl(defaultAPI, resultHandler, gson).getReportsDeletedAfter(
+                TestHelpers.defaultParams.copy(
+                    host = Staging.servers.first(),
+                    customRequestHeaders = mapOf(type to typeReport, deletedAfter to deletedAfterDate)
+                )
+            )
+            assertTrue(clientsResult.isSuccess)
+            val clients = clientsResult.getNullableData()
+            assertNotNull(clients)
+            TestCase.assertEquals(clients!!.deletedResource[0].uuid, uuid)
+        }
+        TestCase.assertTrue(inspectCalled)
+    }
 }
