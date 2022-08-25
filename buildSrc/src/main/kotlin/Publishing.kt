@@ -15,9 +15,14 @@ object Maven {
         }
 
         //Load the version from version.txt
-        val fileVersion: String? = File("version.txt").useLines { it.firstOrNull() }
-        if (fileVersion != null) this.setProperty("version.version", fileVersion)
-
+        try {
+            if (this.getProperty("version.version").trim().isNullOrBlank()) {
+                val fileVersion: String? = File("version.txt").useLines { it.firstOrNull() }
+                if (!fileVersion.isNullOrBlank()) this.setProperty("version.version", fileVersion)
+            }
+        } catch (e: Exception) {
+            println("Exception read version.txt $e")
+        }
     }
 
 
@@ -47,9 +52,10 @@ object Maven {
         else -> -1
     }
 
-    var version  = if (System.getenv().containsKey("VERSION")) {
-        System.getenv("VERSION")
-    } else {
-        localProperties.getProperty("version.version").trim()
+    var version  = when {
+        System.getenv().containsKey("VERSION") -> System.getenv("VERSION")
+        localProperties.containsKey("version.version")
+                -> localProperties.getProperty("version.version").trim().filter { it.isDigit() || it == '.' }
+        else -> "3.0.0"
     }
 }
