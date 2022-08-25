@@ -2,7 +2,6 @@ package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.google.gson.Gson
-import com.thundermaps.apilib.android.api.com.thundermaps.env.Live
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.resources.Task
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
