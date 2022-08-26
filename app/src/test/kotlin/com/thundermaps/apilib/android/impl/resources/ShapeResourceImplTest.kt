@@ -95,6 +95,32 @@ class ShapeResourceImplTest {
         assertEquals(ShapeResourceImpl.ERROR_MESSAGE, (result as Result.Error).exception.message)
     }
 
+    @Test
+    fun getNextFeatures() = runBlockingTest {
+        var inspectCalled = false
+        val content = "{\"type\": \"FeatureCollection\", \"features\":[]}"
+        val client = TestHelpers.testClient(
+            content = content,
+            status = HttpStatusCode.OK,
+            headers = responseHeaders,
+            requestInspector = {
+                assertEquals(path, it.url.encodedPath)
+                assertEquals(HttpMethod.Get, it.method)
+                inspectCalled = true
+            }
+        )
+
+        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+
+        val result = shapeResource.getNextShape()
+
+        result?.let {
+            assertTrue(result.isSuccess)
+            assertTrue(inspectCalled)
+            assertEquals(FeatureCollection.fromJson(content), result.getNullableData())
+        }
+    }
+
     private fun verifyAndroidClient() {
         val parameterCaptor = argumentCaptor<RequestParameters>()
         verify(androidClient).client(parameterCaptor.capture())
