@@ -7,10 +7,10 @@ buildscript {
     }
     // More info on buildscript vs allprojects: https://stackoverflow.com/a/30159149/2085356
     dependencies {
-        classpath(GradlePlugins.gradle)
-        classpath(GradlePlugins.kotlin)
-        classpath(GradlePlugins.junit5)
-        classpath("org.jlleitschuh.gradle:ktlint-gradle:9.2.0")
+        classpath(Libs.com_android_tools_build_gradle)
+        classpath(Libs.kotlin_gradle_plugin)
+        classpath(Libs.android_junit5)
+        classpath(Libs.ktlint_gradle)
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files.
@@ -33,9 +33,6 @@ subprojects {
     configurations.all {
         resolutionStrategy {
             eachDependency {
-                if ("org.jacoco" == requested.group) {
-                    useVersion(Versions.jacoco)
-                }
             }
         }
     }

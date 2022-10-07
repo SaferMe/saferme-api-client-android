@@ -18,4 +18,3 @@ refreshVersions {
     }
     enableBuildSrcLibs()
 }
-
