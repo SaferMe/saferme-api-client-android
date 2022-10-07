@@ -144,9 +144,9 @@ class CategoryResourceImplTest {
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private val CATEGORIES_PATH =
             "/api/v4/channels/$CHANNEL_ID/categories?fields=${
-                CategoryResource.CATEGORY_FIELDS.joinToString(
-                    ","
-                )
+            CategoryResource.CATEGORY_FIELDS.joinToString(
+                ","
+            )
             }"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"

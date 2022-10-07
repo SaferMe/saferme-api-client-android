@@ -109,18 +109,22 @@ class SessionsImpl @Inject constructor(
             path.getApiVersion()
         )
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = methodType
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = if (path.contains(SSO_SESSIONS_PATH)) path else "$encodedPath$path"
-            }.build())
-            if (bodyParameters != null && methodType == HttpMethod.Post) {
-                contentType(ContentType.Application.Json)
-                body = bodyParameters
-            } else {
-                headers.remove(HttpHeaders.ContentType)
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = methodType
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = if (path.contains(SSO_SESSIONS_PATH)) path else "$encodedPath$path"
+                    }.build()
+                )
+                if (bodyParameters != null && methodType == HttpMethod.Post) {
+                    contentType(ContentType.Application.Json)
+                    body = bodyParameters
+                } else {
+                    headers.remove(HttpHeaders.ContentType)
+                }
             }
-        })
+        )
         return call
     }
 

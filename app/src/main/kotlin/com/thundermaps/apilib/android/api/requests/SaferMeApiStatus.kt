@@ -26,14 +26,14 @@ enum class SaferMeApiStatus(private val code: Int?) {
     companion object {
         fun statusForCode(code: Int): SaferMeApiStatus {
             return values().firstOrNull { v -> v.code == code }
-            ?: when (code / 100) {
-                1 -> OTHER_100
-                2 -> OTHER_200
-                3 -> OTHER_300
-                4 -> OTHER_400
-                5 -> OTHER_500
-                else -> UNKNOWN
-            }
+                ?: when (code / 100) {
+                    1 -> OTHER_100
+                    2 -> OTHER_200
+                    3 -> OTHER_300
+                    4 -> OTHER_400
+                    5 -> OTHER_500
+                    else -> UNKNOWN
+                }
         }
     }
 }

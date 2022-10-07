@@ -10,13 +10,13 @@ import io.ktor.http.HttpHeaders
 import io.ktor.util.AttributeKey
 import io.ktor.util.Attributes
 import io.ktor.util.KtorExperimentalAPI
-import java.util.Random
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
+import java.util.Random
 
 @KtorExperimentalAPI
 class AndroidClientTest {

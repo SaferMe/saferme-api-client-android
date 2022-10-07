@@ -336,16 +336,20 @@ class StandardMethods {
             val jsonBody = payload?.let {
                 gsonSerializer.toJsonTree(payload)
             }
-            val call = client.call(HttpRequestBuilder().takeFrom(template).apply {
-                method = requestMethod
-                url(AndroidClient.baseUrlBuilder(params).apply {
-                    encodedPath = "${this.encodedPath}$path"
-                }.build())
-                if (jsonBody != null) {
-                    contentType(ContentType.Application.Json)
-                    body = jsonBody
+            val call = client.call(
+                HttpRequestBuilder().takeFrom(template).apply {
+                    method = requestMethod
+                    url(
+                        AndroidClient.baseUrlBuilder(params).apply {
+                            encodedPath = "${this.encodedPath}$path"
+                        }.build()
+                    )
+                    if (jsonBody != null) {
+                        contentType(ContentType.Application.Json)
+                        body = jsonBody
+                    }
                 }
-            })
+            )
             result(call)
         }
     }

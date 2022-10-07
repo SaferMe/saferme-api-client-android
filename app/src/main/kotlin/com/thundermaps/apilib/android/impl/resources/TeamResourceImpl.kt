@@ -39,12 +39,16 @@ class TeamResourceImpl @Inject constructor(
         parameters: RequestParameters
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}$TEAM_PATH?$TEAM_FIELDS"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "${encodedPath}$TEAM_PATH?$TEAM_FIELDS"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 
@@ -53,12 +57,16 @@ class TeamResourceImpl @Inject constructor(
         teamId: String
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "$encodedPath$TEAM_PATH/$teamId/$TEAM_USER_PATH?$TEAM_USER_FIELDS"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "$encodedPath$TEAM_PATH/$teamId/$TEAM_USER_PATH?$TEAM_USER_FIELDS"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 

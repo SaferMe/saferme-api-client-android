@@ -15,11 +15,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
-import java.util.Random
 import junit.framework.Assert.assertTrue
 import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Test
+import java.util.Random
 
 class StandardReadTest {
 
@@ -91,10 +91,12 @@ class StandardReadTest {
             api = defaultAPI,
             path = testPath,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.encodedPath, expectedPath)
-            }
-            ))
+            client = TestHelpers.testClient(
+                requestInspector = {
+                    TestCase.assertEquals(it.url.encodedPath, expectedPath)
+                }
+            )
+        )
     }
 
     /**
@@ -109,11 +111,13 @@ class StandardReadTest {
         TestHelpers.testReadRequest(
             api = defaultAPI,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertEquals(it.url.port, testPort)
-                called = true
-            }
-            ))
+            client = TestHelpers.testClient(
+                requestInspector = {
+                    TestCase.assertEquals(it.url.port, testPort)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -133,12 +137,14 @@ class StandardReadTest {
         TestHelpers.testReadRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
-            client = TestHelpers.testClient(requestInspector = {
-                TestCase.assertTrue(it.headers.contains(name))
-                TestCase.assertEquals(it.headers[name], value)
-                called = true
-            }
-            ))
+            client = TestHelpers.testClient(
+                requestInspector = {
+                    TestCase.assertTrue(it.headers.contains(name))
+                    TestCase.assertEquals(it.headers[name], value)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -182,8 +188,9 @@ class StandardReadTest {
                 // Response object captures all the headers in the response
                 TestCase.assertEquals(it.responseHeaders, responseHeaders.toMap())
             }, failure = {
-                synchronized(failLambdaCalls) { failLambdaCalls++ }
-            })
+            synchronized(failLambdaCalls) { failLambdaCalls++ }
+        }
+        )
 
         // Ensure callbacks called the correct number of times
         TestCase.assertEquals(successLambdaCalls, 1)
@@ -232,7 +239,8 @@ class StandardReadTest {
 
                 // Correct response headers
                 TestCase.assertEquals(error.responseHeaders, responseHeaders.toMap())
-            })
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         TestCase.assertEquals(successLambdaCalls, 0)
@@ -263,7 +271,8 @@ class StandardReadTest {
 
                 // We should get a SaferMeApiError Class
                 TestCase.assertEquals(it.message, errorMessage)
-            })
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         TestCase.assertEquals(successLambdaCalls, 0)

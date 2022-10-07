@@ -16,9 +16,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.every
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.streams.asSequence
-import kotlinx.coroutines.runBlocking
 
 class TestHelpers {
     companion object {
@@ -28,7 +28,8 @@ class TestHelpers {
             emptyMap(),
             SaferMeCredentials("", "", "", null, ""),
             "",
-            null, 0)
+            null, 0
+        )
 
         /**
          * Helper method - will create a mocked HTTP Client using the provided options.
@@ -228,11 +229,13 @@ class TestHelpers {
 
             // Call the Create method and test the result is correct
             runBlocking {
-                StandardMethods.index<List<GenericTestObject>>(api = api,
+                StandardMethods.index<List<GenericTestObject>>(
+                    api = api,
                     path = path,
                     parameters = paramsToSend,
                     success = success,
-                    failure = failure)
+                    failure = failure
+                )
             }
         }
 

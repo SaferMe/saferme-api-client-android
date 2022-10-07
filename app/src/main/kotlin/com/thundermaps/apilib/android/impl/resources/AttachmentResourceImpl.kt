@@ -33,11 +33,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
 import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.coroutineScope
 
 @KtorExperimentalAPI
 @Singleton
@@ -94,13 +94,16 @@ class AttachmentResourceImpl @Inject constructor(
             }
 
             val file = File(filePath)
-            append(FILE, file.readBytes(), Headers.build {
-                append(HttpHeaders.ContentType, IMAGE_PNG)
-                append(
-                    HttpHeaders.ContentDisposition,
-                    "${FileAttachment.FILE_NAME}=$IMAGE_FILE_NAME"
-                )
-            })
+            append(
+                FILE, file.readBytes(),
+                Headers.build {
+                    append(HttpHeaders.ContentType, IMAGE_PNG)
+                    append(
+                        HttpHeaders.ContentDisposition,
+                        "${FileAttachment.FILE_NAME}=$IMAGE_FILE_NAME"
+                    )
+                }
+            )
         }
         return client.submitFormWithBinaryData<HttpResponse>(
             url = uploadAuthorization.url,
@@ -113,13 +116,17 @@ class AttachmentResourceImpl @Inject constructor(
         client: HttpClient,
         requestBuilder: HttpRequestBuilder
     ): Result<UploadAuthorizationResponse> {
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath =
-                    "$encodedPath$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath =
+                            "$encodedPath$FILE_AUTHORIZATION_PATH?$CONTENT_TYPE_PARAMETER=$IMAGE_PNG"
+                    }.build()
+                )
+            }
+        )
         return resultHandler.processResult(call, moshi, gson)
     }
 
@@ -131,15 +138,19 @@ class AttachmentResourceImpl @Inject constructor(
         keyPrefix: String
     ): Result<FileAttachment> {
         val fileAttachmentBody = FileAttachmentRequest(KeyRequest("$keyPrefix$IMAGE_FILE_NAME"))
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Post
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "$encodedPath$FILE_ATTACHMENTS_PATH"
-            }.build())
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Post
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "$encodedPath$FILE_ATTACHMENTS_PATH"
+                    }.build()
+                )
 
-            contentType(ContentType.Application.Json)
-            body = fileAttachmentBody
-        })
+                contentType(ContentType.Application.Json)
+                body = fileAttachmentBody
+            }
+        )
         return resultHandler.processResult(call, gson)
     }
 

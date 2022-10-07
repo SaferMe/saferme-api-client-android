@@ -62,8 +62,13 @@ data class Task(
     }
 }
 
-interface TaskResource : SaferMeResource<Task>,
-    Creatable<Task>, Readable<Task>, Indexable<Task>, Updatable<Task>, Deletable<Task> {
+interface TaskResource :
+    SaferMeResource<Task>,
+    Creatable<Task>,
+    Readable<Task>,
+    Indexable<Task>,
+    Updatable<Task>,
+    Deletable<Task> {
     suspend fun markAsInComplete(
         parameters: RequestParameters,
         uuid: String,

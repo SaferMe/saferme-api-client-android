@@ -45,12 +45,16 @@ class CategoryResourceImpl @Inject constructor(
         fields: String
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}channels/$channelId/categories?fields=$fields"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "${encodedPath}channels/$channelId/categories?fields=$fields"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 }

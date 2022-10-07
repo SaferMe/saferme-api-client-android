@@ -178,16 +178,20 @@ class MeResourceImpl @Inject constructor(
         bodyRequest: T? = null
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = methodType
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}$path$query"
-            }.build())
-            bodyRequest?.let {
-                contentType(ContentType.Application.Json)
-                body = it
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = methodType
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "${encodedPath}$path$query"
+                    }.build()
+                )
+                bodyRequest?.let {
+                    contentType(ContentType.Application.Json)
+                    body = it
+                }
             }
-        })
+        )
         return call
     }
 

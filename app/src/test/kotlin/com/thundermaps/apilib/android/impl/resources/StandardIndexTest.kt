@@ -15,11 +15,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
-import java.util.Random
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.Random
 
 class StandardIndexTest {
     @MockK
@@ -91,11 +91,13 @@ class StandardIndexTest {
             api = defaultAPI,
             path = testPath,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                assertEquals(it.url.encodedPath, expectedPath)
-                called = true
-            }
-            ))
+            client = TestHelpers.testClient(
+                requestInspector = {
+                    assertEquals(it.url.encodedPath, expectedPath)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -111,11 +113,13 @@ class StandardIndexTest {
         TestHelpers.testIndexRequest(
             api = defaultAPI,
             params = params,
-            client = TestHelpers.testClient(requestInspector = {
-                assertEquals(it.url.port, testPort)
-                called = true
-            }
-            ))
+            client = TestHelpers.testClient(
+                requestInspector = {
+                    assertEquals(it.url.port, testPort)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -135,12 +139,14 @@ class StandardIndexTest {
         TestHelpers.testIndexRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
-            client = TestHelpers.testClient(requestInspector = {
-                assertTrue(it.headers.contains(name))
-                assertEquals(it.headers[name], value)
-                called = true
-            }
-            ))
+            client = TestHelpers.testClient(
+                requestInspector = {
+                    assertTrue(it.headers.contains(name))
+                    assertEquals(it.headers[name], value)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -188,8 +194,9 @@ class StandardIndexTest {
                 // Response object captures all the headers in the response
                 assertEquals(it.responseHeaders, responseHeaders.toMap())
             }, failure = {
-                synchronized(failLambdaCalls) { failLambdaCalls++ }
-            })
+            synchronized(failLambdaCalls) { failLambdaCalls++ }
+        }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 1)
@@ -237,7 +244,8 @@ class StandardIndexTest {
 
                 // Correct response headers
                 assertEquals(error.responseHeaders, responseHeaders.toMap())
-            })
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 0)
@@ -268,7 +276,8 @@ class StandardIndexTest {
 
                 // We should get a SaferMeApiError Class
                 assertEquals(it.message, errorMessage)
-            })
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 0)

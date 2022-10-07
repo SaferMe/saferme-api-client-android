@@ -81,13 +81,15 @@ class ReportImplTest {
         }
 
         runBlockingTest {
-            ReportImpl(defaultAPI, resultHandler, gson).create(TestHelpers.defaultParams, Report(),
+            ReportImpl(defaultAPI, resultHandler, gson).create(
+                TestHelpers.defaultParams, Report(),
                 {
                     assertEquals(it.data.id, id)
                     synchronized(count) { count++ }
                 }, {
-                    fail("Failure block should not be called")
-                })
+                fail("Failure block should not be called")
+            }
+            )
         }
 
         assertEquals(1, count)
@@ -127,7 +129,8 @@ class ReportImplTest {
         }
 
         runBlockingTest {
-            ReportImpl(defaultAPI, resultHandler, gson).read(TestHelpers.defaultParams,
+            ReportImpl(defaultAPI, resultHandler, gson).read(
+                TestHelpers.defaultParams,
                 Report(id = id, uuid = id.toString()),
                 {
                     assertEquals(it.data.uuid, id.toString())
@@ -136,7 +139,8 @@ class ReportImplTest {
                 },
                 {
                     fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         assertEquals(1, count)
@@ -177,7 +181,8 @@ class ReportImplTest {
         }
 
         runBlockingTest {
-            ReportImpl(defaultAPI, resultHandler, gson).update(TestHelpers.defaultParams,
+            ReportImpl(defaultAPI, resultHandler, gson).update(
+                TestHelpers.defaultParams,
                 requestItem,
                 {
                     // return value should be the same object
@@ -186,7 +191,8 @@ class ReportImplTest {
                 },
                 {
                     fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         assertEquals(1, count)
@@ -225,7 +231,8 @@ class ReportImplTest {
         }
 
         runBlockingTest {
-            ReportImpl(defaultAPI, resultHandler, gson).index(TestHelpers.defaultParams,
+            ReportImpl(defaultAPI, resultHandler, gson).index(
+                TestHelpers.defaultParams,
                 {
                     val actualList = it.data
                     assertEquals(2, actualList.size)
@@ -233,8 +240,9 @@ class ReportImplTest {
                     assertEquals(2, actualList[1].id)
                     synchronized(count) { count++ }
                 }, {
-                    fail("Failure block should not be called")
-                })
+                fail("Failure block should not be called")
+            }
+            )
         }
 
         assertEquals(1, count)
@@ -275,7 +283,8 @@ class ReportImplTest {
         }
 
         runBlockingTest {
-            ReportImpl(defaultAPI, resultHandler, gson).delete(TestHelpers.defaultParams,
+            ReportImpl(defaultAPI, resultHandler, gson).delete(
+                TestHelpers.defaultParams,
                 requestItem,
                 {
                     // return value should be the same object
@@ -284,7 +293,8 @@ class ReportImplTest {
                 },
                 {
                     fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         assertEquals(1, count)

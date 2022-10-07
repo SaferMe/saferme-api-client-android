@@ -118,15 +118,19 @@ class ReportImpl @Inject constructor(
         parameters: RequestParameters
     ): HttpClientCall {
         val (client, requestBuilder) = api.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                val extensionParams = parameters.parameters?.toUriParameters()
-                encodedPath =
-                    extensionParams?.let { "${encodedPath}deleted_resources?$it" }
-                        ?: "${encodedPath}deleted_resources?type=report"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        val extensionParams = parameters.parameters?.toUriParameters()
+                        encodedPath =
+                            extensionParams?.let { "${encodedPath}deleted_resources?$it" }
+                                ?: "${encodedPath}deleted_resources?type=report"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 
