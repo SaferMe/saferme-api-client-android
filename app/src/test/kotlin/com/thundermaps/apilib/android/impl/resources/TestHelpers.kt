@@ -239,7 +239,7 @@ class TestHelpers {
             }
         }
 
-        private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + ' ' + '_'
+        private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + '_'
         fun randomString(length: Long = 10): String {
             return ThreadLocalRandom.current()
                 .ints(length, 0, charPool.size)
