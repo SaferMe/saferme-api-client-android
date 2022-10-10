@@ -43,12 +43,16 @@ class FormResourceImpl @Inject constructor(
         channelId: Int
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "${encodedPath}channels/$channelId/form"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "${encodedPath}channels/$channelId/form"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 }

@@ -302,7 +302,7 @@ class SessionsImplTest {
         val nonce = "nonce"
         val path = """
             ${SessionsImpl.SSO_SESSIONS_PATH}?code=$code&sso_team_id=${ssoDetailsMock.ssoTeamId}&callback_url=${SessionsImpl.SSO_REDIRECT_URL}&fields=${SessionsImpl.SSO_FIELDS}&nonce=$nonce
-            """.trimIndent()
+        """.trimIndent()
         val client = TestHelpers.testClient(
             content = SSO_SESSIONS_SUCCESS_RESPONSE,
             status = HttpStatusCode.OK,

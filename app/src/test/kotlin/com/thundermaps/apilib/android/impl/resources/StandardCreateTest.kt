@@ -17,11 +17,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
-import java.util.Random
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.Random
 
 /**
  * Tests for the StandardMethod.create Method
@@ -52,10 +52,13 @@ class StandardCreateTest {
     @Test
     fun testCreateHTTPMethod() {
         var called = false
-        testCreateRequest(api = defaultAPI, client = testClient(requestInspector = {
-            assertEquals(it.method, HttpMethod.Post)
-            called = true
-        }))
+        testCreateRequest(
+            api = defaultAPI,
+            client = testClient(requestInspector = {
+                assertEquals(it.method, HttpMethod.Post)
+                called = true
+            })
+        )
         assertTrue(called)
     }
 
@@ -94,11 +97,13 @@ class StandardCreateTest {
             api = defaultAPI,
             path = testPath,
             params = params,
-            client = testClient(requestInspector = {
-                assertEquals(it.url.encodedPath, expectedPath)
-                called = true
-            }
-        ))
+            client = testClient(
+                requestInspector = {
+                    assertEquals(it.url.encodedPath, expectedPath)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -114,11 +119,13 @@ class StandardCreateTest {
         testCreateRequest(
             api = defaultAPI,
             params = params,
-            client = testClient(requestInspector = {
-                assertEquals(it.url.port, testPort)
-                called = true
-            }
-        ))
+            client = testClient(
+                requestInspector = {
+                    assertEquals(it.url.port, testPort)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -138,12 +145,14 @@ class StandardCreateTest {
         testCreateRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
-            client = testClient(requestInspector = {
-                assertTrue(it.headers.contains(name))
-                assertEquals(it.headers[name], value)
-                called = true
-            }
-        ))
+            client = testClient(
+                requestInspector = {
+                    assertTrue(it.headers.contains(name))
+                    assertEquals(it.headers[name], value)
+                    called = true
+                }
+            )
+        )
 
         assertTrue(called)
     }
@@ -174,19 +183,20 @@ class StandardCreateTest {
             api = defaultAPI,
             client = client,
             success = {
-            synchronized(successLambdaCalls) {
-                successLambdaCalls++
-            }
-            // Data Object returned should be equivalent to the one generated
-            assertEquals(it.data.toJsonString(), returnObject)
-            // Correct status type
-            assertEquals(it.serverStatus, SaferMeApiStatus.CREATED)
+                synchronized(successLambdaCalls) {
+                    successLambdaCalls++
+                }
+                // Data Object returned should be equivalent to the one generated
+                assertEquals(it.data.toJsonString(), returnObject)
+                // Correct status type
+                assertEquals(it.serverStatus, SaferMeApiStatus.CREATED)
 
-            // Response object captures all the headers in the response
-            assertEquals(it.responseHeaders, responseHeaders.toMap())
-        }, failure = {
+                // Response object captures all the headers in the response
+                assertEquals(it.responseHeaders, responseHeaders.toMap())
+            }, failure = {
             synchronized(failLambdaCalls) { failLambdaCalls++ }
-        })
+        }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 1)
@@ -227,7 +237,8 @@ class StandardCreateTest {
             failure = {
                 synchronized(failLambdaCalls) { failLambdaCalls++ }
             },
-            item = returnObject)
+            item = returnObject
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 1)
@@ -268,25 +279,26 @@ class StandardCreateTest {
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
             failure = {
-                    synchronized(failLambdaCalls) { failLambdaCalls++ }
+                synchronized(failLambdaCalls) { failLambdaCalls++ }
 
-                    // We should get a SaferMeApiError Class
-                    assertEquals(it::class, SaferMeApiError::class)
-                    val error = it as SaferMeApiError
+                // We should get a SaferMeApiError Class
+                assertEquals(it::class, SaferMeApiError::class)
+                val error = it as SaferMeApiError
 
-                    // Correct status code
-                    assertEquals(error.serverStatus, SaferMeApiStatus.statusForCode(HttpStatusCode.UnprocessableEntity.value))
+                // Correct status code
+                assertEquals(error.serverStatus, SaferMeApiStatus.statusForCode(HttpStatusCode.UnprocessableEntity.value))
 
-                    // Correct response headers
-                    assertEquals(error.responseHeaders, responseHeaders.toMap())
-        })
+                // Correct response headers
+                assertEquals(error.responseHeaders, responseHeaders.toMap())
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 0)
         assertEquals(failLambdaCalls, 1)
     }
 
-        // Call the Create method and test the result is correct
+    // Call the Create method and test the result is correct
 
     /**
      * Test that a thrown exception will call the failure callback and provide the exception
@@ -312,7 +324,8 @@ class StandardCreateTest {
 
                 // We should get a SaferMeApiError Class
                 assertEquals(it.message, errorMessage)
-            })
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 0)

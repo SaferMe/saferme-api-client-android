@@ -67,13 +67,15 @@ class TracedContactsTest {
         }
 
         runBlocking {
-            TracedContactsImpl(defaultAPI).create(TestHelpers.defaultParams, TracedContacts(tracedContacts),
+            TracedContactsImpl(defaultAPI).create(
+                TestHelpers.defaultParams, TracedContacts(tracedContacts),
                 {
                     TestCase.assertNotNull(it.data)
                     synchronized(count) { count++ }
                 }, {
-                    TestCase.fail("Failure block should not be called")
-                })
+                TestCase.fail("Failure block should not be called")
+            }
+            )
         }
 
         TestCase.assertTrue(inspectCalled)

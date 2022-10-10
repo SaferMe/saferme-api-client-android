@@ -62,14 +62,16 @@ class DeviceInfoLogsImplTest {
             Pair(client, HttpRequestBuilder())
         }
         runBlocking {
-            DeviceInfoLogsImpl(defaultAPI).create(TestHelpers.defaultParams, deviceInfoLog,
+            DeviceInfoLogsImpl(defaultAPI).create(
+                TestHelpers.defaultParams, deviceInfoLog,
                 {
                     TestCase.assertNotNull(it.data)
                     TestCase.assertEquals(it.data, deviceInfoLog)
                     synchronized(count) { count++ }
                 }, {
-                    TestCase.fail("Failure block should not be called")
-                })
+                TestCase.fail("Failure block should not be called")
+            }
+            )
         }
 
         TestCase.assertTrue(inspectCalled)

@@ -47,13 +47,17 @@ class ShapeResourceImpl @Inject constructor(
         }
         val parameters = parameters
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath =
-                    "datasets/v${parameters.api_version}/${shapeParameter.mapboxUser}/${shapeParameter.mapboxDatasetId}/features?access_token=${shapeParameter.mapboxAccessToken}"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath =
+                            "datasets/v${parameters.api_version}/${shapeParameter.mapboxUser}/${shapeParameter.mapboxDatasetId}/features?access_token=${shapeParameter.mapboxAccessToken}"
+                    }.build()
+                )
+            }
+        )
 
         return processResponse(call)
     }
@@ -68,12 +72,16 @@ class ShapeResourceImpl @Inject constructor(
 
                 val parameters = parameters
                 val (client, requestBuilder) = androidClient.client(parameters)
-                val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-                    method = HttpMethod.Get
-                    url(AndroidClient.baseUrlBuilder(parameters).apply {
-                        encodedPath = "$path&access_token=${shapeParameter.mapboxAccessToken}"
-                    }.build())
-                })
+                val call = client.call(
+                    HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                        method = HttpMethod.Get
+                        url(
+                            AndroidClient.baseUrlBuilder(parameters).apply {
+                                encodedPath = "$path&access_token=${shapeParameter.mapboxAccessToken}"
+                            }.build()
+                        )
+                    }
+                )
                 processResponse(call)
             }
         }

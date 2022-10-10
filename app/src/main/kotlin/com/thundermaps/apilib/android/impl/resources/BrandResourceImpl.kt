@@ -60,12 +60,16 @@ class BrandResourceImpl @Inject constructor(
             4
         )
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                encodedPath = "$encodedPath$path?fields=${Constants.BRAND_FIELDS.joinToString(",")}"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "$encodedPath$path?fields=${Constants.BRAND_FIELDS.joinToString(",")}"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 

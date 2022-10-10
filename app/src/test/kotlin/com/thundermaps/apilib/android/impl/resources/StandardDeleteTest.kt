@@ -18,11 +18,11 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
-import java.util.Random
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.Random
 
 /**
  * Tests for the StandardMethod.create Method
@@ -53,10 +53,13 @@ class StandardDeleteTest {
     @Test
     fun testDeleteHTTPMethod() {
         var called = false
-        testDeleteRequest(api = defaultAPI, client = testClient(requestInspector = {
-            assertEquals(it.method, HttpMethod.Delete)
-            called = true
-        }))
+        testDeleteRequest(
+            api = defaultAPI,
+            client = testClient(requestInspector = {
+                assertEquals(it.method, HttpMethod.Delete)
+                called = true
+            })
+        )
         assertTrue(called)
     }
 
@@ -95,11 +98,13 @@ class StandardDeleteTest {
             api = defaultAPI,
             path = testPath,
             params = params,
-            client = testClient(requestInspector = {
-                assertEquals(it.url.encodedPath, expectedPath)
-                called = true
-            }
-        ))
+            client = testClient(
+                requestInspector = {
+                    assertEquals(it.url.encodedPath, expectedPath)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -115,11 +120,13 @@ class StandardDeleteTest {
         testDeleteRequest(
             api = defaultAPI,
             params = params,
-            client = testClient(requestInspector = {
-                assertEquals(it.url.port, testPort)
-                called = true
-            }
-        ))
+            client = testClient(
+                requestInspector = {
+                    assertEquals(it.url.port, testPort)
+                    called = true
+                }
+            )
+        )
         assertTrue(called)
     }
 
@@ -139,12 +146,14 @@ class StandardDeleteTest {
         testDeleteRequest(
             api = defaultAPI,
             httpRequestBuilder = builder,
-            client = testClient(requestInspector = {
-                assertTrue(it.headers.contains(name))
-                assertEquals(it.headers[name], value)
-                called = true
-            }
-        ))
+            client = testClient(
+                requestInspector = {
+                    assertTrue(it.headers.contains(name))
+                    assertEquals(it.headers[name], value)
+                    called = true
+                }
+            )
+        )
 
         assertTrue(called)
     }
@@ -176,16 +185,17 @@ class StandardDeleteTest {
             api = defaultAPI,
             client = client,
             success = {
-            synchronized(successLambdaCalls) {
-                successLambdaCalls++
-            }
-            // Correct status type
-            assertEquals(it.serverStatus, SaferMeApiStatus.ACCEPTED)
-            // Response object captures all the headers in the response
-            assertEquals(it.responseHeaders, responseHeaders.toMap())
-        }, failure = {
+                synchronized(successLambdaCalls) {
+                    successLambdaCalls++
+                }
+                // Correct status type
+                assertEquals(it.serverStatus, SaferMeApiStatus.ACCEPTED)
+                // Response object captures all the headers in the response
+                assertEquals(it.responseHeaders, responseHeaders.toMap())
+            }, failure = {
             synchronized(failLambdaCalls) { failLambdaCalls++ }
-        })
+        }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 1)
@@ -219,25 +229,26 @@ class StandardDeleteTest {
             client = client,
             success = { synchronized(successLambdaCalls) { successLambdaCalls++ } },
             failure = {
-                    synchronized(failLambdaCalls) { failLambdaCalls++ }
+                synchronized(failLambdaCalls) { failLambdaCalls++ }
 
-                    // We should get a SaferMeApiError Class
-                    assertEquals(it::class, SaferMeApiError::class)
-                    val error = it as SaferMeApiError
+                // We should get a SaferMeApiError Class
+                assertEquals(it::class, SaferMeApiError::class)
+                val error = it as SaferMeApiError
 
-                    // Correct status code
-                    assertEquals(error.serverStatus, SaferMeApiStatus.statusForCode(HttpStatusCode.UnprocessableEntity.value))
+                // Correct status code
+                assertEquals(error.serverStatus, SaferMeApiStatus.statusForCode(HttpStatusCode.UnprocessableEntity.value))
 
-                    // Correct response headers
-                    assertEquals(error.responseHeaders, responseHeaders.toMap())
-        })
+                // Correct response headers
+                assertEquals(error.responseHeaders, responseHeaders.toMap())
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 0)
         assertEquals(failLambdaCalls, 1)
     }
 
-        // Call the delete method and test the result is correct
+    // Call the delete method and test the result is correct
 
     /**
      * Test that a thrown exception will call the failure callback and provide the exception
@@ -263,7 +274,8 @@ class StandardDeleteTest {
 
                 // We should get a SaferMeApiError Class
                 assertEquals(it.message, errorMessage)
-            })
+            }
+        )
 
         // Ensure callbacks called the correct number of times
         assertEquals(successLambdaCalls, 0)

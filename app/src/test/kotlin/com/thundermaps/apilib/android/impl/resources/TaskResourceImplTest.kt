@@ -77,7 +77,8 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI, resultHandler, gson).create(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).create(
+                TestHelpers.defaultParams,
                 Task(),
                 {
                     assertEquals(it.data.uuid, uuid)
@@ -85,7 +86,8 @@ class TaskResourceImplTest {
                 },
                 {
                     fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         assertEquals(1, count)
@@ -125,7 +127,8 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI, resultHandler, gson).read(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).read(
+                TestHelpers.defaultParams,
                 Task(uuid = uuid),
                 {
                     assertEquals(it.data.uuid, uuid)
@@ -133,7 +136,8 @@ class TaskResourceImplTest {
                 },
                 {
                     fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         assertEquals(1, count)
@@ -174,7 +178,8 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI, resultHandler, gson).update(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).update(
+                TestHelpers.defaultParams,
                 requestItem,
                 {
                     // return value should be the same object
@@ -183,7 +188,8 @@ class TaskResourceImplTest {
                 },
                 {
                     fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         assertEquals(1, count)
@@ -223,7 +229,8 @@ class TaskResourceImplTest {
         }
 
         runBlocking {
-            TaskResourceImpl(defaultAPI, resultHandler, gson).index(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).index(
+                TestHelpers.defaultParams,
                 {
                     val actualList = it.data
                     assertEquals(2, actualList.size)
@@ -231,8 +238,9 @@ class TaskResourceImplTest {
                     assertEquals("test-two", actualList[1].uuid)
                     synchronized(count) { count++ }
                 }, {
-                    fail("Failure block should not be called")
-                })
+                fail("Failure block should not be called")
+            }
+            )
         }
 
         assertEquals(1, count)
@@ -268,7 +276,8 @@ class TaskResourceImplTest {
         }
 
         runBlockingTest {
-            TaskResourceImpl(defaultAPI, resultHandler, gson).delete(TestHelpers.defaultParams,
+            TaskResourceImpl(defaultAPI, resultHandler, gson).delete(
+                TestHelpers.defaultParams,
                 requestItem,
                 {
                     // return value should be the same object
@@ -277,7 +286,8 @@ class TaskResourceImplTest {
                 },
                 {
                     Assert.fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         Assert.assertEquals(1, count)
@@ -317,7 +327,8 @@ class TaskResourceImplTest {
                 defaultAPI,
                 resultHandler,
                 gson
-            ).markAsInComplete(TestHelpers.defaultParams,
+            ).markAsInComplete(
+                TestHelpers.defaultParams,
                 "Random-Task",
                 {
                     // return value should be the same object
@@ -325,7 +336,8 @@ class TaskResourceImplTest {
                 },
                 {
                     fail("Failure block should not be called")
-                })
+                }
+            )
         }
 
         assertEquals(1, count)

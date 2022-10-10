@@ -46,15 +46,19 @@ class ChannelResourceImpl @Inject constructor(
         fields: String
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                val extensionParams = parameters.parameters?.toUriParameters()
-                encodedPath =
-                    extensionParams?.let { "${encodedPath}channels?team_id=$teamId&$it&fields=$fields" }
-                        ?: "${encodedPath}teams/$teamId/channels?fields=$fields"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        val extensionParams = parameters.parameters?.toUriParameters()
+                        encodedPath =
+                            extensionParams?.let { "${encodedPath}channels?team_id=$teamId&$it&fields=$fields" }
+                                ?: "${encodedPath}teams/$teamId/channels?fields=$fields"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 
@@ -74,15 +78,19 @@ class ChannelResourceImpl @Inject constructor(
         parameters: RequestParameters
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(HttpRequestBuilder().takeFrom(requestBuilder).apply {
-            method = HttpMethod.Get
-            url(AndroidClient.baseUrlBuilder(parameters).apply {
-                val extensionParams = parameters.parameters?.toUriParameters()
-                encodedPath =
-                    extensionParams?.let { "${encodedPath}deleted_resources?$it" }
-                        ?: "${encodedPath}deleted_resources?type=account"
-            }.build())
-        })
+        val call = client.call(
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        val extensionParams = parameters.parameters?.toUriParameters()
+                        encodedPath =
+                            extensionParams?.let { "${encodedPath}deleted_resources?$it" }
+                                ?: "${encodedPath}deleted_resources?type=account"
+                    }.build()
+                )
+            }
+        )
         return call
     }
 }
