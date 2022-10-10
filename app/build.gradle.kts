@@ -43,7 +43,7 @@ android {
         getByName("release") {
             setProperty(
                 "archivesBaseName",
-                "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}"
+                "${Maven.artifactId}-${Maven.version}.${Maven.build}"
             )
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -52,7 +52,7 @@ android {
         getByName("debug") {
             setProperty(
                 "archivesBaseName",
-                "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}"
+                "${Maven.artifactId}-${Maven.version}.${Maven.build}"
             )
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
