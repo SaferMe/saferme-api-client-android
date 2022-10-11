@@ -1,3 +1,4 @@
+import de.fayard.refreshVersions.core.versionFor
 
 plugins {
     id("com.android.library")
@@ -43,7 +44,7 @@ android {
         getByName("release") {
             setProperty(
                 "archivesBaseName",
-                "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}"
+                "${Maven.artifactId}-${Maven.version}.${Maven.build}"
             )
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -52,7 +53,7 @@ android {
         getByName("debug") {
             setProperty(
                 "archivesBaseName",
-                "$buildDir/outputs/aar/${Maven.artifactId}-${Maven.version}.${Maven.build}"
+                "${Maven.artifactId}-${Maven.version}.${Maven.build}"
             )
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -151,7 +152,6 @@ publishing {
         }
     }
     publications {
-
         register("ProductionRelease", MavenPublication::class) {
             groupId = Maven.group
             artifactId = "${Maven.artifactId}-release"
@@ -167,11 +167,11 @@ publishing {
                             "unspecified" != it.name &&
                             it.version != null
                         ) {
-
                             val dependencyNode = dependencies.appendNode("dependency")
+                            val version = versionFor("${it.group}:${it.name}:${it.version}")
                             dependencyNode.appendNode("groupId", it.group)
                             dependencyNode.appendNode("artifactId", it.name)
-                            dependencyNode.appendNode("version", it.version)
+                            dependencyNode.appendNode("version", version)
                         }
                     }
                 }

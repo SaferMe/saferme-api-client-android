@@ -104,7 +104,9 @@ jobs:
             echo "version.build=<<pipeline.number>>" >> buildSrc/local.properties
       - run:
           name: Build
-          command: ./gradlew clean ktlintCheck build assemble publishTestReleasePublicationToGitHubRepository
+          command: |
+            ./gradlew clean ktlintCheck build assemble
+            ./gradlew publishTestReleasePublicationToGitHubRepository
 
   prodRelease:
     executor:
@@ -133,7 +135,9 @@ jobs:
             echo "version.build=<<pipeline.number>>" >> buildSrc/local.properties
       - run:
           name: Build
-          command: ./gradlew clean ktlintCheck build assemble publishProductionReleasePublicationToGitHubRepository
+          command: |
+            ./gradlew clean ktlintCheck build assemble
+            ./gradlew publishProductionReleasePublicationToGitHubRepository
 
 workflows:
   build-and-test: # This is the name of the workflow, feel free to change it to better match your workflow.
