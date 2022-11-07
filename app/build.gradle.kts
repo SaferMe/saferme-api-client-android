@@ -85,8 +85,8 @@ dependencies {
     //  implementation("io.ktor:ktor-client-logging-native:_")
 
     // Logging for HTTPClient
-    implementation("org.slf4j:slf4j-simple:_")
-    implementation("com.raygun:raygun4android:_")
+    implementation(Libs.slf4j_simple)
+    implementation(Libs.raygun4android)
     // Gson Serialisation
     implementation(Libs.gson)
 

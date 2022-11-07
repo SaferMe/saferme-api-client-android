@@ -14,6 +14,7 @@ import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.FormResourceImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
+import com.thundermaps.apilib.android.impl.resources.ReportStateChangeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.SessionsImpl
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.StateImpl
@@ -47,6 +48,7 @@ internal class SaferMeClientTest {
     private val stateImpl = mock<StateImpl>()
     private val reportImpl = mock<ReportImpl>()
     private val taskResourceImpl = mock<TaskResourceImpl>()
+    private val reportStateChangeResourceImpl = mock<ReportStateChangeResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -65,7 +67,8 @@ internal class SaferMeClientTest {
             attachmentResourceImpl,
             stateImpl,
             reportImpl,
-            taskResourceImpl
+            taskResourceImpl,
+            reportStateChangeResourceImpl
         )
     }
 
@@ -82,7 +85,8 @@ internal class SaferMeClientTest {
             attachmentResourceImpl,
             stateImpl,
             reportImpl,
-            taskResourceImpl
+            taskResourceImpl,
+            reportStateChangeResourceImpl
         )
     }
 
@@ -198,5 +202,10 @@ internal class SaferMeClientTest {
     @Test
     fun verifyGetStateResource() {
         assertEquals(stateImpl, saferMeClient.stateResource)
+    }
+
+    @Test
+    fun verifyGetStateChangeResource() {
+        assertEquals(reportStateChangeResourceImpl, saferMeClient.reportStateChangeResource)
     }
 }
