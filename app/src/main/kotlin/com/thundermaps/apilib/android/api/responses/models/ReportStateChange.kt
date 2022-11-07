@@ -13,5 +13,5 @@ data class ReportStateChange(
     @Expose @SerializedName("previous_report_state") val previousReportState: ReportState,
     @Expose @SerializedName("report_id") val reportId: Int,
     @Expose @SerializedName("user_id") val userId: Int,
-    @Expose @SerializedName("report_uuid") val reportUUID: String
-): SaferMeDatum
+    @Expose @SerializedName("report_uuid") val reportUUID: String? = null
+) : SaferMeDatum

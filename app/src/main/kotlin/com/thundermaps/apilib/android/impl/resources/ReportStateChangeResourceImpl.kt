@@ -1,19 +1,15 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.ReportStateChangeResource
 import com.thundermaps.apilib.android.api.responses.models.ReportStateChange
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import javax.inject.Inject
 
 class ReportStateChangeResourceImpl @Inject constructor(
-    val api: AndroidClient,
-    private val result: ResultHandler,
-    private val gson: Gson
-): ReportStateChangeResource {
+    val api: AndroidClient
+) : ReportStateChangeResource {
     override suspend fun read(
         parameters: RequestParameters,
         item: ReportStateChange,
@@ -34,9 +30,11 @@ class ReportStateChangeResourceImpl @Inject constructor(
         success: (SaferMeApiResult<List<ReportStateChange>>) -> Unit,
         failure: (Exception) -> Unit
     ) {
+        val extensionParameters = parameters.parameters?.toUriParameters()
+        val apiPath = extensionParameters?.let { "$ENDPOINT?$it" } ?: ENDPOINT
         StandardMethods.index(
             api = api,
-            path = ENDPOINT,
+            path = apiPath,
             parameters = parameters,
             success = success,
             failure = failure
