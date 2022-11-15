@@ -190,7 +190,7 @@ class AttachmentResourceImplTest {
                   "key": "$key",
                   "success_action_status": "201",
                   "Content-Type": "image/png",
-                  
+
                   "policy": "$policy",
                   "x-amz-credential": "AKIAICPNAEAPUN54KXIA/20220410/us-east-1/s3/aws4_request",
                   "x-amz-algorithm": "AWS4-HMAC-SHA256",

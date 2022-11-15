@@ -158,8 +158,8 @@ class FormResourceImplTest {
         )
 
         private val FIELDS = """
-            [  
-                {  
+            [
+                {
                   "id":13,
                   "label":"Category",
                   "key":"f_1_36_13",
@@ -172,7 +172,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":14,
                   "label":"A Check Box field",
                   "key":"f_1_38_14",
@@ -185,7 +185,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":17,
                   "label":"Drop Down",
                   "key":"f_1_48_17",
@@ -198,7 +198,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":15,
                   "label":"Date and time field",
                   "key":"f_1_42_15",
@@ -211,7 +211,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":12,
                   "label":"Description",
                   "key":"f_1_35_12",
@@ -224,7 +224,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":11,
                   "label":"Short Text Box",
                   "key":"f_1_29_11",
@@ -237,7 +237,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":6,
                   "label":"Amazing pictures",
                   "key":"f_1_8_6",
@@ -250,7 +250,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":9,
                   "label":"Awesome files",
                   "key":"f_1_18_9",
@@ -263,7 +263,7 @@ class FormResourceImplTest {
                   "value":null,
                   "editable":true
                 },
-                {  
+                {
                   "id":10,
                   "label":"Important files",
                   "key":"f_1_19_10",
@@ -280,7 +280,7 @@ class FormResourceImplTest {
         """.trimIndent()
         private val FORM_SUCCESS_RESPONSE =
             """
-                {  
+                {
                   "id":1,
                   "name":"Cleaner streams Form",
                   "version":52,
