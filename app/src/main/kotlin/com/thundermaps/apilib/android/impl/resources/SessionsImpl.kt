@@ -8,9 +8,12 @@ import com.thundermaps.apilib.android.api.requests.Constants.APPLICATION_JSON
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.SessionBody
+import com.thundermaps.apilib.android.api.requests.models.SessionBodyV4
+import com.thundermaps.apilib.android.api.requests.models.UserV4
 import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
+import com.thundermaps.apilib.android.api.responses.models.Session
 import com.thundermaps.apilib.android.api.responses.models.Sessions
 import com.thundermaps.apilib.android.api.responses.models.SsoDetails
 import com.thundermaps.apilib.android.api.responses.models.SsoSessions
@@ -49,15 +52,20 @@ class SessionsImpl @Inject constructor(
             host = host,
             api_version = apiVersion
         )
-
     override suspend fun login(
         body: SessionBody,
         applicationId: String
-    ): Result<Sessions> {
+    ): Result<Sessions> = loginV4(body, applicationId).convert { it.toSessions() }
+
+    private suspend fun loginV4(
+        body: SessionBody,
+        applicationId: String
+    ): Result<Session> {
         if (!environmentManager.environment.servers.first().isInternetAvailable()) {
             return resultHandler.handleException(UnknownHostException())
         }
-        val call = requestHandler(body, applicationId, LOGIN_PATH)
+        val requestBody = SessionBodyV4(UserV4(applicationId, body.user.email, body.user.password))
+        val call = requestHandler(requestBody, applicationId, LOGIN_PATH)
         return resultHandler.processResult(call, gson)
     }
 
@@ -106,7 +114,7 @@ class SessionsImpl @Inject constructor(
         val parameters = createParameters(
             environmentManager.environment.servers.first(),
             applicationId,
-            path.getApiVersion()
+            getApiVersion()
         )
         val (client, requestBuilder) = androidClient.client(parameters)
         val call = client.call(
@@ -128,13 +136,11 @@ class SessionsImpl @Inject constructor(
         return call
     }
 
-    private fun String.getApiVersion(): Int {
-        return if (LOGIN_PATH == this) 3 else 4
-    }
+    private fun getApiVersion(): Int = 4
 
     companion object {
         private const val SSO_DETAILS_PATH = "sso_details"
-        private const val LOGIN_PATH = "sessions"
+        private const val LOGIN_PATH = "session"
 
         @VisibleForTesting
         const val SSO_SESSIONS_PATH = "auth/sm_azure_oauth2/callback"
