@@ -14,7 +14,9 @@ import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.models.EmailBody
 import com.thundermaps.apilib.android.api.requests.models.SessionBody
+import com.thundermaps.apilib.android.api.requests.models.SessionBodyV4
 import com.thundermaps.apilib.android.api.requests.models.User
+import com.thundermaps.apilib.android.api.requests.models.UserV4
 import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.ErrorCode
 import com.thundermaps.apilib.android.api.responses.models.ErrorCodes
@@ -92,14 +94,14 @@ class SessionsImplTest {
     fun verifyLoginSuccess() = runBlockingTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
-            content = LOGIN_SUCCESS_RESPONSE,
+            content = LOGIN_SUCCESS_RESPONSE_V4,
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
                 assertEquals(LOGIN_PATH, it.url.encodedPath)
                 assertEquals(HttpMethod.Post, it.method)
                 val bodyText = (it.body as TextContent).text
-                assertEquals(gson.toJson(sessionBody), bodyText)
+                assertEquals(gson.toJson(sessionBodyV4), bodyText)
                 assertTrue(bodyText.contains(sessionBody.user.email))
                 assertTrue(bodyText.contains(sessionBody.user.password))
                 inspectCalled = true
@@ -117,11 +119,10 @@ class SessionsImplTest {
         assertTrue(loginResult.isSuccess)
         assertNotNull(loginResult.getNullableData())
         val sessions = loginResult.getNullableData()!!
-        val expectedTeamId = 49033L
-        assertEquals(sessionsMock.copy(teamId = expectedTeamId), sessions)
+        assertEquals(sessionsMock, sessions)
         assertEquals(sessionsMock.apiKey, sessions.apiKey)
         assertFalse(sessions.consentRequired)
-        assertEquals(expectedTeamId, sessions.teamId)
+        assertEquals(null, sessions.teamId)
         assertEquals(sessionsMock.userId, sessions.userId)
         assertFalse(sessions.personalAccountOption)
         assertFalse(sessions.profileDetailsPending)
@@ -330,7 +331,7 @@ class SessionsImplTest {
         assertTrue(inspectCalled)
     }
 
-    private fun verifyAndroidClient(expectedVersion: Int = 3) {
+    private fun verifyAndroidClient(expectedVersion: Int = 4) {
         val parameterCaptor = argumentCaptor<RequestParameters>()
         verify(androidClient).client(parameterCaptor.capture())
         val requestParameters = parameterCaptor.firstValue
@@ -342,19 +343,21 @@ class SessionsImplTest {
 
     companion object {
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val LOGIN_PATH = "/api/v3/sessions"
+        private const val LOGIN_PATH = "/api/v4/session"
         private const val RESET_PASSWORD_PATH = "/api/v4/reset_passwords/request_token"
         private const val SSO_PATH = "/api/v4/sso_details"
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private val sessionBody = SessionBody(User("test@gmail.com", "abce9w0"))
+        private val sessionBodyV4 = SessionBodyV4(UserV4(APPLICATION_ID, sessionBody.user.email, sessionBody.user.password))
         private val sessionsMock = Sessions(
-            apiKey = "823e0ea66f59cebeffaf969dd16d8929",
+            apiKey = "smt_32pv_KzeXFzJQmCHZ6gOUXDljfFQt53Pawfo_ePnDT48iQQQ",
             consentRequired = false,
             teamId = null,
             userId = 92536,
             personalAccountOption = false,
             profileDetailsPending = false,
+            clientUuid = "000086fc-4948-41f1-9a3e-f75b45ca6a4d",
             passwordUpdatePending = false
         )
         private val LOGIN_SUCCESS_RESPONSE =
@@ -367,6 +370,28 @@ class SessionsImplTest {
                     "personal_account_option":false,
                     "profile_details_pending":false,
                     "password_update_pending":false
+                }
+            """.trimIndent()
+        private val LOGIN_SUCCESS_RESPONSE_V4 =
+            """
+                {
+                    "session": {
+                        "access_token": "smt_32pv_KzeXFzJQmCHZ6gOUXDljfFQt53Pawfo_ePnDT48iQQQ",
+                        "app_bundle_id": "com.thundermaps.saferme",
+                        "branded_app_id": 24,
+                        "client_uuid": "000086fc-4948-41f1-9a3e-f75b45ca6a4d",
+                        "profile": {
+                            "consent_required": false,
+                            "password_update_pending": false,
+                            "personal_account_option": false,
+                            "preferred_team_id": null,
+                            "profile_details_pending": false,
+                            "user_id": 92536,
+                            "user_uuid": "56871f40-86cb-589a-bef7-f820c6f8c382"
+                        },
+                        "refresh_token": "JL74JsA-73b7StUd-1xxl8oYBPFYOGUUpcKikwwH1yg",
+                        "token_expire_at": "2023-12-16T18:10:36.918+13:00"
+                    }
                 }
             """.trimIndent()
         private val badCredentialsResponseError = ResponseError(
