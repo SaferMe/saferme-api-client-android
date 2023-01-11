@@ -18,18 +18,17 @@ import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.UserDetails
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
-import io.ktor.util.KtorExperimentalAPI
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@KtorExperimentalAPI
 @Singleton
 class MeResourceImpl @Inject constructor(
     private val androidClient: AndroidClient,
@@ -178,7 +177,7 @@ class MeResourceImpl @Inject constructor(
         bodyRequest: T? = null
     ): HttpClientCall {
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(
+        val call = client.request<HttpResponse>(
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = methodType
                 url(
@@ -191,7 +190,7 @@ class MeResourceImpl @Inject constructor(
                     body = it
                 }
             }
-        )
+        ).call
         return call
     }
 

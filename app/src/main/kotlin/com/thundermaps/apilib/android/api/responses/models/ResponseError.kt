@@ -3,7 +3,7 @@ package com.thundermaps.apilib.android.api.responses.models
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.thundermaps.apilib.android.api.resources.SaferMeDatum
-import kotlinx.io.errors.IOException
+import java.io.IOException
 
 private const val ACCOUNT_LOCKED_CODE = "account_locked"
 

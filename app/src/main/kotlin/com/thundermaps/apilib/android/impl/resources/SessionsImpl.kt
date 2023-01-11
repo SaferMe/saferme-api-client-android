@@ -20,19 +20,17 @@ import com.thundermaps.apilib.android.api.responses.models.SsoSessions
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.HeaderType
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
-import io.ktor.util.KtorExperimentalAPI
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@KtorExperimentalAPI
 @Singleton
 class SessionsImpl @Inject constructor(
     private val androidClient: AndroidClient,
@@ -117,7 +115,7 @@ class SessionsImpl @Inject constructor(
             getApiVersion()
         )
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(
+        val call = client.request<HttpClientCall> (
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = methodType
                 url(
