@@ -21,7 +21,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -46,7 +46,7 @@ class ShapeResourceImplTest {
     }
 
     @Test
-    fun getFeaturesSuccess() = runBlockingTest {
+    fun getFeaturesSuccess() = runTest {
         var inspectCalled = false
         val content = "{\"type\": \"FeatureCollection\", \"features\":[]}"
         val client = TestHelpers.testClient(
@@ -71,7 +71,7 @@ class ShapeResourceImplTest {
     }
 
     @Test
-    fun getFeaturesError() = runBlockingTest {
+    fun getFeaturesError() = runTest {
         var inspectCalled = false
         val content = ""
         val client = TestHelpers.testClient(
@@ -96,7 +96,7 @@ class ShapeResourceImplTest {
     }
 
     @Test
-    fun getNextFeatures() = runBlockingTest {
+    fun getNextFeatures() = runTest {
         var inspectCalled = false
         val content = "{\"type\": \"FeatureCollection\", \"features\":[]}"
         val client = TestHelpers.testClient(

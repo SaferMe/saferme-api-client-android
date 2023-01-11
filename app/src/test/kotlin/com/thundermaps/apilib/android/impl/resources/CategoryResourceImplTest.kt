@@ -24,7 +24,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -52,7 +52,7 @@ class CategoryResourceImplTest {
     }
 
     @Test
-    fun verifyGetChannelsSuccess() = runBlockingTest {
+    fun verifyGetChannelsSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = CATEGORIES_SUCCESS_RESPONSE,
@@ -85,7 +85,7 @@ class CategoryResourceImplTest {
     }
 
     @Test
-    fun verifyChannelsError() = runBlockingTest {
+    fun verifyChannelsError() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = BAD_CREDENTIAL_ERROR_RESPONSE,

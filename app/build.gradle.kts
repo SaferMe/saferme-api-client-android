@@ -116,7 +116,6 @@ dependencies {
     // ktor mocking libs
     testImplementation(Libs.ktor_client_mock)
     testImplementation(Libs.ktor_client_mock_jvm)
-    testImplementation(Libs.ktor_client_mock_native)
 
     // Add JUnit5 dependencies.
     testImplementation(Libs.junit_jupiter)

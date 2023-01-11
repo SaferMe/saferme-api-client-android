@@ -38,7 +38,7 @@ import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -91,7 +91,7 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyLoginSuccess() = runBlockingTest {
+    fun verifyLoginSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = LOGIN_SUCCESS_RESPONSE_V4,
@@ -120,18 +120,18 @@ class SessionsImplTest {
         assertNotNull(loginResult.getNullableData())
         val sessions = loginResult.getNullableData()!!
         assertEquals(sessionsMock, sessions)
-        assertEquals(sessionsMock.apiKey, sessions.apiKey)
-        assertFalse(sessions.consentRequired)
-        assertEquals(null, sessions.teamId)
-        assertEquals(sessionsMock.userId, sessions.userId)
-        assertFalse(sessions.personalAccountOption)
-        assertFalse(sessions.profileDetailsPending)
-        assertFalse(sessions.passwordUpdatePending)
+        assertEquals(sessionsMock.apiKey, sessions.session.accessToken)
+        assertFalse(sessions.session.profile.consentRequired)
+        assertEquals(null, sessions.session.profile.preferredTeamId)
+        assertEquals(sessionsMock.userId, sessions.session.profile.userId)
+        assertFalse(sessions.session.profile.personalAccountOption)
+        assertFalse(sessions.session.profile.profileDetailsPending)
+        assertFalse(sessions.session.profile.passwordUpdatePending)
         assertTrue(inspectCalled)
     }
 
     @Test
-    fun verifyLoginErrorBadCredential() = runBlockingTest {
+    fun verifyLoginErrorBadCredential() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = LOGIN_BAD_CREDENTIAL_ERROR_RESPONSE,
@@ -161,7 +161,7 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyLoginErrorLockedAccount() = runBlockingTest {
+    fun verifyLoginErrorLockedAccount() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = LOGIN_LOCKED_ACCOUNT_ERROR_RESPONSE,
@@ -188,7 +188,7 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyLoginOtherError() = runBlockingTest {
+    fun verifyLoginOtherError() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = "{}",
@@ -212,7 +212,7 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyRequestPasswordSuccess() = runBlockingTest {
+    fun verifyRequestPasswordSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = REQUEST_PASSWORD_SUCCESS_RESPONSE,
@@ -237,7 +237,7 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyRequestError() = runBlockingTest {
+    fun verifyRequestError() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = "",
@@ -261,7 +261,7 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyGetSsoDetailsSuccess() = runBlockingTest {
+    fun verifyGetSsoDetailsSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = SSO_DETAILS_SUCCESS_RESPONSE,
@@ -297,7 +297,7 @@ class SessionsImplTest {
     }
 
     @Test
-    fun verifyGetSsoSessionsSuccess() = runBlockingTest {
+    fun verifyGetSsoSessionsSuccess() = runTest {
         var inspectCalled = false
         val code = "932909205op950295uof23909423"
         val nonce = "nonce"

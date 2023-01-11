@@ -20,7 +20,7 @@ import junit.framework.Assert.assertNotNull
 import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
@@ -80,7 +80,7 @@ class ReportImplTest {
             Pair(client, HttpRequestBuilder())
         }
 
-        runBlockingTest {
+        runTest {
             ReportImpl(defaultAPI, resultHandler, gson).create(
                 TestHelpers.defaultParams, Report(),
                 {
@@ -128,7 +128,7 @@ class ReportImplTest {
             Pair(client, HttpRequestBuilder())
         }
 
-        runBlockingTest {
+        runTest {
             ReportImpl(defaultAPI, resultHandler, gson).read(
                 TestHelpers.defaultParams,
                 Report(id = id, uuid = id.toString()),
@@ -180,7 +180,7 @@ class ReportImplTest {
             Pair(client, HttpRequestBuilder())
         }
 
-        runBlockingTest {
+        runTest {
             ReportImpl(defaultAPI, resultHandler, gson).update(
                 TestHelpers.defaultParams,
                 requestItem,
@@ -230,7 +230,7 @@ class ReportImplTest {
             Pair(client, HttpRequestBuilder())
         }
 
-        runBlockingTest {
+        runTest {
             ReportImpl(defaultAPI, resultHandler, gson).index(
                 TestHelpers.defaultParams,
                 {
@@ -282,7 +282,7 @@ class ReportImplTest {
             Pair(client, HttpRequestBuilder())
         }
 
-        runBlockingTest {
+        runTest {
             ReportImpl(defaultAPI, resultHandler, gson).delete(
                 TestHelpers.defaultParams,
                 requestItem,

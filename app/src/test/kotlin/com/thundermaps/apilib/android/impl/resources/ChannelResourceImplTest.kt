@@ -24,7 +24,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -54,7 +54,7 @@ class ChannelResourceImplTest {
     }
 
     @Test
-    fun verifyGetChannelsSuccess() = runBlockingTest {
+    fun verifyGetChannelsSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = CHANNELS_SUCCESS_RESPONSE,
@@ -111,7 +111,7 @@ class ChannelResourceImplTest {
     }
 
     @Test
-    fun verifyChannelsError() = runBlockingTest {
+    fun verifyChannelsError() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = BAD_CREDENTIAL_ERROR_RESPONSE,
@@ -151,7 +151,7 @@ class ChannelResourceImplTest {
     }
 
     @Test
-    fun verifyGetChannelsDeletedSuccess() = runBlockingTest {
+    fun verifyGetChannelsDeletedSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = CHANNELS_DELETED_SUCCESS_RESPONSE,

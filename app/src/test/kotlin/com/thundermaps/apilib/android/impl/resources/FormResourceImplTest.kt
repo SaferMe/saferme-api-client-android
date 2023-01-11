@@ -25,7 +25,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -52,7 +52,7 @@ class FormResourceImplTest {
     }
 
     @Test
-    fun verifyGetFormSuccess() = runBlockingTest {
+    fun verifyGetFormSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = FORM_SUCCESS_RESPONSE,
@@ -88,7 +88,7 @@ class FormResourceImplTest {
     }
 
     @Test
-    fun verifyGetFormError() = runBlockingTest {
+    fun verifyGetFormError() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = BAD_CREDENTIAL_ERROR_RESPONSE,
