@@ -3,16 +3,21 @@ package com.thundermaps.apilib.android.impl
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.thundermaps.apilib.android.api.SaferMeClientService
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.DataValue
 import com.thundermaps.apilib.android.api.responses.models.DataValueDecode
 import com.thundermaps.apilib.android.api.responses.models.FieldType
 import com.thundermaps.apilib.android.api.responses.models.FieldTypeDecode
 import com.thundermaps.apilib.android.api.responses.models.FormValue
 import com.thundermaps.apilib.android.api.responses.models.FormValueDecode
+import com.thundermaps.apilib.android.api.responses.models.Session
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
+import io.ktor.client.features.auth.Auth
+import io.ktor.client.features.auth.providers.bearer
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
@@ -22,11 +27,23 @@ import io.ktor.http.URLProtocol
 import javax.inject.Inject
 
 class AndroidClient @Inject constructor() {
+    private lateinit var sessionsResource: SessionsResource
+
     // Reusable / Shared Components (Singleton)
     val currentClient: HttpClient by lazy {
         HttpClient(Android) {
             install(JsonFeature) {
                 serializer = GsonSerializer().apply { gsonBuilder }
+            }
+            install(Auth) {
+                lateinit var tokenInfo: Session
+
+                bearer {
+                    loadTokens {
+                        sessionsResource = SaferMeClientService.getService().getClient().sessionsResource
+                        sessionsResource.tokens
+                    }
+                }
             }
         }
     }
