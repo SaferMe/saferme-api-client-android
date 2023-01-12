@@ -82,6 +82,7 @@ dependencies {
     implementation(Libs.ktor_client_cio)
     implementation(Libs.ktor_client_android)
     implementation(Libs.ktor_client_gson)
+    implementation(Libs.ktor_client_auth)
     //  implementation("io.ktor:ktor-client-logging-native:_")
 
     // Logging for HTTPClient

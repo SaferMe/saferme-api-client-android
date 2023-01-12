@@ -57,6 +57,8 @@ object Libs {
 
     const val ktor_client_gson: String = "io.ktor:ktor-client-gson:_"
 
+    const val ktor_client_auth: String = "io.ktor:ktor-client-auth:_"
+
     const val ktor_client_mock: String = "io.ktor:ktor-client-mock:_"
 
     const val ktor_client_mock_jvm: String = "io.ktor:ktor-client-mock-jvm:_"

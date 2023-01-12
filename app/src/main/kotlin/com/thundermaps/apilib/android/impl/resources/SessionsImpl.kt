@@ -14,15 +14,16 @@ import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Session
-import com.thundermaps.apilib.android.api.responses.models.Sessions
 import com.thundermaps.apilib.android.api.responses.models.SsoDetails
 import com.thundermaps.apilib.android.api.responses.models.SsoSessions
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.HeaderType
 import io.ktor.client.call.HttpClientCall
+import io.ktor.client.features.auth.providers.BearerTokens
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -38,6 +39,10 @@ class SessionsImpl @Inject constructor(
     private val resultHandler: ResultHandler,
     private val gson: Gson
 ) : SessionsResource {
+    private val sessionCache = mutableListOf<Session>()
+    override val tokens: BearerTokens?
+        get() = sessionCache.lastOrNull()?.let { BearerTokens("Token", "token=${it.session.refreshToken}") }
+
     override fun isStaging(): Boolean = environmentManager.isStaging()
     private fun createParameters(host: String, applicationId: String, apiVersion: Int) =
         RequestParameters(
@@ -53,7 +58,7 @@ class SessionsImpl @Inject constructor(
     override suspend fun login(
         body: SessionBody,
         applicationId: String
-    ): Result<Sessions> = loginV4(body, applicationId).convert { it.toSessions() }
+    ): Result<Session> = loginV4(body, applicationId)
 
     private suspend fun loginV4(
         body: SessionBody,
@@ -115,7 +120,7 @@ class SessionsImpl @Inject constructor(
             getApiVersion()
         )
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.request<HttpClientCall> (
+        val call = client.request<HttpResponse> (
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = methodType
                 url(
@@ -130,7 +135,7 @@ class SessionsImpl @Inject constructor(
                     headers.remove(HttpHeaders.ContentType)
                 }
             }
-        )
+        ).call
         return call
     }
 

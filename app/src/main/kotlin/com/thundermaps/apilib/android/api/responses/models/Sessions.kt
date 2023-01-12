@@ -22,7 +22,7 @@ data class Profile(
     @SerializedName("personal_account_option") @Expose val personalAccountOption: Boolean,
     @SerializedName("consent_required") @Expose val consentRequired: Boolean,
     @SerializedName("profile_details_pending") @Expose val profileDetailsPending: Boolean,
-    @SerializedName("passowrd_update_pending") @Expose val passwordUpdatePending: Boolean
+    @SerializedName("password_update_pending") @Expose val passwordUpdatePending: Boolean
 )
 
 data class SessionV4(
