@@ -15,5 +15,10 @@ interface SessionsResource {
     suspend fun getSsoDetails(ssoId: String, applicationId: String): Result<SsoDetails>
     suspend fun getSsoSessions(code: String, applicationId: String, ssoDetails: SsoDetails, nonce: String?): Result<SsoSessions>
 
+    fun updateSession(session: Session)
+    suspend fun getCurrentSession(): Result<Session>
+    suspend fun refreshSessionToken(): Result<Session>
+    suspend fun deleteCurrentSession()
+
     val tokens: BearerTokens?
 }

@@ -2,6 +2,8 @@ package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.requests.models.SessionHeader
+import com.thundermaps.apilib.android.api.requests.models.SessionRequest
 
 data class Sessions(
     @SerializedName("auth_token") @Expose val apiKey: String,
@@ -48,5 +50,12 @@ data class Session(
         passwordUpdatePending = session.profile.passwordUpdatePending,
         clientUuid = session.clientUuid,
         installationId = null
+    )
+
+    fun toSessionRequest() = SessionRequest(
+        session = SessionHeader(
+            accessToken = session.accessToken,
+            refreshToken = session.refreshToken
+        )
     )
 }
