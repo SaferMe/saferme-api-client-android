@@ -15,7 +15,27 @@ data class Sessions(
     @SerializedName("password_update_pending") @Expose val passwordUpdatePending: Boolean,
     @SerializedName("client_uuid") @Expose val clientUuid: String? = null,
     @SerializedName("installation_id") @Expose val installationId: String? = null
-)
+) {
+    fun toSession(appId: String) = Session(
+        session = SessionV4(
+            accessToken = apiKey,
+            clientUuid = clientUuid,
+            refreshToken = "",
+            tokenExpireAt = "",
+            appBundleId = appId,
+            brandedAppId = 0,
+            profile = Profile(
+                consentRequired = consentRequired,
+                preferredTeamId = teamId,
+                userId = userId,
+                personalAccountOption = personalAccountOption,
+                profileDetailsPending = profileDetailsPending,
+                passwordUpdatePending = passwordUpdatePending,
+                userUuid = ""
+            )
+        )
+    )
+}
 
 data class Profile(
     @SerializedName("user_id") @Expose val userId: Long,
