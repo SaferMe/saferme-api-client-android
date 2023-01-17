@@ -16,6 +16,7 @@ import com.thundermaps.apilib.android.api.responses.models.FormValueDecode
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.auth.Auth
+import io.ktor.client.features.auth.providers.BearerTokens
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
@@ -39,8 +40,16 @@ class AndroidClient @Inject constructor() {
                         sessionsResource = SaferMeClientService.getService().getClient().sessionsResource
                         sessionsResource.tokens
                     }
+                    refreshTokens { response ->
+                        val result = sessionsResource.refreshSessionToken()
+                        result.getNullableData()?.let {
+                            BearerTokens(it.session.accessToken, it.session.refreshToken)
+                        }
+                    }
                 }
             }
+
+            expectSuccess = false
         }
     }
 

@@ -56,9 +56,13 @@ class SessionsImpl @Inject constructor(
 
     override suspend fun getCurrentSession(): Result<Session> {
         val call = requestHandler(null, "", SESSION_PATH, HttpMethod.Get)
-        return resultHandler.processResult<Session>(call, gson).also {
-            it.getNullableData()?.let { session ->
-                sessionCache.add(session)
+        return resultHandler.processResult<Session>(call, gson).let {
+            if (it.isSuccess) {
+                it.convert { _ ->
+                    sessionCache.last()
+                }
+            } else {
+                it
             }
         }
     }
