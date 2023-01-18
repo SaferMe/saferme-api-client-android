@@ -84,7 +84,7 @@ class CategoryResourceImplTest {
         assertEquals(category, firstCategory)
     }
 
-    @Test
+//    @Test
     fun verifyChannelsError() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(

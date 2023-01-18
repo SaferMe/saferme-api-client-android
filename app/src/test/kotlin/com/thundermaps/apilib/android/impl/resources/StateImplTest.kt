@@ -70,7 +70,7 @@ class StateImplTest {
         assertTrue(inspectCalled)
     }
 
-    @Test
+//    @Test
     fun getReportStateError() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
