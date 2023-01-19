@@ -20,7 +20,7 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -275,7 +275,7 @@ class TaskResourceImplTest {
             Pair(client, HttpRequestBuilder())
         }
 
-        runBlockingTest {
+        runTest {
             TaskResourceImpl(defaultAPI, resultHandler, gson).delete(
                 TestHelpers.defaultParams,
                 requestItem,

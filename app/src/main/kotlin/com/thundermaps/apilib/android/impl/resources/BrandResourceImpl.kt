@@ -13,17 +13,16 @@ import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.HeaderType
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import io.ktor.util.KtorExperimentalAPI
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@KtorExperimentalAPI
 @Singleton
 class BrandResourceImpl @Inject constructor(
     private val androidClient: AndroidClient,
@@ -60,7 +59,7 @@ class BrandResourceImpl @Inject constructor(
             4
         )
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(
+        val call = client.request<HttpResponse> (
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = HttpMethod.Get
                 url(
@@ -69,7 +68,7 @@ class BrandResourceImpl @Inject constructor(
                     }.build()
                 )
             }
-        )
+        ).call
         return call
     }
 

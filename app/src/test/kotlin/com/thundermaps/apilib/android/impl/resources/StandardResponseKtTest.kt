@@ -11,12 +11,12 @@ import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Sessions
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.response.HttpResponse
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.util.KtorExperimentalAPI
+import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.io.ByteReadChannel
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -50,7 +50,7 @@ class StandardResponseKtTest {
     }
 
     @Test
-    fun verifyProcessResultStatusOKSuccess() = runBlockingTest {
+    fun verifyProcessResultStatusOKSuccess() = runTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.OK.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel(LOGIN_SUCCESS_RESPONSE))
         val result: Result<Sessions> = resultHandler.processResult(client, gson)
@@ -65,7 +65,7 @@ class StandardResponseKtTest {
     }
 
     @Test
-    fun verifyProcessResultStatusOKError() = runBlockingTest {
+    fun verifyProcessResultStatusOKError() = runTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.OK.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel(""))
         val result: Result<Sessions> = resultHandler.processResult(client, gson)
@@ -78,7 +78,7 @@ class StandardResponseKtTest {
     }
 
     @Test
-    fun verifyProcessResultStatusOther200() = runBlockingTest {
+    fun verifyProcessResultStatusOther200() = runTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.PartialContent.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel(LOGIN_SUCCESS_RESPONSE))
         val result: Result<Sessions> = resultHandler.processResult(client, gson)
@@ -93,7 +93,7 @@ class StandardResponseKtTest {
     }
 
     @Test
-    fun verifyProcessResultStatusNoContent() = runBlockingTest {
+    fun verifyProcessResultStatusNoContent() = runTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.NoContent.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel(""))
         val result: Result<Unit> = resultHandler.processResult(client, gson)
@@ -108,7 +108,7 @@ class StandardResponseKtTest {
     }
 
     @Test
-    fun verifyProcessResultSaferMeError() = runBlockingTest {
+    fun verifyProcessResultSaferMeError() = runTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.Unauthorized.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel(LOGIN_BAD_CREDENTIAL_ERROR_RESPONSE))
         val result: Result<Sessions> = resultHandler.processResult(client, gson)
@@ -123,7 +123,7 @@ class StandardResponseKtTest {
     }
 
     @Test
-    fun verifyProcessResultOtherError() = runBlockingTest {
+    fun verifyProcessResultOtherError() = runTest {
         whenever(statusMock.value).thenReturn(HttpStatusCode.UnsupportedMediaType.value)
         whenever(responseMock.content).thenReturn(ByteReadChannel("Unsupport"))
         val result: Result<Sessions> = resultHandler.processResult(client, gson)

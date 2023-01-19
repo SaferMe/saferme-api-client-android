@@ -14,25 +14,25 @@ import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Session
-import com.thundermaps.apilib.android.api.responses.models.Sessions
 import com.thundermaps.apilib.android.api.responses.models.SsoDetails
 import com.thundermaps.apilib.android.api.responses.models.SsoSessions
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.HeaderType
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.call
+import io.ktor.client.features.auth.providers.BearerTokens
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
-import io.ktor.util.KtorExperimentalAPI
+import timber.log.Timber
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@KtorExperimentalAPI
 @Singleton
 class SessionsImpl @Inject constructor(
     private val androidClient: AndroidClient,
@@ -40,7 +40,49 @@ class SessionsImpl @Inject constructor(
     private val resultHandler: ResultHandler,
     private val gson: Gson
 ) : SessionsResource {
+    private val sessionCache = mutableListOf<Session>()
+    override val tokens: BearerTokens?
+        get() = sessionCache.lastOrNull()?.let {
+            Timber.d("token = ${it.session.accessToken}")
+            BearerTokens(it.session.accessToken, it.session.refreshToken)
+        }
+
     override fun isStaging(): Boolean = environmentManager.isStaging()
+
+    override fun updateSession(session: Session) {
+        sessionCache.add(session)
+        Timber.d("update session = $session")
+    }
+
+    override suspend fun getCurrentSession(): Result<Session> {
+        val call = requestHandler(null, "", SESSION_PATH, HttpMethod.Get)
+        return resultHandler.processResult<Session>(call, gson).let {
+            if (it.isSuccess) {
+                it.convert { _ ->
+                    sessionCache.last()
+                }
+            } else {
+                it
+            }
+        }
+    }
+
+    override suspend fun refreshSessionToken(): Result<Session> {
+        val call = requestHandler(sessionCache.lastOrNull()?.toSessionRequest(), "", SESSION_PATH, HttpMethod.Patch)
+        return resultHandler.processResult<Session>(call, gson).also {
+            it.getNullableData()?.let { session ->
+                sessionCache.add(session)
+            }
+        }
+    }
+
+    override suspend fun deleteCurrentSession() {
+        val call = requestHandler(null, "", SESSION_PATH, HttpMethod.Delete)
+        resultHandler.processResult<HttpResponse>(call, gson).also {
+            sessionCache.clear()
+        }
+    }
+
     private fun createParameters(host: String, applicationId: String, apiVersion: Int) =
         RequestParameters(
             customRequestHeaders = hashMapOf(
@@ -55,7 +97,7 @@ class SessionsImpl @Inject constructor(
     override suspend fun login(
         body: SessionBody,
         applicationId: String
-    ): Result<Sessions> = loginV4(body, applicationId).convert { it.toSessions() }
+    ): Result<Session> = loginV4(body, applicationId)
 
     private suspend fun loginV4(
         body: SessionBody,
@@ -117,7 +159,7 @@ class SessionsImpl @Inject constructor(
             getApiVersion()
         )
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(
+        val call = client.request<HttpResponse> (
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = methodType
                 url(
@@ -125,14 +167,14 @@ class SessionsImpl @Inject constructor(
                         encodedPath = if (path.contains(SSO_SESSIONS_PATH)) path else "$encodedPath$path"
                     }.build()
                 )
-                if (bodyParameters != null && methodType == HttpMethod.Post) {
+                if (bodyParameters != null) {
                     contentType(ContentType.Application.Json)
                     body = bodyParameters
                 } else {
                     headers.remove(HttpHeaders.ContentType)
                 }
             }
-        )
+        ).call
         return call
     }
 
@@ -141,6 +183,7 @@ class SessionsImpl @Inject constructor(
     companion object {
         private const val SSO_DETAILS_PATH = "sso_details"
         private const val LOGIN_PATH = "session"
+        private const val SESSION_PATH = "session"
 
         @VisibleForTesting
         const val SSO_SESSIONS_PATH = "auth/sm_azure_oauth2/callback"

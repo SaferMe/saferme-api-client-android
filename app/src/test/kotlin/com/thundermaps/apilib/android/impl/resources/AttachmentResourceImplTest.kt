@@ -14,7 +14,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -43,7 +43,7 @@ class AttachmentResourceImplTest {
     }
 
     @Test
-    fun `verify get upload authorization success`() = runBlockingTest {
+    fun `verify get upload authorization success`() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = uploadAuthorizationResponseSuccess,
@@ -70,7 +70,7 @@ class AttachmentResourceImplTest {
     }
 
     @Test
-    fun `verify get upload error`() = runBlockingTest {
+    fun `verify get upload error`() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = badCredentialsResponse,
@@ -97,7 +97,7 @@ class AttachmentResourceImplTest {
     }
 
     @Test
-    fun `verify get uploadFileAttachment`() = runBlockingTest {
+    fun `verify get uploadFileAttachment`() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = fileAttachmentSuccessResponse,

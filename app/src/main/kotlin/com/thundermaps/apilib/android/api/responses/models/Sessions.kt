@@ -2,6 +2,8 @@ package com.thundermaps.apilib.android.api.responses.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.requests.models.SessionHeader
+import com.thundermaps.apilib.android.api.requests.models.SessionRequest
 
 data class Sessions(
     @SerializedName("auth_token") @Expose val apiKey: String,
@@ -13,7 +15,27 @@ data class Sessions(
     @SerializedName("password_update_pending") @Expose val passwordUpdatePending: Boolean,
     @SerializedName("client_uuid") @Expose val clientUuid: String? = null,
     @SerializedName("installation_id") @Expose val installationId: String? = null
-)
+) {
+    fun toSession(appId: String) = Session(
+        session = SessionV4(
+            accessToken = apiKey,
+            clientUuid = clientUuid,
+            refreshToken = "",
+            tokenExpireAt = "",
+            appBundleId = appId,
+            brandedAppId = 0,
+            profile = Profile(
+                consentRequired = consentRequired,
+                preferredTeamId = teamId,
+                userId = userId,
+                personalAccountOption = personalAccountOption,
+                profileDetailsPending = profileDetailsPending,
+                passwordUpdatePending = passwordUpdatePending,
+                userUuid = ""
+            )
+        )
+    )
+}
 
 data class Profile(
     @SerializedName("user_id") @Expose val userId: Long,
@@ -22,7 +44,7 @@ data class Profile(
     @SerializedName("personal_account_option") @Expose val personalAccountOption: Boolean,
     @SerializedName("consent_required") @Expose val consentRequired: Boolean,
     @SerializedName("profile_details_pending") @Expose val profileDetailsPending: Boolean,
-    @SerializedName("passowrd_update_pending") @Expose val passwordUpdatePending: Boolean
+    @SerializedName("password_update_pending") @Expose val passwordUpdatePending: Boolean
 )
 
 data class SessionV4(
@@ -48,5 +70,12 @@ data class Session(
         passwordUpdatePending = session.profile.passwordUpdatePending,
         clientUuid = session.clientUuid,
         installationId = null
+    )
+
+    fun toSessionRequest() = SessionRequest(
+        session = SessionHeader(
+            accessToken = session.accessToken,
+            refreshToken = session.refreshToken
+        )
     )
 }

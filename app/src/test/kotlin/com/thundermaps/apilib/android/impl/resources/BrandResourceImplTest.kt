@@ -28,7 +28,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -59,7 +59,7 @@ class BrandResourceImplTest {
     }
 
     @Test
-    fun verifyGetBrandSuccess() = runBlockingTest {
+    fun verifyGetBrandSuccess() = runTest {
         var inspectCalled = false
         val client = TestHelpers.testClient(
             content = BRAND_RESPONSE,

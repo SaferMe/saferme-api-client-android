@@ -11,10 +11,11 @@ import com.thundermaps.apilib.android.api.resources.SaferMeDatum
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.call
 import io.ktor.client.call.receive
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
@@ -87,7 +88,6 @@ class StandardMethods {
                             )
                         )
                     }
-                    call.response.close()
                 }
             } catch (ex: Exception) {
                 if (ex.message != null) {
@@ -137,7 +137,6 @@ class StandardMethods {
                             )
                         )
                     }
-                    call.response.close()
                 }
             } catch (ex: Exception) {
                 if (ex.message != null) {
@@ -196,7 +195,6 @@ class StandardMethods {
                             )
                         )
                     }
-                    call.response.close()
                 }
             } catch (ex: Exception) {
                 if (ex.message != null) {
@@ -250,7 +248,6 @@ class StandardMethods {
                             )
                         )
                     }
-                    call.response.close()
                 }
             } catch (ex: Exception) {
                 if (ex.message != null) {
@@ -311,7 +308,6 @@ class StandardMethods {
                             )
                         )
                     }
-                    call.response.close()
                 }
             } catch (ex: Exception) {
                 if (ex.message != null) {
@@ -336,7 +332,7 @@ class StandardMethods {
             val jsonBody = payload?.let {
                 gsonSerializer.toJsonTree(payload)
             }
-            val call = client.call(
+            val call = client.request<HttpResponse> (
                 HttpRequestBuilder().takeFrom(template).apply {
                     method = requestMethod
                     url(
@@ -349,7 +345,7 @@ class StandardMethods {
                         body = jsonBody
                     }
                 }
-            )
+            ).call
             result(call)
         }
     }

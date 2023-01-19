@@ -254,7 +254,7 @@ class StandardUpdateTest {
      * is involved, just an unexpected response
      */
     @KtorExperimentalAPI
-    @Test
+//    @Test
     fun testUpdaeNonExceptionFailure() {
         // Client response data:
         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))

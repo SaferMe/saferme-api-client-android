@@ -82,6 +82,7 @@ dependencies {
     implementation(Libs.ktor_client_cio)
     implementation(Libs.ktor_client_android)
     implementation(Libs.ktor_client_gson)
+    implementation(Libs.ktor_client_auth)
     //  implementation("io.ktor:ktor-client-logging-native:_")
 
     // Logging for HTTPClient
@@ -116,7 +117,6 @@ dependencies {
     // ktor mocking libs
     testImplementation(Libs.ktor_client_mock)
     testImplementation(Libs.ktor_client_mock_jvm)
-    testImplementation(Libs.ktor_client_mock_native)
 
     // Add JUnit5 dependencies.
     testImplementation(Libs.junit_jupiter)

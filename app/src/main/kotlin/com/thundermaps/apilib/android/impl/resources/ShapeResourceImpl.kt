@@ -12,20 +12,19 @@ import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.resources.ShapeResourceImpl.Companion.VALUE_BETWEEN_TAGS
 import io.github.dellisd.spatialk.geojson.FeatureCollection
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
 import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.toByteArray
 import java.net.UnknownHostException
 import java.util.regex.Pattern
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@KtorExperimentalAPI
 @Singleton
 class ShapeResourceImpl @Inject constructor(
     private val androidClient: AndroidClient,
@@ -47,7 +46,7 @@ class ShapeResourceImpl @Inject constructor(
         }
         val parameters = parameters
         val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.call(
+        val call = client.request<HttpResponse> (
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = HttpMethod.Get
                 url(
@@ -57,7 +56,7 @@ class ShapeResourceImpl @Inject constructor(
                     }.build()
                 )
             }
-        )
+        ).call
 
         return processResponse(call)
     }
@@ -72,7 +71,7 @@ class ShapeResourceImpl @Inject constructor(
 
                 val parameters = parameters
                 val (client, requestBuilder) = androidClient.client(parameters)
-                val call = client.call(
+                val call = client.request<HttpResponse> (
                     HttpRequestBuilder().takeFrom(requestBuilder).apply {
                         method = HttpMethod.Get
                         url(
@@ -81,7 +80,7 @@ class ShapeResourceImpl @Inject constructor(
                             }.build()
                         )
                     }
-                )
+                ).call
                 processResponse(call)
             }
         }

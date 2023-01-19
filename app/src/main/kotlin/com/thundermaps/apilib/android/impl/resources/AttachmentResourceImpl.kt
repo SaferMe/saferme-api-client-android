@@ -19,12 +19,12 @@ import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.serializeToMap
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.HttpClient
-import io.ktor.client.call.call
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.client.request.request
 import io.ktor.client.request.url
-import io.ktor.client.response.HttpResponse
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
@@ -116,7 +116,7 @@ class AttachmentResourceImpl @Inject constructor(
         client: HttpClient,
         requestBuilder: HttpRequestBuilder
     ): Result<UploadAuthorizationResponse> {
-        val call = client.call(
+        val call = client.request<HttpResponse> (
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = HttpMethod.Get
                 url(
@@ -126,7 +126,7 @@ class AttachmentResourceImpl @Inject constructor(
                     }.build()
                 )
             }
-        )
+        ).call
         return resultHandler.processResult(call, moshi, gson)
     }
 
@@ -138,7 +138,7 @@ class AttachmentResourceImpl @Inject constructor(
         keyPrefix: String
     ): Result<FileAttachment> {
         val fileAttachmentBody = FileAttachmentRequest(KeyRequest("$keyPrefix$IMAGE_FILE_NAME"))
-        val call = client.call(
+        val call = client.request<HttpResponse> (
             HttpRequestBuilder().takeFrom(requestBuilder).apply {
                 method = HttpMethod.Post
                 url(
@@ -150,7 +150,7 @@ class AttachmentResourceImpl @Inject constructor(
                 contentType(ContentType.Application.Json)
                 body = fileAttachmentBody
             }
-        )
+        ).call
         return resultHandler.processResult(call, gson)
     }
 
