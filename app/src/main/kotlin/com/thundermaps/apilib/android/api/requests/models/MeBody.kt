@@ -33,3 +33,7 @@ data class UserBody(
     @Expose val email: String,
     @SerializedName("contact_number") @Expose val contactNumber: String
 )
+
+data class UpdateGdprBody(
+    @SerializedName("gdpr_accept") @Expose val gdprAccept: Boolean
+)
