@@ -512,7 +512,9 @@ class MeResourceImplTest {
                 "missing/avatars/huge.png"
             ),
             emailNotificationEnabled = null,
-            personalAccountOption = null
+            personalAccountOption = null,
+            gdprVersion = 1,
+            gdprAccept = true
         )
         private val USER_DETAIL_RESPONSE = """
             {
@@ -527,6 +529,8 @@ class MeResourceImplTest {
                 "large": "missing/avatars/large.png",
                 "huge": "missing/avatars/huge.png"
               },
+              "gdpr_version": 1,
+              "gdpr_accept": true,
               "contact_number": "32903290592",
               "accepted_terms_version": 4
             }

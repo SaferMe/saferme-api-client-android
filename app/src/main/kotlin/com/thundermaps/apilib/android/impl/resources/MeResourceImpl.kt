@@ -8,6 +8,7 @@ import com.thundermaps.apilib.android.api.requests.models.FirebaseTokenBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateAddressBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateContactNumberBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateEmailNotificationEnableBody
+import com.thundermaps.apilib.android.api.requests.models.UpdateGdprBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateNameBody
 import com.thundermaps.apilib.android.api.requests.models.UpdatePasswordBody
 import com.thundermaps.apilib.android.api.requests.models.UpdateProfileBody
@@ -166,6 +167,17 @@ class MeResourceImpl @Inject constructor(
             bodyRequest = firebaseTokenBody
         )
 
+        return resultHandler.processResult(call, gson)
+    }
+
+    override suspend fun updateGdpr(
+        parameters: RequestParameters,
+        updateGdprBody: UpdateGdprBody
+    ): Result<Unit> {
+        if (!parameters.host.isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
+        val call = processCall(parameters = parameters, bodyRequest = updateGdprBody)
         return resultHandler.processResult(call, gson)
     }
 
