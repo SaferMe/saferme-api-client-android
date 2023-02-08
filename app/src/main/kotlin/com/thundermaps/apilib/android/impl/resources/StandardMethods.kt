@@ -74,6 +74,7 @@ class StandardMethods {
                         SaferMeApiStatus.OTHER_400 -> {
                             failure(
                                 SaferMeApiError(
+                                    statusCode = call.response.status.value,
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
                                     responseHeaders = call.response.headers.toMap()
@@ -82,6 +83,7 @@ class StandardMethods {
                         }
                         else -> failure(
                             SaferMeApiError(
+                                statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()
@@ -131,6 +133,7 @@ class StandardMethods {
                         )
                         else -> failure(
                             SaferMeApiError(
+                                statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()
@@ -189,6 +192,7 @@ class StandardMethods {
                         }
                         else -> failure(
                             SaferMeApiError(
+                                statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()
@@ -242,6 +246,7 @@ class StandardMethods {
                         }
                         else -> failure(
                             SaferMeApiError(
+                                statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()
@@ -294,6 +299,7 @@ class StandardMethods {
                         SaferMeApiStatus.OTHER_400 -> {
                             failure(
                                 SaferMeApiError(
+                                    statusCode = call.response.status.value,
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
                                     responseHeaders = call.response.headers.toMap()
@@ -302,6 +308,7 @@ class StandardMethods {
                         }
                         else -> failure(
                             SaferMeApiError(
+                                statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
                                 responseHeaders = call.response.headers.toMap()
@@ -332,6 +339,7 @@ class StandardMethods {
             val jsonBody = payload?.let {
                 gsonSerializer.toJsonTree(payload)
             }
+
             val call = client.request<HttpResponse> (
                 HttpRequestBuilder().takeFrom(template).apply {
                     method = requestMethod
