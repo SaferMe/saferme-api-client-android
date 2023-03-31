@@ -202,7 +202,7 @@ class ChannelResourceImplTest {
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private const val CHANNELS_PATH =
-            "/api/v4/channels?team_id=$TEAM_ID&updated_after=$UPDATED_AFTER&fields=${ChannelResource.DEFAULT_FIELDS}"
+            "/api/v4/channels?team_id=$TEAM_ID&fields=${ChannelResource.DEFAULT_FIELDS}&updated_after=$UPDATED_AFTER"
         private const val CHANNELS_DELETED_PATH =
             "/api/v4/deleted_resources?type=account&deleted_after=$UPDATED_AFTER"
         private const val TEST_KEY = "Test Key"
