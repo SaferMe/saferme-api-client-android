@@ -129,7 +129,7 @@ open class FormValue {
     data class ValueFormFieldImage(val images: List<FormFieldImage> = emptyList()) : FormValue()
 
     @ExcludeFromJacocoGeneratedReport
-    data class ValueFormFieldSignature(val signature: FormFieldSignature) : FormValue()
+    data class ValueFormFieldSignature(val signature: List<FormFieldSignature> = emptyList()) : FormValue()
 }
 
 @ExcludeFromJacocoGeneratedReport
@@ -203,6 +203,38 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
             is FormValue.ValueJsonArray -> src.value
             is FormValue.ValueFormFieldSignature -> gsonSerializer.toJsonTree(src.signature)
             else -> JsonObject()
+        }
+    }
+}
+
+class FormFieldDecode : JsonDeserializer<FormField> {
+    override fun deserialize(
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
+    ): FormField {
+        return with(json.asJsonObject) {
+            val fieldType: FieldType = get("field_type").let { context.deserialize(it, FieldType::class.java) }
+            val value: FormValue? = get("value")?.let {
+                when (fieldType) {
+                    FieldType.Image -> context.deserialize<List<FormFieldImage>>(it, object : TypeToken<List<FormFieldImage>>() {}.type)?.let { FormValue.ValueFormFieldImage(it) }
+                    FieldType.Signature -> context.deserialize<List<FormFieldSignature>>(it, object : TypeToken<List<FormFieldSignature>>() {}.type)?.let { FormValue.ValueFormFieldSignature(it) }
+                    else -> context.deserialize(it, FormValue::class.java)
+                }
+            }
+            FormField(
+                id = get("id").asInt,
+                label = get("label").asString,
+                key = get("key").asString,
+                data = get("data").let { context.deserialize(it, DataValue::class.java) },
+                editable = get("editable").asBoolean,
+                fieldType = fieldType,
+                fieldVisibility = get("field_visibility").asString,
+                formOrder = get("form_order").asInt,
+                value = value,
+                mandatory = get("mandatory").let { if (it.isJsonPrimitive) it.asBoolean else null },
+                visibility = get("visibility").asString
+            )
         }
     }
 }
