@@ -16,6 +16,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
@@ -77,7 +78,9 @@ class StandardMethods {
                                     statusCode = call.response.status.value,
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
-                                    responseHeaders = call.response.headers.toMap()
+                                    responseHeaders = call.response.headers.toMap(),
+                                    url = path,
+                                    error = call.response.readText()
                                 )
                             )
                         }
@@ -86,7 +89,9 @@ class StandardMethods {
                                 statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()
+                                responseHeaders = call.response.headers.toMap(),
+                                url = path,
+                                error = call.response.readText()
                             )
                         )
                     }
@@ -136,7 +141,9 @@ class StandardMethods {
                                 statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()
+                                responseHeaders = call.response.headers.toMap(),
+                                url = path,
+                                error = call.response.readText()
                             )
                         )
                     }
@@ -195,7 +202,9 @@ class StandardMethods {
                                 statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()
+                                responseHeaders = call.response.headers.toMap(),
+                                url = path,
+                                error = call.response.readText()
                             )
                         )
                     }
@@ -249,7 +258,9 @@ class StandardMethods {
                                 statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()
+                                responseHeaders = call.response.headers.toMap(),
+                                url = path,
+                                error = call.response.readText()
                             )
                         )
                     }
@@ -302,7 +313,9 @@ class StandardMethods {
                                     statusCode = call.response.status.value,
                                     serverStatus = status,
                                     requestHeaders = call.request.headers.toMap(),
-                                    responseHeaders = call.response.headers.toMap()
+                                    responseHeaders = call.response.headers.toMap(),
+                                    url = path,
+                                    error = call.response.readText()
                                 )
                             )
                         }
@@ -311,7 +324,9 @@ class StandardMethods {
                                 statusCode = call.response.status.value,
                                 serverStatus = status,
                                 requestHeaders = call.request.headers.toMap(),
-                                responseHeaders = call.response.headers.toMap()
+                                responseHeaders = call.response.headers.toMap(),
+                                url = path,
+                                error = call.response.readText()
                             )
                         )
                     }

@@ -1,6 +1,7 @@
 package com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging
 
 import android.util.Log
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.raygun.raygun4android.RaygunClient
 import java.util.HashMap
 import java.util.HashSet
@@ -31,7 +32,14 @@ class ELog {
 
         fun e(e: SafermeException) {
             if (!ERROR_LOGS_ENABLED) return
-            e.error.printStackTrace()
+//            e.error.printStackTrace()
+            FirebaseCrashlytics.getInstance().apply {
+                log(e.message)
+                e.customData.forEach {
+                    setCustomKey(it.key, it.value)
+                }
+                recordException(e.error)
+            }
             try {
                 if (!RaygunClient.isCrashReportingEnabled())
                     RaygunClient.enableCrashReporting()
