@@ -2,7 +2,6 @@ package com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.loggin
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.raygun.raygun4android.RaygunClient
 import java.util.HashMap
 import java.util.HashSet
 
@@ -41,27 +40,6 @@ class ELog {
                     setCustomKey(it.key, it.value)
                 }
                 recordException(e.error)
-            }
-            try {
-                if (!RaygunClient.isCrashReportingEnabled())
-                    RaygunClient.enableCrashReporting()
-                RaygunClient.send(e.error, e.tags, e.customData)
-            } catch (exception: Exception) {
-                try {
-                    // according to our setup in thor cordova the raygun client may fail so we use this workarround to retry sending the logs
-                    RaygunClient.send(
-                        Exception("Raygun failed to send error", exception),
-                        emptyList<Any>(),
-                        emptyMap<Any, Any>()
-                    )
-                    RaygunClient.send(
-                        Exception(e.error.toString()),
-                        emptyList<Any>(),
-                        emptyMap<Any, Any>()
-                    )
-                } catch (ex2: Exception) {
-                    ex2.printStackTrace()
-                }
             }
         }
     }
