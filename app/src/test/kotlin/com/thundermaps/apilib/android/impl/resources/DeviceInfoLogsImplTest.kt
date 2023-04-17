@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.impl.resources
 
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLog
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogs
 import com.thundermaps.apilib.android.impl.AndroidClient
@@ -9,8 +10,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockkObject
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -24,6 +28,10 @@ class DeviceInfoLogsImplTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        mockkObject(ELog)
+        every { ELog.i(any(), any()) } just Runs
+        every { ELog.w(any(), any()) } just Runs
+        every { ELog.e(any()) } just Runs
     }
 
     /**

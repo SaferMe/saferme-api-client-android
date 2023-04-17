@@ -24,10 +24,12 @@ class ELog {
 
         fun i(tag: String, msg: String) {
             if (INFO_LOGS_ENABLED) Log.i(tag, msg)
+            FirebaseCrashlytics.getInstance().log("[$TAG] <I> $msg")
         }
 
         fun w(tag: String, msg: String) {
             if (WARN_LOGS_ENABLED) Log.w(tag, msg)
+            FirebaseCrashlytics.getInstance().log("[$TAG] <W> $msg")
         }
 
         fun e(e: SafermeException) {

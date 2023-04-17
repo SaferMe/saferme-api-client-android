@@ -39,6 +39,8 @@ class StandardCreateTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(ELog)
+        every { ELog.i(any(), any()) } just Runs
+        every { ELog.w(any(), any()) } just Runs
         every { ELog.e(any()) } just Runs
         mockkStatic(Log::class)
         every { Log.v(any(), any()) } returns 0

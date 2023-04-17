@@ -369,6 +369,8 @@ class StandardMethods {
                     }
                 }
             ).call
+
+            ELog.i("Http", "${call.response.status}: ${requestMethod.value} [$path]\n- ${call.response.readText()}\n- $payload")
             result(call)
         }
     }
