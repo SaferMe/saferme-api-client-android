@@ -1,6 +1,7 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
 import com.thundermaps.apilib.android.api.requests.SaferMeApiError
 import com.thundermaps.apilib.android.api.requests.SaferMeApiStatus
 import com.thundermaps.apilib.android.impl.AndroidClient
@@ -14,8 +15,11 @@ import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.toMap
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -34,6 +38,10 @@ class StandardCreateTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        mockkObject(ELog)
+        every { ELog.i(any(), any()) } just Runs
+        every { ELog.w(any(), any()) } just Runs
+        every { ELog.e(any()) } just Runs
         mockkStatic(Log::class)
         every { Log.v(any(), any()) } returns 0
         every { Log.d(any(), any()) } returns 0

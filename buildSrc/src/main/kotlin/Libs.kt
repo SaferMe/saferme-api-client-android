@@ -36,6 +36,12 @@ object Libs {
 
     const val raygun4android: String = "com.raygun:raygun4android:_"
 
+    const val firebase: String = "com.google.firebase:firebase-bom:_"
+    const val firebase_crashlytics: String = "com.google.firebase:firebase-crashlytics-ktx"
+    const val firebase_analytics: String = "com.google.firebase:firebase-analytics-ktx"
+    const val firebase_crashlytics_gradle: String =
+        "com.google.firebase:firebase-crashlytics-gradle:_"
+
     const val moshi: String = "com.squareup.moshi:moshi:_"
 
     const val moshi_kotlin: String = "com.squareup.moshi:moshi-kotlin:_"

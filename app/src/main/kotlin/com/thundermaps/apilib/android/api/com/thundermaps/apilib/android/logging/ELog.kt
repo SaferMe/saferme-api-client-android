@@ -1,7 +1,7 @@
 package com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging
 
 import android.util.Log
-import com.raygun.raygun4android.RaygunClient
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.util.HashMap
 import java.util.HashSet
 
@@ -23,35 +23,23 @@ class ELog {
 
         fun i(tag: String, msg: String) {
             if (INFO_LOGS_ENABLED) Log.i(tag, msg)
+            FirebaseCrashlytics.getInstance().log("[$TAG] <I> $msg")
         }
 
         fun w(tag: String, msg: String) {
             if (WARN_LOGS_ENABLED) Log.w(tag, msg)
+            FirebaseCrashlytics.getInstance().log("[$TAG] <W> $msg")
         }
 
         fun e(e: SafermeException) {
             if (!ERROR_LOGS_ENABLED) return
-            e.error.printStackTrace()
-            try {
-                if (!RaygunClient.isCrashReportingEnabled())
-                    RaygunClient.enableCrashReporting()
-                RaygunClient.send(e.error, e.tags, e.customData)
-            } catch (exception: Exception) {
-                try {
-                    // according to our setup in thor cordova the raygun client may fail so we use this workarround to retry sending the logs
-                    RaygunClient.send(
-                        Exception("Raygun failed to send error", exception),
-                        emptyList<Any>(),
-                        emptyMap<Any, Any>()
-                    )
-                    RaygunClient.send(
-                        Exception(e.error.toString()),
-                        emptyList<Any>(),
-                        emptyMap<Any, Any>()
-                    )
-                } catch (ex2: Exception) {
-                    ex2.printStackTrace()
+//            e.error.printStackTrace()
+            FirebaseCrashlytics.getInstance().apply {
+                log(e.message)
+                e.customData.forEach {
+                    setCustomKey(it.key, it.value)
                 }
+                recordException(e.error)
             }
         }
     }

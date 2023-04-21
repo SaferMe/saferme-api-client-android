@@ -2,6 +2,7 @@ package com.thundermaps.apilib.android.impl.resources
 
 import android.util.Log
 import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
@@ -13,8 +14,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import junit.framework.Assert.assertNotNull
 import junit.framework.TestCase
@@ -41,6 +45,10 @@ class ReportImplTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        mockkObject(ELog)
+        every { ELog.i(any(), any()) } just Runs
+        every { ELog.w(any(), any()) } just Runs
+        every { ELog.e(any()) } just Runs
         mockkStatic(Log::class)
         every { Log.v(any(), any()) } returns 0
         every { Log.d(any(), any()) } returns 0

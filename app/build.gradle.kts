@@ -88,6 +88,10 @@ dependencies {
     // Logging for HTTPClient
     implementation(Libs.slf4j_simple)
     implementation(Libs.raygun4android)
+    implementation(platform(Libs.firebase))
+    implementation(Libs.firebase_analytics)
+    implementation(Libs.firebase_crashlytics)
+
     // Gson Serialisation
     implementation(Libs.gson)
 
