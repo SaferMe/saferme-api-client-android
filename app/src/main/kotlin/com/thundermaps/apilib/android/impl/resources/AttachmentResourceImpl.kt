@@ -154,6 +154,24 @@ class AttachmentResourceImpl @Inject constructor(
         return resultHandler.processResult(call, gson)
     }
 
+    override suspend fun getFile(
+        parameters: RequestParameters,
+        attachmentId: Long
+    ): Result<FileAttachment> {
+        val (client, requestBuilder) = androidClient.client(parameters)
+        val call = client.request<HttpResponse> (
+            HttpRequestBuilder().takeFrom(requestBuilder).apply {
+                method = HttpMethod.Get
+                url(
+                    AndroidClient.baseUrlBuilder(parameters).apply {
+                        encodedPath = "$encodedPath$FILE_ATTACHMENTS_PATH/$attachmentId"
+                    }.build()
+                )
+            }
+        ).call
+        return resultHandler.processResult(call, gson)
+    }
+
     companion object {
         private const val CONTENT_TYPE_PARAMETER = "content_type"
         private const val IMAGE_PNG = "image/png"

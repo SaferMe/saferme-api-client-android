@@ -6,4 +6,5 @@ import com.thundermaps.apilib.android.api.responses.models.Result
 
 interface AttachmentResource {
     suspend fun uploadFile(parameters: RequestParameters, filePath: String): Result<FileAttachment>
+    suspend fun getFile(parameters: RequestParameters, attachmentId: Long): Result<FileAttachment>
 }
