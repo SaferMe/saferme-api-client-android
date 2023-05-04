@@ -75,7 +75,7 @@ android {
 // Project dependencies
 dependencies {
     // Kotlin stdlib
-    implementation(Libs.kotlin_stdlib_jdk8)
+    implementation(Libs.kotlin_stdlib)
 
     // KTOR
     implementation(Libs.ktor_client_core)

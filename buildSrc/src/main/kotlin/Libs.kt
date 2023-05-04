@@ -90,7 +90,7 @@ object Libs {
     const val kotlin_parcelize_runtime: String =
             "org.jetbrains.kotlin:kotlin-parcelize-runtime:_"
 
-    const val kotlin_stdlib_jdk8: String = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:_"
+    const val kotlin_stdlib: String = "org.jetbrains.kotlin:kotlin-stdlib:_"
 
     const val kotlinx_coroutines_test: String =
             "org.jetbrains.kotlinx:kotlinx-coroutines-test:_"
