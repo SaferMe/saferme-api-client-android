@@ -348,8 +348,7 @@ class StandardMethods {
             path: String,
             params: RequestParameters,
             payload: T?,
-            result: (call: HttpClientCall) -> Unit
-        ) {
+        ): HttpClientCall {
             val (client, template) = api.client(params)
             val jsonBody = payload?.let {
                 gsonSerializer.toJsonTree(payload)
@@ -360,7 +359,7 @@ class StandardMethods {
                     method = requestMethod
                     url(
                         AndroidClient.baseUrlBuilder(params).apply {
-                            encodedPath = "${this.encodedPath}$path"
+                            encodedPath = if (path.startsWith("/")) path else "${encodedPath}$path"
                         }.build()
                     )
                     if (jsonBody != null) {
@@ -371,7 +370,18 @@ class StandardMethods {
             ).call
 
             ELog.i("Http", "${call.response.status}: ${requestMethod.value} [$path]\n- ${call.response.readText()}\n- $payload")
-            result(call)
+            return call
+        }
+
+        suspend inline fun <T> standardCall(
+            api: AndroidClient,
+            requestMethod: HttpMethod,
+            path: String,
+            params: RequestParameters,
+            payload: T?,
+            result: (call: HttpClientCall) -> Unit
+        ) {
+            result(standardCall(api, requestMethod, path, params, payload))
         }
     }
 }

@@ -2,6 +2,8 @@ package com.thundermaps.apilib.android.impl.resources
 
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.SafermeException
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.Constants.APPLICATION_JSON
@@ -20,14 +22,9 @@ import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.HeaderType
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.features.auth.providers.BearerTokens
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.request
-import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import io.ktor.http.contentType
 import timber.log.Timber
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -55,6 +52,9 @@ class SessionsImpl @Inject constructor(
     }
 
     override suspend fun getCurrentSession(): Result<Session> {
+        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = requestHandler(null, "", SESSION_PATH, HttpMethod.Get)
         return resultHandler.processResult<Session>(call, gson).let {
             if (it.isSuccess) {
@@ -68,6 +68,9 @@ class SessionsImpl @Inject constructor(
     }
 
     override suspend fun refreshSessionToken(): Result<Session> {
+        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = requestHandler(sessionCache.lastOrNull()?.toSessionRequest(), "", SESSION_PATH, HttpMethod.Patch)
         return resultHandler.processResult<Session>(call, gson).also {
             it.getNullableData()?.let { session ->
@@ -77,6 +80,9 @@ class SessionsImpl @Inject constructor(
     }
 
     override suspend fun deleteCurrentSession() {
+        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
+            return
+        }
         val call = requestHandler(null, "", SESSION_PATH, HttpMethod.Delete)
         resultHandler.processResult<HttpResponse>(call, gson).also {
             sessionCache.clear()
@@ -138,6 +144,9 @@ class SessionsImpl @Inject constructor(
         ssoDetails: SsoDetails,
         nonce: String?
     ): Result<SsoSessions> {
+        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
+            return resultHandler.handleException(UnknownHostException())
+        }
         val call = requestHandler(
             bodyParameters = null,
             applicationId = applicationId,
@@ -152,29 +161,24 @@ class SessionsImpl @Inject constructor(
         applicationId: String,
         path: String,
         methodType: HttpMethod = HttpMethod.Post
-    ): HttpClientCall {
+    ): HttpClientCall? {
         val parameters = createParameters(
             environmentManager.environment.servers.first(),
             applicationId,
             getApiVersion()
         )
-        val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.request<HttpResponse> (
-            HttpRequestBuilder().takeFrom(requestBuilder).apply {
-                method = methodType
-                url(
-                    AndroidClient.baseUrlBuilder(parameters).apply {
-                        encodedPath = if (path.contains(SSO_SESSIONS_PATH)) path else "$encodedPath$path"
-                    }.build()
-                )
-                if (bodyParameters != null) {
-                    contentType(ContentType.Application.Json)
-                    body = bodyParameters
-                } else {
-                    headers.remove(HttpHeaders.ContentType)
-                }
-            }
-        ).call
+        val call = try {
+            StandardMethods.standardCall(
+                androidClient,
+                methodType,
+                path,
+                parameters,
+                bodyParameters,
+            )
+        } catch (e: Exception) {
+            ELog.e(SafermeException.Builder(th = e).build())
+            null
+        }
         return call
     }
 
@@ -186,7 +190,7 @@ class SessionsImpl @Inject constructor(
         private const val SESSION_PATH = "session"
 
         @VisibleForTesting
-        const val SSO_SESSIONS_PATH = "auth/sm_azure_oauth2/callback"
+        const val SSO_SESSIONS_PATH = "/auth/sm_azure_oauth2/callback"
         private const val RESET_PASSWORD_PATH = "reset_passwords/request_token"
 
         @VisibleForTesting

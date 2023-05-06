@@ -12,13 +12,17 @@ import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import io.ktor.client.call.HttpClientCall
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.toByteArray
+import java.net.UnknownHostException
 
 @KtorExperimentalAPI
 @ExcludeFromJacocoGeneratedReport
 suspend inline fun <reified T : Any> ResultHandler.processResult(
-    call: HttpClientCall,
+    call: HttpClientCall?,
     gson: Gson
 ): Result<T> {
+    if (call == null) {
+        return handleException(UnknownHostException())
+    }
     val status = SaferMeApiStatus.statusForCode(call.response.status.value)
     val responseString = String(call.response.content.toByteArray())
     return when (status) {
