@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
+import com.thundermaps.apilib.android.api.com.thundermaps.apilib.android.logging.ELog
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
 import com.thundermaps.apilib.android.api.requests.RequestParameters
@@ -37,6 +38,10 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -63,6 +68,10 @@ class SessionsImplTest {
     @Before
     fun setUp() {
         sessions = SessionsImpl(androidClient, environmentManager, resultHandler, gson)
+        mockkObject(ELog)
+        every { ELog.i(any(), any()) } just Runs
+        every { ELog.w(any(), any()) } just Runs
+        every { ELog.e(any()) } just Runs
     }
 
     @After
@@ -320,7 +329,7 @@ class SessionsImplTest {
         val ssoSessionsResult = sessions.getSsoSessions(code, APPLICATION_ID, ssoDetailsMock, nonce)
 
         verifyAndroidClient(4)
-        verify(environmentManager).environment
+        verify(environmentManager, times(2)).environment
         assertTrue(ssoSessionsResult.isSuccess)
         val ssoSessions = ssoSessionsResult.getNullableData()!!
 
