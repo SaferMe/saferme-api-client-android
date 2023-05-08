@@ -350,9 +350,6 @@ class StandardMethods {
             payload: T?,
         ): HttpClientCall {
             val (client, template) = api.client(params)
-            val jsonBody = payload?.let {
-                gsonSerializer.toJsonTree(payload)
-            }
 
             val call = client.request<HttpResponse> (
                 HttpRequestBuilder().takeFrom(template).apply {
@@ -362,9 +359,9 @@ class StandardMethods {
                             encodedPath = if (path.startsWith("/")) path else "${encodedPath}$path"
                         }.build()
                     )
-                    if (jsonBody != null) {
+                    if (payload != null) {
                         contentType(ContentType.Application.Json)
-                        body = jsonBody
+                        body = payload
                     }
                 }
             ).call
