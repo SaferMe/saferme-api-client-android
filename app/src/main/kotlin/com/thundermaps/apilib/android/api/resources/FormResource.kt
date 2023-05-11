@@ -9,4 +9,8 @@ interface FormResource {
         parameters: RequestParameters,
         channelId: Int
     ): Result<Form>
+
+    suspend fun getForms(
+        parameters: RequestParameters
+    ): Result<List<Form>>
 }
