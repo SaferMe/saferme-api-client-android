@@ -73,18 +73,19 @@ class AndroidClient @Inject constructor() {
                         headers.append(HeaderType.xTeamId, creds.TeamId)
                 }
                 headers.append(HttpHeaders.Accept, "application/json, text/plain, */*")
-                params.customRequestHeaders.forEach { (key, value) ->
-                    headers[key] = value
-                }
             }
-        } else if (currentCredentials == null || currentCredentials == params.credentials) {
-            requestBuilderTemplate.apply {
+        }
+
+        val requestBuilder = if (params.customRequestHeaders.isEmpty()) {
+            requestBuilderTemplate
+        } else {
+            HttpRequestBuilder().takeFrom(requestBuilderTemplate).apply {
                 params.customRequestHeaders.forEach { (key, value) ->
                     headers[key] = value
                 }
             }
         }
-        return Pair(currentClient, requestBuilderTemplate)
+        return Pair(currentClient, requestBuilder)
     }
 
     // Widely used static builders/configuration (Assists with DRY code)
