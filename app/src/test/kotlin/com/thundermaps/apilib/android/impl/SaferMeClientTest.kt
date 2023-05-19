@@ -32,7 +32,7 @@ import org.junit.Test
 
 @KtorExperimentalAPI
 internal class SaferMeClientTest {
-    private val androidClient = AndroidClient()
+    private val androidClient = AndroidClient(DefaultKtorClient())
     private val environmentManager: EnvironmentManager = mock {
         on { environment } doReturn Staging
     }
