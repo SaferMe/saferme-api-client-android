@@ -3,10 +3,9 @@ package com.thundermaps.apilib.android.impl
 import androidx.annotation.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.thundermaps.apilib.android.api.SaferMeClientService
+import com.thundermaps.apilib.android.api.ApiClient
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
-import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.responses.models.DataValue
 import com.thundermaps.apilib.android.api.responses.models.DataValueDecode
 import com.thundermaps.apilib.android.api.responses.models.FieldType
@@ -14,45 +13,13 @@ import com.thundermaps.apilib.android.api.responses.models.FieldTypeDecode
 import com.thundermaps.apilib.android.api.responses.models.FormValue
 import com.thundermaps.apilib.android.api.responses.models.FormValueDecode
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
-import io.ktor.client.features.auth.Auth
-import io.ktor.client.features.auth.providers.BearerTokens
-import io.ktor.client.features.json.GsonSerializer
-import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import javax.inject.Inject
 
-class AndroidClient @Inject constructor() {
-    private lateinit var sessionsResource: SessionsResource
-
-    // Reusable / Shared Components (Singleton)
-    val currentClient: HttpClient by lazy {
-        HttpClient(Android) {
-            install(JsonFeature) {
-                serializer = GsonSerializer().apply { gsonBuilder }
-            }
-            install(Auth) {
-                refreshToken {
-                    loadTokens {
-                        sessionsResource = SaferMeClientService.getService().getClient().sessionsResource
-                        sessionsResource.tokens
-                    }
-                    refreshTokens { response ->
-                        val result = sessionsResource.refreshSessionToken()
-                        result.getNullableData()?.let {
-                            BearerTokens(it.session.accessToken, it.session.refreshToken)
-                        }
-                    }
-                }
-            }
-
-            expectSuccess = false
-        }
-    }
-
+class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
     private var requestBuilderTemplate = HttpRequestBuilder()
 
     // Store the most recently used credentials
@@ -85,7 +52,7 @@ class AndroidClient @Inject constructor() {
                 }
             }
         }
-        return Pair(currentClient, requestBuilder)
+        return Pair(apiClient.ktorClient, requestBuilder)
     }
 
     // Widely used static builders/configuration (Assists with DRY code)

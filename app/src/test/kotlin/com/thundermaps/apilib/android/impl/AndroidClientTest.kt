@@ -23,7 +23,7 @@ class AndroidClientTest {
     private lateinit var androidClient: AndroidClient
     @Before
     fun setUp() {
-        androidClient = AndroidClient()
+        androidClient = AndroidClient(DefaultKtorClient())
     }
     @Test
     fun clientChangesWithCredentials() {
