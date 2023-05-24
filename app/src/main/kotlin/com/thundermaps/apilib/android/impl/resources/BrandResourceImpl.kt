@@ -1,36 +1,24 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
+import apiRequest
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
-import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
-import com.thundermaps.apilib.android.api.requests.Constants
 import com.thundermaps.apilib.android.api.requests.Constants.APPLICATION_JSON
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.responses.models.Brand
 import com.thundermaps.apilib.android.api.responses.models.Result
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.HeaderType
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.request
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BrandResourceImpl @Inject constructor(
     private val androidClient: AndroidClient,
-    private val environmentManager: EnvironmentManager,
-    private val resultHandler: ResultHandler,
-    private val gson: Gson
+    private val environmentManager: EnvironmentManager
 ) : BrandResource {
-    private fun createParameters(applicationId: String, host: String, apiVersion: Int) =
+    fun createParameters(applicationId: String, host: String = "") =
         RequestParameters(
             customRequestHeaders = hashMapOf(
                 HeaderType.xAppId to applicationId,
@@ -38,41 +26,28 @@ class BrandResourceImpl @Inject constructor(
             ),
             credentials = null,
             host = host,
-            api_version = apiVersion
+            api_version = 4,
+            parameters = mapOf("fields" to BRAND_FIELDS.joinToString(","))
         )
 
     override suspend fun getBrand(applicationId: String): Result<Brand> {
-        if (!environmentManager.environment.servers.first().isInternetAvailable()) {
-            return resultHandler.handleException(UnknownHostException())
-        }
-        val call = requestHandler(applicationId, PATH)
-        return resultHandler.processResult(call, gson)
-    }
-
-    private suspend fun requestHandler(
-        applicationId: String,
-        path: String
-    ): HttpClientCall {
-        val parameters = createParameters(
-            applicationId,
-            environmentManager.environment.servers.first(),
-            4
-        )
-        val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.request<HttpResponse> (
-            HttpRequestBuilder().takeFrom(requestBuilder).apply {
-                method = HttpMethod.Get
-                url(
-                    AndroidClient.baseUrlBuilder(parameters).apply {
-                        encodedPath = "$encodedPath$path?fields=${Constants.BRAND_FIELDS.joinToString(",")}"
-                    }.build()
-                )
-            }
-        ).call
-        return call
+        val parameters = createParameters(applicationId, environmentManager.environment.servers.first())
+        val (client, requestBuilder) = androidClient.build(parameters, PATH)
+        return client.apiRequest(requestBuilder)
     }
 
     companion object {
-        private const val PATH = "branded_app"
+        const val PATH = "branded_app"
+        val BRAND_FIELDS = listOf(
+            "name",
+            "bundle_id",
+            "android_url",
+            "oauth_providers",
+            "layer_tilejson",
+            "custom_user_fields",
+            "default_location",
+            "default_zoom",
+            "safety_app"
+        )
     }
 }

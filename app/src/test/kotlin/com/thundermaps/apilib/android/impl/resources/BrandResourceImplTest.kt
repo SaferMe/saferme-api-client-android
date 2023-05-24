@@ -1,30 +1,26 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
-import com.thundermaps.apilib.android.api.requests.Constants
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.responses.models.Brand
 import com.thundermaps.apilib.android.api.responses.models.Layer
 import com.thundermaps.apilib.android.api.responses.models.LayerSource
 import com.thundermaps.apilib.android.api.responses.models.PasswordRequirements
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.StrengthLevels
 import com.thundermaps.apilib.android.impl.AndroidClient
-import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,14 +39,12 @@ class BrandResourceImplTest {
     private val environmentManager: EnvironmentManager = mock {
         on { environment } doReturn Staging
     }
-    private val resultHandler: ResultHandler = ResultHandler()
-    private val gson = Gson()
 
     private lateinit var brandResource: BrandResource
 
     @Before
     fun setUp() {
-        brandResource = BrandResourceImpl(androidClient, environmentManager, resultHandler, gson)
+        brandResource = BrandResourceImpl(androidClient, environmentManager)
     }
 
     @After
@@ -68,19 +62,24 @@ class BrandResourceImplTest {
             requestInspector = {
                 assertEquals(
                     PATH,
-                    it.url.encodedPath
+                    it.url.fullPath
                 )
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+            client,
+            AndroidClient.getRequestBuilder(
+                (brandResource as BrandResourceImpl).createParameters(APPLICATION_ID), BrandResourceImpl.PATH, HttpMethod.Get
+            )
+        )
 
         val brandResult = brandResource.getBrand(APPLICATION_ID)
 
         verifyAndroidClient()
-        verify(environmentManager, times(2)).environment
+        verify(environmentManager).environment
         assertTrue(brandResult.isSuccess)
         val brandValue = brandResult.getNullableData()
 
@@ -90,7 +89,7 @@ class BrandResourceImplTest {
 
     private fun verifyAndroidClient() {
         val parameterCaptor = argumentCaptor<RequestParameters>()
-        verify(androidClient).client(parameterCaptor.capture())
+        verify(androidClient).build(parameterCaptor.capture(), any(), any())
         val requestParameters = parameterCaptor.firstValue
         assertEquals(4, requestParameters.api_version)
         assertNull(requestParameters.credentials)
@@ -103,7 +102,7 @@ class BrandResourceImplTest {
 
     companion object {
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private val PATH = "/api/v4/branded_app?fields=${Constants.BRAND_FIELDS.joinToString(",")}"
+        private val PATH = "/api/v4/branded_app?fields=${BrandResourceImpl.BRAND_FIELDS.joinToString("%2C")}"
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private val strengthLevels = StrengthLevels(100, 10000, 1000000)

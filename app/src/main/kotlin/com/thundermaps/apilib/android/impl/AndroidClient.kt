@@ -32,7 +32,7 @@ class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
 
     // Widely used static builders/configuration (Assists with DRY code)
     companion object {
-        private lateinit var requestBuilderBasic: HttpRequestBuilder
+        private var requestBuilderBasic: HttpRequestBuilder = HttpRequestBuilder()
 
         // Store the most recently used credentials
         private var currentCredentials: SaferMeCredentials? = null
@@ -73,7 +73,7 @@ class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
 
         fun getRequestBuilder(params: RequestParameters, path: String, method: HttpMethod): HttpRequestBuilder {
             // Reinitialize if users credentials have changed
-            if (currentCredentials != params.credentials) {
+            if (params.credentials != null && currentCredentials != params.credentials) {
                 requestBuilderBasic = HttpRequestBuilder().apply {
                     val creds = params.credentials
                     currentCredentials = creds
