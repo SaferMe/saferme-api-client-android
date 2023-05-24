@@ -7,7 +7,6 @@ import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
-import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.HttpRequestData
@@ -55,7 +54,7 @@ class TestHelpers {
                 }
 
                 install(JsonFeature) {
-                    serializer = GsonSerializer().apply { AndroidClient.gsonBuilder }
+                    serializer = AndroidClient.jsonSerializer
                 }
             }
         }

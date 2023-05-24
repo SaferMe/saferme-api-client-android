@@ -15,7 +15,6 @@ import com.thundermaps.apilib.android.api.resources.FormResource
 import com.thundermaps.apilib.android.api.responses.models.FormField
 import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
 import io.ktor.client.request.HttpRequestBuilder
@@ -37,13 +36,12 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class FormResourceImplTest {
     private val androidClient: AndroidClient = mock()
-    private val resultHandler: ResultHandler = ResultHandler()
 
     private lateinit var formResource: FormResource
 
     @Before
     fun setUp() {
-        formResource = FormResourceImpl(androidClient, resultHandler, gsonSerializer)
+        formResource = FormResourceImpl(androidClient)
     }
 
     @After
@@ -71,7 +69,12 @@ class FormResourceImplTest {
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+            client,
+            AndroidClient.getRequestBuilder(
+                defaultParameters, "channels/$CHANNEL_ID/form", HttpMethod.Get
+            )
+        )
 
         val result = formResource.getForm(defaultParameters, CHANNEL_ID)
 
@@ -107,7 +110,7 @@ class FormResourceImplTest {
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(client, HttpRequestBuilder())
 
         val result = formResource.getForm(defaultParameters, CHANNEL_ID)
 
@@ -123,7 +126,7 @@ class FormResourceImplTest {
 
     private fun verifyAndroidClient() {
         val parameterCaptor = argumentCaptor<RequestParameters>()
-        verify(androidClient).client(parameterCaptor.capture())
+        verify(androidClient).build(parameterCaptor.capture(), any(), any())
         val requestParameters = parameterCaptor.firstValue
         assertEquals(
             4,
