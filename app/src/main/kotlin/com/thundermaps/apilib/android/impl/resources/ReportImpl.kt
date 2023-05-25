@@ -1,8 +1,8 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import androidx.annotation.VisibleForTesting
+import apiRequest
 import com.google.gson.Gson
-import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
 import com.thundermaps.apilib.android.api.resources.DeletedResourceList
@@ -11,13 +11,6 @@ import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.request
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpMethod
-import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -105,37 +98,15 @@ class ReportImpl @Inject constructor(
     }
 
     override suspend fun getReportsDeletedAfter(parameters: RequestParameters): Result<DeletedResourceList> {
-        if (!parameters.host.isInternetAvailable()) {
-            return resultHandler.handleException(UnknownHostException())
-        }
-        val call = getReportsCallDeletedAfter(parameters)
-
-        return resultHandler.processResult(call, gson)
-    }
-
-    private suspend fun getReportsCallDeletedAfter(
-        parameters: RequestParameters
-    ): HttpClientCall {
-        val (client, requestBuilder) = api.client(parameters)
-        val call = client.request<HttpResponse>(
-            HttpRequestBuilder().takeFrom(requestBuilder).apply {
-                method = HttpMethod.Get
-                url(
-                    AndroidClient.baseUrlBuilder(parameters).apply {
-                        val extensionParams = parameters.parameters?.toUriParameters()
-                        encodedPath =
-                            extensionParams?.let { "${encodedPath}deleted_resources?$it" }
-                                ?: "${encodedPath}deleted_resources?type=report"
-                    }.build()
-                )
-            }
-        ).call
-        return call
+        val params = parameters.copy(parameters = parameters.parameters ?: mapOf("type" to "report"))
+        val (client, requestBuilder) = api.build(params, DELETED_REPORT_PATH)
+        return client.apiRequest(requestBuilder)
     }
 
     companion object {
-        private const val REPORT_PATH = "reports"
-        const val DELETED_AFTER = "type=report"
+        internal const val REPORT_PATH = "reports"
+        internal const val DELETED_REPORT_PATH = "deleted_resources"
+        internal const val DELETED_AFTER = "type=report"
 
         @VisibleForTesting
         const val FIELDS_PARAM =

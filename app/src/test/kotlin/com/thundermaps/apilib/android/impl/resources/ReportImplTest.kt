@@ -10,7 +10,9 @@ import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.resources.ReportImpl.Companion.FIELDS_PARAM
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.MockKAnnotations
@@ -328,15 +330,25 @@ class ReportImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                TestCase.assertEquals(it.url.encodedPath, expectedPath)
+                TestCase.assertEquals(it.url.fullPath, expectedPath)
                 inspectCalled = true
             }
         )
 
         every {
-            defaultAPI.client(any())
+            defaultAPI.build(any(), any(), any())
         } answers {
-            Pair(client, HttpRequestBuilder())
+            Pair(
+                client,
+                AndroidClient.getRequestBuilder(
+                    TestHelpers.defaultParams.copy(
+                        host = Staging.servers.first(),
+                        parameters = mapOf(type to typeReport)
+                    ),
+                    ReportImpl.DELETED_REPORT_PATH,
+                    HttpMethod.Get
+                )
+            )
         }
 
         runBlocking {
