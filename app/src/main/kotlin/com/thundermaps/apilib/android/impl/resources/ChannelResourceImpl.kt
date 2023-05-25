@@ -1,93 +1,39 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
-import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
+import apiRequest
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.resources.DeletedResourceList
 import com.thundermaps.apilib.android.api.responses.models.Channel
 import com.thundermaps.apilib.android.api.responses.models.Result
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.request
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpMethod
-import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ChannelResourceImpl @Inject constructor(
-    private val androidClient: AndroidClient,
-    private val resultHandler: ResultHandler,
-    private val gson: Gson
+    private val androidClient: AndroidClient
 ) : ChannelResource {
     override suspend fun getChannels(
         parameters: RequestParameters,
-        teamId: Long,
-        fields: String
+        teamId: Long
     ): Result<List<Channel>> {
-        if (!parameters.host.isInternetAvailable()) {
-            return resultHandler.handleException(UnknownHostException())
-        }
-
-        val call = getChannelsCall(parameters, teamId, fields)
-
-        return resultHandler.processResult(call, gson)
-    }
-
-    private suspend fun getChannelsCall(
-        parameters: RequestParameters,
-        teamId: Long,
-        fields: String
-    ): HttpClientCall {
-        val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.request<HttpResponse>(
-            HttpRequestBuilder().takeFrom(requestBuilder).apply {
-                method = HttpMethod.Get
-                url(
-                    AndroidClient.baseUrlBuilder(parameters).apply {
-                        val extensionParams = parameters.parameters?.toUriParameters()?.let { "&$it" } ?: ""
-                        encodedPath = "${encodedPath}channels?team_id=$teamId&fields=$fields$extensionParams"
-                    }.build()
-                )
-            }
-        ).call
-        return call
+        val params = parameters.copy(parameters = (parameters.parameters ?: emptyMap()) + mapOf("team_id" to teamId.toString(), "fields" to CHANNELS_FIELDS.joinToString(",")))
+        val (client, requestBuilder) = androidClient.build(params, PATH)
+        return client.apiRequest(requestBuilder)
     }
 
     override suspend fun getChannelsDeletedAfter(
         parameters: RequestParameters
     ): Result<DeletedResourceList> {
-        if (!parameters.host.isInternetAvailable()) {
-            return resultHandler.handleException(UnknownHostException())
-        }
-
-        val call = getChannelsCallDeletedAfter(parameters)
-
-        return resultHandler.processResult(call, gson)
+        val params = parameters.copy(parameters = parameters.parameters ?: mapOf("type" to "account"))
+        val (client, requestBuilder) = androidClient.build(params, PATH_DELETED_RESOURCES)
+        return client.apiRequest(requestBuilder)
     }
 
-    private suspend fun getChannelsCallDeletedAfter(
-        parameters: RequestParameters
-    ): HttpClientCall {
-        val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.request<HttpResponse>(
-            HttpRequestBuilder().takeFrom(requestBuilder).apply {
-                method = HttpMethod.Get
-                url(
-                    AndroidClient.baseUrlBuilder(parameters).apply {
-                        val extensionParams = parameters.parameters?.toUriParameters()
-                        encodedPath =
-                            extensionParams?.let { "${encodedPath}deleted_resources?$it" }
-                                ?: "${encodedPath}deleted_resources?type=account"
-                    }.build()
-                )
-            }
-        ).call
-        return call
+    companion object {
+        internal const val PATH = "channels"
+        internal const val PATH_DELETED_RESOURCES = "deleted_resources"
+        internal val CHANNELS_FIELDS = listOf("hazard_channel", "is_deletable_by", "member_count", "last_report_date", "-additional_fields", "tune_in_count")
     }
 }

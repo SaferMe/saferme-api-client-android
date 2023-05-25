@@ -7,13 +7,8 @@ import com.thundermaps.apilib.android.api.responses.models.Result
 interface ChannelResource {
     suspend fun getChannels(
         parameters: RequestParameters,
-        teamId: Long,
-        fields: String = DEFAULT_FIELDS
+        teamId: Long
     ): Result<List<Channel>>
-
-    companion object {
-        internal const val DEFAULT_FIELDS = "hazard_channel,is_deletable_by,member_count,last_report_date,-additional_fields,tune_in_count"
-    }
 
     suspend fun getChannelsDeletedAfter(
         parameters: RequestParameters
