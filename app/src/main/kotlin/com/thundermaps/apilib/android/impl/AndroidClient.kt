@@ -54,7 +54,8 @@ class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
         val jsonSerializer = GsonSerializer {
             serializeNulls()
             disableHtmlEscaping()
-            excludeFieldsWithoutExposeAnnotation()
+            // Disable field exclusion to be consistent with the default GSON configuration
+            // excludeFieldsWithoutExposeAnnotation()
             setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
             registerTypeAdapter(FieldType::class.java, FieldTypeDecode())
             registerTypeAdapter(FormValue::class.java, FormValueDecode())
