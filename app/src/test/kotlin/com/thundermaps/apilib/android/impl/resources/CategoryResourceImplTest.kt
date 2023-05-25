@@ -1,6 +1,5 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
@@ -15,12 +14,12 @@ import com.thundermaps.apilib.android.api.resources.CategoryResource
 import com.thundermaps.apilib.android.api.responses.models.Category
 import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,14 +35,12 @@ import org.junit.Test
 @ExperimentalCoroutinesApi
 class CategoryResourceImplTest {
     private val androidClient: AndroidClient = mock()
-    private val resultHandler: ResultHandler = ResultHandler()
-    private val gson = Gson()
 
     private lateinit var categoryResource: CategoryResource
 
     @Before
     fun setUp() {
-        categoryResource = CategoryResourceImpl(androidClient, resultHandler, gson)
+        categoryResource = CategoryResourceImpl(androidClient)
     }
 
     @After
@@ -59,13 +56,18 @@ class CategoryResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals(CATEGORIES_PATH, it.url.encodedPath)
+                assertEquals(CATEGORIES_PATH, it.url.fullPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+            client,
+            AndroidClient.getRequestBuilder(
+                defaultParameters.copy(parameters = mapOf("fields" to CategoryResourceImpl.FIELDS.joinToString(",")) + (defaultParameters.parameters ?: emptyMap())), "channels/$CHANNEL_ID/categories", HttpMethod.Get
+            )
+        )
 
         val result = categoryResource.getCategory(
             defaultParameters,
@@ -125,7 +127,7 @@ class CategoryResourceImplTest {
 
     private fun verifyAndroidClient() {
         val parameterCaptor = argumentCaptor<RequestParameters>()
-        verify(androidClient).client(parameterCaptor.capture())
+        verify(androidClient).build(parameterCaptor.capture(), any(), any())
         val requestParameters = parameterCaptor.firstValue
         assertEquals(
             4,
@@ -144,8 +146,8 @@ class CategoryResourceImplTest {
         private const val APPLICATION_ID = "com.thundermaps.saferme"
         private val CATEGORIES_PATH =
             "/api/v4/channels/$CHANNEL_ID/categories?fields=${
-            CategoryResource.CATEGORY_FIELDS.joinToString(
-                ","
+            CategoryResourceImpl.FIELDS.joinToString(
+                "%2C"
             )
             }"
         private const val TEST_KEY = "Test Key"
