@@ -1,6 +1,5 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
@@ -15,12 +14,12 @@ import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.responses.models.Channel
 import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,19 +32,18 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.net.URLEncoder
 
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi
 class ChannelResourceImplTest {
     private val androidClient: AndroidClient = mock()
-    private val resultHandler: ResultHandler = ResultHandler()
-    private val gson = Gson()
 
     private lateinit var channelResource: ChannelResource
 
     @Before
     fun setUp() {
-        channelResource = ChannelResourceImpl(androidClient, resultHandler, gson)
+        channelResource = ChannelResourceImpl(androidClient)
     }
 
     @After
@@ -61,13 +59,16 @@ class ChannelResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals(CHANNELS_PATH, it.url.encodedPath)
+                assertEquals(CHANNELS_PATH, it.url.fullPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+            client,
+            AndroidClient.getRequestBuilder(defaultParameters.copy(parameters = (defaultParameters.parameters ?: emptyMap()) + mapOf("team_id" to TEAM_ID.toString(), "fields" to ChannelResourceImpl.CHANNELS_FIELDS.joinToString(","), "updated_after" to UPDATED_AFTER)), ChannelResourceImpl.PATH, HttpMethod.Get)
+        )
 
         val result = channelResource.getChannels(defaultParameters.copy(parameters = mapOf("updated_after" to UPDATED_AFTER)), TEAM_ID)
 
@@ -158,13 +159,16 @@ class ChannelResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals(CHANNELS_DELETED_PATH, it.url.encodedPath)
+                assertEquals(CHANNELS_DELETED_PATH, it.url.fullPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+            client,
+            AndroidClient.getRequestBuilder(defaultParameters.copy(parameters = mapOf("type" to "account", "deleted_after" to UPDATED_AFTER)), ChannelResourceImpl.PATH_DELETED_RESOURCES, HttpMethod.Get)
+        )
 
         val result = channelResource.getChannelsDeletedAfter(defaultParameters.copy(parameters = mapOf("type" to "account", "deleted_after" to UPDATED_AFTER)))
 
@@ -183,7 +187,7 @@ class ChannelResourceImplTest {
 
     private fun verifyAndroidClient(expectedVersion: Int) {
         val parameterCaptor = argumentCaptor<RequestParameters>()
-        verify(androidClient).client(parameterCaptor.capture())
+        verify(androidClient).build(parameterCaptor.capture(), any(), any())
         val requestParameters = parameterCaptor.firstValue
         assertEquals(
             expectedVersion,
@@ -201,10 +205,10 @@ class ChannelResourceImplTest {
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val CHANNELS_PATH =
-            "/api/v4/channels?team_id=$TEAM_ID&fields=${ChannelResource.DEFAULT_FIELDS}&updated_after=$UPDATED_AFTER"
-        private const val CHANNELS_DELETED_PATH =
-            "/api/v4/deleted_resources?type=account&deleted_after=$UPDATED_AFTER"
+        private val CHANNELS_PATH =
+            "/api/v4/channels?team_id=$TEAM_ID&fields=${ChannelResourceImpl.CHANNELS_FIELDS.joinToString("%2C")}&updated_after=${URLEncoder.encode(UPDATED_AFTER, "UTF-8")}"
+        private val CHANNELS_DELETED_PATH =
+            "/api/v4/deleted_resources?type=account&deleted_after=${URLEncoder.encode(UPDATED_AFTER, "UTF-8")}"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID

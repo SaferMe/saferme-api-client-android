@@ -4,7 +4,7 @@ sealed class Result<out T : Any> {
     object Initial : Result<Nothing>()
     class Loading<T : Any>(val data: T?) : Result<T>()
     class Success<T : Any>(val data: T) : Result<T>()
-    class Error<T : Any>(val data: T?, val exception: Exception) : Result<T>()
+    class Error<T : Any>(val data: T? = null, val exception: Exception) : Result<T>()
 
     val isLoading: Boolean
         get() = this is Loading

@@ -1,6 +1,5 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
@@ -15,7 +14,6 @@ import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.responses.models.ResponseException
 import com.thundermaps.apilib.android.api.responses.models.Result
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.api.responses.models.Team
 import com.thundermaps.apilib.android.api.responses.models.Team.Companion.shapeParameterRequest
 import com.thundermaps.apilib.android.impl.AndroidClient
@@ -23,6 +21,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.util.KtorExperimentalAPI
 import io.mockk.every
@@ -40,20 +39,19 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.net.URLEncoder
 
 @KtorExperimentalAPI
 @ExperimentalCoroutinesApi
 class TeamResourceImplTest {
     private val androidClient: AndroidClient = mock()
-    private val resultHandler: ResultHandler = ResultHandler()
-    private val gson = Gson()
     private lateinit var teamResource: TeamResource
 
     @Before
     fun setUp() {
         mockkObject(ELog)
         every { ELog.w(any(), any()) } just runs
-        teamResource = TeamResourceImpl(androidClient, resultHandler, gson)
+        teamResource = TeamResourceImpl(androidClient)
     }
 
     @After
@@ -70,13 +68,22 @@ class TeamResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals(TEAMS_PATH, it.url.encodedPath)
+                assertEquals(TEAMS_PATH, it.url.fullPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+            client,
+            AndroidClient.getRequestBuilder(
+                defaultParameters.copy(
+                    parameters = mapOf("fields" to TeamResourceImpl.TEAM_FIELDS.joinToString(",")) + (defaultParameters.parameters ?: emptyMap())
+                ),
+                TeamResourceImpl.TEAM_PATH,
+                HttpMethod.Get
+            )
+        )
 
         val result = teamResource.getTeams(defaultParameters)
 
@@ -168,7 +175,7 @@ class TeamResourceImplTest {
 
     private fun verifyAndroidClient(expectedVersion: Int) {
         val parameterCaptor = argumentCaptor<RequestParameters>()
-        verify(androidClient).client(parameterCaptor.capture())
+        verify(androidClient).build(parameterCaptor.capture(), any(), any())
         val requestParameters = parameterCaptor.firstValue
         assertEquals(expectedVersion, requestParameters.api_version)
         assertEquals(saferMeCredentials, requestParameters.credentials)
@@ -182,13 +189,22 @@ class TeamResourceImplTest {
             status = HttpStatusCode.OK,
             headers = responseHeaders,
             requestInspector = {
-                assertEquals(TEAMS_USER_PATH, it.url.encodedPath)
+                assertEquals(TEAMS_USER_PATH, it.url.fullPath)
                 assertEquals(HttpMethod.Get, it.method)
                 inspectCalled = true
             }
         )
 
-        whenever(androidClient.client(any())) doReturn Pair(client, HttpRequestBuilder())
+        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+            client,
+            AndroidClient.getRequestBuilder(
+                defaultParameters.copy(
+                    parameters = mapOf("fields" to TeamResourceImpl.TEAM_USER_FIELDS.joinToString(",")) + (defaultParameters.parameters ?: emptyMap())
+                ),
+                "${TeamResourceImpl.TEAM_PATH}/6141/${TeamResourceImpl.TEAM_USER_PATH}",
+                HttpMethod.Get
+            )
+        )
 
         val result = teamResource.getTeamUsers(defaultParameters, "6141")
 
@@ -201,10 +217,10 @@ class TeamResourceImplTest {
         private val responseHeaders =
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         private const val APPLICATION_ID = "com.thundermaps.saferme"
-        private const val TEAMS_PATH =
-            "/api/v4/teams?fields=mapbox_username,mapbox_dataset_id,mapbox_access_token"
-        private const val TEAMS_USER_PATH =
-            "/api/v4/teams/6141/team_users?fields=first_name,last_name,email"
+        private val TEAMS_PATH =
+            "/api/v4/teams?fields=${URLEncoder.encode("mapbox_username,mapbox_dataset_id,mapbox_access_token", "UTF-8")}"
+        private val TEAMS_USER_PATH =
+            "/api/v4/teams/6141/team_users?fields=${URLEncoder.encode("first_name,last_name,email", "UTF-8")}"
         private const val TEST_KEY = "Test Key"
         private const val TEST_INSTALL = "Install App"
         private const val TEST_APP = APPLICATION_ID

@@ -1,59 +1,31 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import com.google.gson.Gson
-import com.thundermaps.apilib.android.api.com.thundermaps.isInternetAvailable
+import apiRequest
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.CategoryResource
 import com.thundermaps.apilib.android.api.responses.models.Category
 import com.thundermaps.apilib.android.api.responses.models.Result
-import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.request
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpMethod
-import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class CategoryResourceImpl @Inject constructor(
-    private val androidClient: AndroidClient,
-    private val resultHandler: ResultHandler,
-    private val gson: Gson
+    private val androidClient: AndroidClient
 ) : CategoryResource {
     override suspend fun getCategory(
         parameters: RequestParameters,
-        channelId: Int,
-        fields: String
+        channelId: Int
     ): Result<List<Category>> {
-        if (!parameters.host.isInternetAvailable()) {
-            return resultHandler.handleException(UnknownHostException())
-        }
+        val params = parameters.copy(parameters = mapOf("fields" to FIELDS.joinToString(",")) + (parameters.parameters ?: emptyMap()))
+        val (client, requestBuilder) = androidClient.build(params, "channels/$channelId/categories")
 
-        val call = getCategoriesCall(parameters, channelId, fields)
-
-        return resultHandler.processResult(call, gson)
+        return client.apiRequest(requestBuilder)
     }
 
-    private suspend fun getCategoriesCall(
-        parameters: RequestParameters,
-        channelId: Int,
-        fields: String
-    ): HttpClientCall {
-        val (client, requestBuilder) = androidClient.client(parameters)
-        val call = client.request<HttpResponse> (
-            HttpRequestBuilder().takeFrom(requestBuilder).apply {
-                method = HttpMethod.Get
-                url(
-                    AndroidClient.baseUrlBuilder(parameters).apply {
-                        encodedPath = "${encodedPath}channels/$channelId/categories?fields=$fields"
-                    }.build()
-                )
-            }
-        ).call
-        return call
+    companion object {
+        internal val FIELDS = listOf(
+            "id", "name", "depth", "parent", "label_name", "pin_color", "position", "pin_appearance"
+        )
     }
 }

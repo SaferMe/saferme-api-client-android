@@ -9,7 +9,6 @@ import io.ktor.client.engine.android.Android
 import io.ktor.client.engine.android.AndroidEngineConfig
 import io.ktor.client.features.auth.Auth
 import io.ktor.client.features.auth.providers.BearerTokens
-import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 
 class DefaultKtorClient(private val httpClient: HttpClient? = null) : ApiClient {
@@ -31,7 +30,7 @@ class DefaultKtorClient(private val httpClient: HttpClient? = null) : ApiClient 
 
     private val ktorClientConfig = HttpClientConfig<AndroidEngineConfig>().apply {
         install(JsonFeature) {
-            serializer = GsonSerializer().apply { AndroidClient.gsonBuilder }
+            serializer = AndroidClient.jsonSerializer
         }
         install(Auth) {
             refreshToken {
