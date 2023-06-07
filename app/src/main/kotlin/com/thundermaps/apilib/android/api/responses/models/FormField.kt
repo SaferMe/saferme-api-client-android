@@ -142,13 +142,15 @@ class FormValueDecode : JsonSerializer<FormValue>, JsonDeserializer<FormValue> {
         return when {
             json.isJsonPrimitive -> {
                 try {
-                    FormValue.ValueInt(json.asInt)
-                } catch (exception: Exception) {
-                    try {
-                        FormValue.ValueString(json.asString)
-                    } catch (exception: Exception) {
-                        null
+                    val jsonPrimitive = json.asJsonPrimitive
+                    if (jsonPrimitive.isNumber) {
+                        FormValue.ValueInt(jsonPrimitive.asInt)
+                    } else {
+                        FormValue.ValueString(jsonPrimitive.asString)
                     }
+                    // other types of primitives are not supported
+                } catch (exception: Exception) {
+                    null
                 }
             }
             json.isJsonObject -> {
