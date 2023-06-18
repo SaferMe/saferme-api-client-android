@@ -3,6 +3,7 @@ package com.thundermaps.apilib.android.api.responses.models
 import com.google.gson.JsonArray
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.thundermaps.apilib.android.api.ExcludeFromJacocoGeneratedReport
 import com.thundermaps.apilib.android.api.resources.Location
 import com.thundermaps.apilib.android.api.resources.SaferMeDatum
 import com.thundermaps.apilib.android.impl.AndroidClient.Companion.gsonSerializer
@@ -73,3 +74,11 @@ data class Report(
         const val HIDDEN_FIELDS = "hidden_fields"
     }
 }
+
+@ExcludeFromJacocoGeneratedReport
+data class RiskMatrixConfig(
+    @Expose val id: Int? = 0,
+    @Expose val likelihoods: List<Likelihood> = ArrayList(),
+    @Expose val severities: List<Severity> = ArrayList(),
+    @SerializedName("risk_levels") @Expose val riskLevels: List<RiskLevel> = ArrayList()
+)

@@ -33,3 +33,9 @@ data class Likelihood(
     @Expose val label: String = "",
     @Expose val value: Int = 0
 )
+
+data class RiskLevel(
+    @Expose val score: Int = 0,
+    @Expose val label: String = "",
+    @Expose val color: String = ""
+)

@@ -9,7 +9,6 @@ import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import com.nhaarman.mockitokotlin2.whenever
 import com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager
 import com.thundermaps.apilib.android.api.com.thundermaps.env.Staging
-import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.BrandResource
 import com.thundermaps.apilib.android.api.responses.models.Brand
 import com.thundermaps.apilib.android.api.responses.models.Layer
@@ -27,7 +26,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -71,7 +69,8 @@ class BrandResourceImplTest {
 
         whenever(androidClient.buildRequest(any(), any(), any())) doReturn Pair(
             client,
-            AndroidClient.getRequestBuilder(mapOf("fields" to BrandResourceImpl.BRAND_FIELDS.joinToString(",")), BrandResourceImpl.PATH, HttpMethod.Get
+            AndroidClient.getRequestBuilder(
+                mapOf("fields" to BrandResourceImpl.BRAND_FIELDS.joinToString(",")), BrandResourceImpl.PATH, HttpMethod.Get
             )
         )
 
