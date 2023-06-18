@@ -1,7 +1,6 @@
 package com.thundermaps.apilib.android.impl.resources
 
 import androidx.annotation.VisibleForTesting
-import apiRequest
 import com.google.gson.Gson
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.requests.SaferMeApiResult
@@ -11,6 +10,7 @@ import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
+import com.thundermaps.apilib.android.impl.apiRequest
 import javax.inject.Inject
 import javax.inject.Singleton
 

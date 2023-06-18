@@ -44,7 +44,7 @@ class BrandResourceImplTest {
 
     @Before
     fun setUp() {
-        brandResource = BrandResourceImpl(androidClient, environmentManager)
+        brandResource = BrandResourceImpl(androidClient)
     }
 
     @After
@@ -69,17 +69,15 @@ class BrandResourceImplTest {
             }
         )
 
-        whenever(androidClient.build(any(), any(), any())) doReturn Pair(
+        whenever(androidClient.buildRequest(any(), any(), any())) doReturn Pair(
             client,
-            AndroidClient.getRequestBuilder(
-                (brandResource as BrandResourceImpl).createParameters(APPLICATION_ID), BrandResourceImpl.PATH, HttpMethod.Get
+            AndroidClient.getRequestBuilder(mapOf("fields" to BrandResourceImpl.BRAND_FIELDS.joinToString(",")), BrandResourceImpl.PATH, HttpMethod.Get
             )
         )
 
         val brandResult = brandResource.getBrand(APPLICATION_ID)
 
         verifyAndroidClient()
-        verify(environmentManager).environment
         assertTrue(brandResult.isSuccess)
         val brandValue = brandResult.getNullableData()
 
@@ -88,16 +86,10 @@ class BrandResourceImplTest {
     }
 
     private fun verifyAndroidClient() {
-        val parameterCaptor = argumentCaptor<RequestParameters>()
-        verify(androidClient).build(parameterCaptor.capture(), any(), any())
-        val requestParameters = parameterCaptor.firstValue
-        assertEquals(4, requestParameters.api_version)
-        assertNull(requestParameters.credentials)
-        assertEquals(Staging.servers.first(), requestParameters.host)
-        assertEquals(
-            APPLICATION_ID,
-            requestParameters.customRequestHeaders["X-AppID"]
-        )
+        val parameterCaptor = argumentCaptor<Map<String, String>>()
+        verify(androidClient).buildRequest(parameterCaptor.capture(), any(), any())
+        val parameters = parameterCaptor.firstValue
+        assertEquals(mapOf("fields" to BrandResourceImpl.BRAND_FIELDS.joinToString(",")), parameters)
     }
 
     companion object {

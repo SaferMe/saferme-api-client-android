@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.thundermaps.apilib.android.api.ApiClient
 import com.thundermaps.apilib.android.api.SaferMeCredentials
 import com.thundermaps.apilib.android.api.requests.RequestParameters
+import com.thundermaps.apilib.android.api.requests.buildRequestParameters
 import com.thundermaps.apilib.android.api.responses.models.DataValue
 import com.thundermaps.apilib.android.api.responses.models.DataValueDecode
 import com.thundermaps.apilib.android.api.responses.models.FieldType
@@ -25,8 +26,14 @@ import io.ktor.client.request.url as requestUrl
 class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
     fun client(params: RequestParameters): Pair<HttpClient, HttpRequestBuilder> = build(params)
 
+    @Deprecated("Use the request(parameters: Map<String, String>?, path: String = \"\", method: HttpMethod = HttpMethod.Get) version of this method instead")
     fun build(params: RequestParameters, path: String = "", method: HttpMethod = HttpMethod.Get): Pair<HttpClient, HttpRequestBuilder> {
         val requestBuilder = getRequestBuilder(params, path, method)
+        return Pair(apiClient.ktorClient, requestBuilder)
+    }
+
+    fun buildRequest(parameters: Map<String, String>?, path: String = "", method: HttpMethod = HttpMethod.Get): Pair<HttpClient, HttpRequestBuilder> {
+        val requestBuilder = getRequestBuilder(parameters, path, method)
         return Pair(apiClient.ktorClient, requestBuilder)
     }
 
@@ -116,6 +123,11 @@ class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
                     }.build()
                 )
             }
+        }
+
+        fun getRequestBuilder(parameters: Map<String, String>?, path: String, method: HttpMethod): HttpRequestBuilder {
+            val requestParameters = buildRequestParameters(parameters)
+            return getRequestBuilder(requestParameters, path, method)
         }
     }
 }
