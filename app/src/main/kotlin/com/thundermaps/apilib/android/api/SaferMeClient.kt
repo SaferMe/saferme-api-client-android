@@ -11,6 +11,7 @@ import com.thundermaps.apilib.android.api.resources.FormResource
 import com.thundermaps.apilib.android.api.resources.MeResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.resources.ReportStateChangeResource
+import com.thundermaps.apilib.android.api.resources.RiskResource
 import com.thundermaps.apilib.android.api.resources.SessionsResource
 import com.thundermaps.apilib.android.api.resources.ShapeResource
 import com.thundermaps.apilib.android.api.resources.StateResource
@@ -37,4 +38,5 @@ interface SaferMeClient {
     val attachmentResource: AttachmentResource
     val stateResource: StateResource
     val reportStateChangeResource: ReportStateChangeResource
+    val riskResource: RiskResource
 }
