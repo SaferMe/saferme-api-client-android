@@ -19,6 +19,7 @@ data class Report(
     @SerializedName(CATEGORY_ID) @Expose val categoryId: Int = 0,
     @SerializedName(COMMENT_COUNT) @Expose val commentCount: Int? = null,
     @Expose val description: String? = null,
+    @SerializedName(FEATURE_UUID) @Expose val featureId: String? = null,
     @SerializedName(IS_ANONYMOUS) @Expose val isAnonymous: Boolean? = false,
     @SerializedName(IS_HAZARD) @Expose val isHazard: Boolean? = false,
     @SerializedName(ISO_CREATED_AT) @Expose val isoCreatedAt: String? = null,
@@ -50,6 +51,7 @@ data class Report(
         const val CATEGORIES_TITLE = "categories_title"
         const val CATEGORY_ID = "category_id"
         const val COMMENT_COUNT = "comment_count"
+        const val FEATURE_UUID = "feature_uuid"
         const val IS_ANONYMOUS = "is_anonymous"
         const val IS_HAZARD = "is_hazard"
         const val ISO_CREATED_AT = "iso_created_at"
