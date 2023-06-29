@@ -37,6 +37,6 @@ class RiskResourceImpl @Inject constructor(
 
     companion object {
         const val PATH = "risk_assessments"
-        val FIELDS = arrayOf("report_id", "team_id", "created_at")
+        val FIELDS = arrayOf("report_uuid", "team_id", "created_at")
     }
 }
