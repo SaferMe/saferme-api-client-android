@@ -73,8 +73,8 @@ class ReportImpl @Inject constructor(
         failure: (Exception) -> Unit
     ) {
         val extensionParams = parameters.parameters?.toUriParameters()
-        val path = extensionParams?.let { "$REPORT_PATH?$FIELDS_PARAM&$it" }
-            ?: "$REPORT_PATH?$FIELDS_PARAM"
+        val path = extensionParams?.let { "$REPORT_PATH?$FIELDS_PARAM&$FILTER_SYNCABLE&$it" }
+            ?: "$REPORT_PATH?$FIELDS_PARAM&$FILTER_SYNCABLE"
         StandardMethods.index(
             api = api, path = path, parameters = parameters, success = success, failure = failure
         )
@@ -111,5 +111,8 @@ class ReportImpl @Inject constructor(
         @VisibleForTesting
         const val FIELDS_PARAM =
             "fields=categories_title,category_id,comment_count,viewer_count,form_fields,hidden_fields,is_hazard,risk_level,risk_assessment,risk_matrix_config,risk_control_id,risk_control_editable_by,report_state,user_short_name,appearance,assignee_id,assignment_due_at,assignee,feature_uuid"
+
+        @VisibleForTesting
+        const val FILTER_SYNCABLE = "preset_filter=syncable_reports"
     }
 }
