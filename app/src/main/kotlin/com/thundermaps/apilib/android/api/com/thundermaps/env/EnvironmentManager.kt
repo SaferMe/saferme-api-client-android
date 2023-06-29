@@ -1,5 +1,6 @@
 package com.thundermaps.apilib.android.api.com.thundermaps.env
 
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,6 +19,7 @@ class EnvironmentManager @Inject constructor() {
     )
     fun updateEnvironment(env: Environment) {
         Companion.environment = env
+        Timber.i("Environment updated to ${env.servers.first()} -> $host")
     }
 
     @Deprecated(
@@ -27,7 +29,7 @@ class EnvironmentManager @Inject constructor() {
             "com.thundermaps.apilib.android.api.com.thundermaps.env.EnvironmentManager.Companion"
         )
     )
-    fun isStaging() = Companion.isStaging()
+    fun isStaging() = isStaging
 
     companion object {
         private const val APP_ID_SAFERME = "com.thundermaps.saferme"
@@ -37,9 +39,12 @@ class EnvironmentManager @Inject constructor() {
         var environment: Environment = Staging
             private set
 
-        fun isStaging() = environment == Staging || environment == StagingOceanfarmr
+        val isStaging
+            get() = environment == Staging || environment == StagingOceanfarmr
 
-        val host = environment.servers.first()
-        val appId = if (environment == Staging || environment == Live) APP_ID_SAFERME else APP_ID_OCEANFARMR
+        val host
+            get() = environment.servers.first()
+        val appId
+            get() = if (environment == Staging || environment == Live) APP_ID_SAFERME else APP_ID_OCEANFARMR
     }
 }
