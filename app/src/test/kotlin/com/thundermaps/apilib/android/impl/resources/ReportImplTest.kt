@@ -8,6 +8,7 @@ import com.thundermaps.apilib.android.api.responses.models.Report
 import com.thundermaps.apilib.android.api.responses.models.ResultHandler
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.resources.ReportImpl.Companion.FIELDS_PARAM
+import com.thundermaps.apilib.android.impl.resources.ReportImpl.Companion.FILTER_SYNCABLE
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -222,7 +223,7 @@ class ReportImplTest {
             headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
         var count = 0
         var inspectCalled = false
-        val expectedPath = "/api/v0/reports?$FIELDS_PARAM"
+        val expectedPath = "/api/v0/reports?$FIELDS_PARAM&$FILTER_SYNCABLE"
 
         val client = TestHelpers.testClient(
             content = returnJson,

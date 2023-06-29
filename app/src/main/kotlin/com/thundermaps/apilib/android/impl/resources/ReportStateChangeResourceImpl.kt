@@ -31,7 +31,7 @@ class ReportStateChangeResourceImpl @Inject constructor(
         failure: (Exception) -> Unit
     ) {
         val extensionParameters = parameters.parameters?.toUriParameters()
-        val apiPath = extensionParameters?.let { "$ENDPOINT?$it" } ?: ENDPOINT
+        val apiPath = extensionParameters?.let { "$ENDPOINT?$FILTER_SYNCABLE&$it" } ?: "$ENDPOINT?$FILTER_SYNCABLE"
         StandardMethods.index(
             api = api,
             path = apiPath,
@@ -43,5 +43,7 @@ class ReportStateChangeResourceImpl @Inject constructor(
 
     companion object {
         private const val ENDPOINT = "report_state_changes"
+
+        const val FILTER_SYNCABLE = "preset_filter=syncable_reports"
     }
 }
