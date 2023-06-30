@@ -1,3 +1,5 @@
+package com.thundermaps.apilib.android.impl
+
 import com.thundermaps.apilib.android.api.responses.models.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive

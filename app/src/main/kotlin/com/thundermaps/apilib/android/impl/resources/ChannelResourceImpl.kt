@@ -1,12 +1,12 @@
 package com.thundermaps.apilib.android.impl.resources
 
-import apiRequest
 import com.thundermaps.apilib.android.api.requests.RequestParameters
 import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.resources.DeletedResourceList
 import com.thundermaps.apilib.android.api.responses.models.Channel
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.impl.AndroidClient
+import com.thundermaps.apilib.android.impl.apiRequest
 import javax.inject.Inject
 import javax.inject.Singleton
 
