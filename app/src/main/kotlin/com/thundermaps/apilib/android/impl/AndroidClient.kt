@@ -16,10 +16,14 @@ import com.thundermaps.apilib.android.api.responses.models.FormValueDecode
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.utils.EmptyContent.contentType
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
+import io.ktor.http.contentType
+import timber.log.Timber
 import javax.inject.Inject
 import io.ktor.client.request.url as requestUrl
 
@@ -33,7 +37,12 @@ class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
     }
 
     fun buildRequest(parameters: Map<String, String>?, path: String = "", method: HttpMethod = HttpMethod.Get): Pair<HttpClient, HttpRequestBuilder> {
-        val requestBuilder = getRequestBuilder(parameters, path, method)
+        return buildRequest(parameters, path, method, null)
+    }
+
+    fun buildRequest(parameters: Map<String, String>?, path: String = "", method: HttpMethod = HttpMethod.Get, payload: Any?): Pair<HttpClient, HttpRequestBuilder> {
+        val requestBuilder = getRequestBuilder(parameters, path, method, payload)
+        Timber.d("${apiClient.ktorClient} $requestBuilder")
         return Pair(apiClient.ktorClient, requestBuilder)
     }
 
@@ -125,9 +134,14 @@ class AndroidClient @Inject constructor(private val apiClient: ApiClient) {
             }
         }
 
-        fun getRequestBuilder(parameters: Map<String, String>?, path: String, method: HttpMethod): HttpRequestBuilder {
+        fun getRequestBuilder(parameters: Map<String, String>?, path: String, method: HttpMethod, payload: Any? = null): HttpRequestBuilder {
             val requestParameters = buildRequestParameters(parameters)
-            return getRequestBuilder(requestParameters, path, method)
+            val requestBuilder = getRequestBuilder(requestParameters, path, method)
+            payload?.let {
+                requestBuilder.contentType(ContentType.Application.Json)
+                requestBuilder.body = it
+            }
+            return requestBuilder
         }
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class RiskAssessment(
     @Expose val id: Int = 0,
+    @Expose val uuid: String? = null,
     @SerializedName(REPORT_UUID) @Expose val reportUuid: String? = null,
     @SerializedName(USER_ID) @Expose val userId: Int? = null,
     @SerializedName(USER_IMAGE) @Expose val userImage: String? = null,
@@ -26,21 +27,28 @@ data class RiskAssessment(
     }
 }
 
+data class RiskMatrixConfig(
+    @Expose val id: Int? = 0,
+    @Expose val likelihoods: List<Likelihood> = ArrayList(),
+    @Expose val severities: List<Severity> = ArrayList(),
+    @SerializedName("risk_levels") @Expose val riskLevels: List<RiskLevelLimit> = ArrayList()
+)
+
 data class Severity(
     @Expose val key: String = "",
     @Expose val label: String = "",
     @Expose val value: Int = 0
 )
 
-data class Likelihood(
-    @Expose val key: String = "",
-    @Expose val label: String = "",
-    @Expose val value: Int = 0
-)
+typealias Likelihood = Severity
 
 data class RiskLevel(
-    @Expose val limit: Int = 0,
     @Expose val score: Int = 0,
+    @Expose val label: String = "",
+    @Expose val color: String = ""
+)
+data class RiskLevelLimit(
+    @Expose val limit: Int = 0,
     @Expose val label: String = "",
     @Expose val color: String = ""
 )

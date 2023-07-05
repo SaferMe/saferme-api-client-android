@@ -13,7 +13,8 @@ class BrandResourceImpl @Inject constructor(
     private val androidClient: AndroidClient
 ) : BrandResource {
     override suspend fun getBrand(applicationId: String): Result<Brand> {
-        val (client, requestBuilder) = androidClient.buildRequest(mapOf("fields" to BRAND_FIELDS.joinToString(",")), PATH)
+        val pair = androidClient.buildRequest(mapOf("fields" to BRAND_FIELDS.joinToString(",")), PATH)
+        val (client, requestBuilder) = pair
         return client.apiRequest(requestBuilder)
     }
 
