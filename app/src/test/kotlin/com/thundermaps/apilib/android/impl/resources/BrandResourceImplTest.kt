@@ -69,9 +69,7 @@ class BrandResourceImplTest {
 
         whenever(androidClient.buildRequest(any(), any(), any())) doReturn Pair(
             client,
-            AndroidClient.getRequestBuilder(
-                mapOf("fields" to BrandResourceImpl.BRAND_FIELDS.joinToString(",")), BrandResourceImpl.PATH, HttpMethod.Get
-            )
+            AndroidClient.getRequestBuilder(mapOf("fields" to BrandResourceImpl.BRAND_FIELDS.joinToString(",")), BrandResourceImpl.PATH, HttpMethod.Get, null)
         )
 
         val brandResult = brandResource.getBrand(APPLICATION_ID)
