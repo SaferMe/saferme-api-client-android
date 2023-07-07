@@ -19,6 +19,7 @@ import com.thundermaps.apilib.android.api.resources.StateResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
+import com.thundermaps.apilib.android.api.resources.TrainingResource
 import com.thundermaps.apilib.android.impl.resources.AttachmentResourceImpl
 import com.thundermaps.apilib.android.impl.resources.BrandResourceImpl
 import com.thundermaps.apilib.android.impl.resources.CategoryResourceImpl
@@ -35,6 +36,7 @@ import com.thundermaps.apilib.android.impl.resources.StateImpl
 import com.thundermaps.apilib.android.impl.resources.TaskResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
+import com.thundermaps.apilib.android.impl.resources.TrainingResourceImpl
 import io.ktor.util.KtorExperimentalAPI
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -57,7 +59,8 @@ class SaferMeClientImpl @Inject constructor(
     private val reportImpl: ReportImpl,
     private val taskResourceImpl: TaskResourceImpl,
     private val reportStateChangeResourceImpl: ReportStateChangeResourceImpl,
-    private val riskResourceImpl: RiskResourceImpl
+    private val riskResourceImpl: RiskResourceImpl,
+    private val trainingResourceImpl: TrainingResourceImpl
 ) : SaferMeClient {
     override val taskResource: TaskResource get() = taskResourceImpl
 
@@ -102,6 +105,9 @@ class SaferMeClientImpl @Inject constructor(
 
     override val riskResource: RiskResource
         get() = riskResourceImpl
+
+    override val trainingResource: TrainingResource
+        get() = trainingResource
 
     override fun defaultParams(): RequestParameters = RequestParameters(
         customRequestHeaders = HashMap(),

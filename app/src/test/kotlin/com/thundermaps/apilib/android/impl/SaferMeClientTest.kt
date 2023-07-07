@@ -22,6 +22,7 @@ import com.thundermaps.apilib.android.impl.resources.StateImpl
 import com.thundermaps.apilib.android.impl.resources.TaskResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TeamResourceImpl
 import com.thundermaps.apilib.android.impl.resources.TracedContactsImpl
+import com.thundermaps.apilib.android.impl.resources.TrainingResourceImpl
 import io.ktor.util.KtorExperimentalAPI
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -51,6 +52,7 @@ internal class SaferMeClientTest {
     private val taskResourceImpl = mock<TaskResourceImpl>()
     private val reportStateChangeResourceImpl = mock<ReportStateChangeResourceImpl>()
     private val riskResourceImpl = mock<RiskResourceImpl>()
+    private val trainingResourceImpl = mock<TrainingResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -71,7 +73,8 @@ internal class SaferMeClientTest {
             reportImpl,
             taskResourceImpl,
             reportStateChangeResourceImpl,
-            riskResourceImpl
+            riskResourceImpl,
+            trainingResourceImpl
         )
     }
 
