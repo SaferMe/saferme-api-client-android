@@ -18,6 +18,7 @@ import com.thundermaps.apilib.android.api.resources.StateResource
 import com.thundermaps.apilib.android.api.resources.TaskResource
 import com.thundermaps.apilib.android.api.resources.TeamResource
 import com.thundermaps.apilib.android.api.resources.TracedContactsResource
+import com.thundermaps.apilib.android.api.resources.TrainingResource
 
 interface SaferMeClient {
     val taskResource: TaskResource
@@ -39,4 +40,5 @@ interface SaferMeClient {
     val stateResource: StateResource
     val reportStateChangeResource: ReportStateChangeResource
     val riskResource: RiskResource
+    val trainingResource: TrainingResource
 }
