@@ -107,7 +107,7 @@ class SaferMeClientImpl @Inject constructor(
         get() = riskResourceImpl
 
     override val trainingResource: TrainingResource
-        get() = trainingResource
+        get() = trainingResourceImpl
 
     override fun defaultParams(): RequestParameters = RequestParameters(
         customRequestHeaders = HashMap(),
