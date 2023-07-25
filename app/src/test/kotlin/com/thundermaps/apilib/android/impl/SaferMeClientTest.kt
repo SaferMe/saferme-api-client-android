@@ -13,6 +13,7 @@ import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.FormResourceImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
+import com.thundermaps.apilib.android.impl.resources.ReportCommentsResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.ReportStateChangeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.RiskResourceImpl
@@ -53,6 +54,7 @@ internal class SaferMeClientTest {
     private val reportStateChangeResourceImpl = mock<ReportStateChangeResourceImpl>()
     private val riskResourceImpl = mock<RiskResourceImpl>()
     private val trainingResourceImpl = mock<TrainingResourceImpl>()
+    private val reportCommentsResourceImpl = mock<ReportCommentsResourceImpl>()
     private lateinit var saferMeClient: SaferMeClient
 
     @Before
@@ -72,6 +74,7 @@ internal class SaferMeClientTest {
             stateImpl,
             reportImpl,
             taskResourceImpl,
+            reportCommentsResourceImpl,
             reportStateChangeResourceImpl,
             riskResourceImpl,
             trainingResourceImpl

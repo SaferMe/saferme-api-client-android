@@ -10,6 +10,7 @@ import com.thundermaps.apilib.android.api.resources.ChannelResource
 import com.thundermaps.apilib.android.api.resources.DeviceInfoLogsResource
 import com.thundermaps.apilib.android.api.resources.FormResource
 import com.thundermaps.apilib.android.api.resources.MeResource
+import com.thundermaps.apilib.android.api.resources.ReportCommentsResource
 import com.thundermaps.apilib.android.api.resources.ReportResource
 import com.thundermaps.apilib.android.api.resources.ReportStateChangeResource
 import com.thundermaps.apilib.android.api.resources.RiskResource
@@ -27,6 +28,7 @@ import com.thundermaps.apilib.android.impl.resources.ChannelResourceImpl
 import com.thundermaps.apilib.android.impl.resources.DeviceInfoLogsImpl
 import com.thundermaps.apilib.android.impl.resources.FormResourceImpl
 import com.thundermaps.apilib.android.impl.resources.MeResourceImpl
+import com.thundermaps.apilib.android.impl.resources.ReportCommentsResourceImpl
 import com.thundermaps.apilib.android.impl.resources.ReportImpl
 import com.thundermaps.apilib.android.impl.resources.ReportStateChangeResourceImpl
 import com.thundermaps.apilib.android.impl.resources.RiskResourceImpl
@@ -58,6 +60,7 @@ class SaferMeClientImpl @Inject constructor(
     private val stateImpl: StateImpl,
     private val reportImpl: ReportImpl,
     private val taskResourceImpl: TaskResourceImpl,
+    private val reportCommentsResourceImpl: ReportCommentsResourceImpl,
     private val reportStateChangeResourceImpl: ReportStateChangeResourceImpl,
     private val riskResourceImpl: RiskResourceImpl,
     private val trainingResourceImpl: TrainingResourceImpl
@@ -99,6 +102,9 @@ class SaferMeClientImpl @Inject constructor(
 
     override val stateResource: StateResource
         get() = stateImpl
+
+    override val reportCommentsResource: ReportCommentsResource
+        get() = reportCommentsResource
 
     override val reportStateChangeResource: ReportStateChangeResource
         get() = reportStateChangeResourceImpl
