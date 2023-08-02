@@ -11,18 +11,28 @@ class ReportCommentsResourceImpl @Inject constructor(
     private val androidClient: AndroidClient
 ) : ReportCommentsResource {
     override suspend fun getReportComments(
-        reportId: Int?,
-        userId: Int?
+        reportId: String?,
+        teamId: String?,
+        userId: String?,
+        updatedAfter: String?
     ): Result<List<ReportComment>> {
         val parameters = mutableMapOf(
             "fields" to FIELDS.joinToString(",")
         ).apply {
             if (reportId != null) {
-                this["report_id"] = reportId.toString()
+                this["report_id"] = reportId
+            }
+
+            if (teamId != null) {
+                this["team_id"] = teamId
             }
 
             if (userId != null) {
-                this["user_id"] = userId.toString()
+                this["user_id"] = userId
+            }
+
+            if (updatedAfter != null) {
+                this["updated_after"] = updatedAfter
             }
         }
 
@@ -35,6 +45,6 @@ class ReportCommentsResourceImpl @Inject constructor(
 
     companion object {
         const val PATH = "report_comments"
-        val FIELDS = arrayOf("report_id", "user_id")
+        val FIELDS = arrayOf("-created_at", "report_uuid")
     }
 }
