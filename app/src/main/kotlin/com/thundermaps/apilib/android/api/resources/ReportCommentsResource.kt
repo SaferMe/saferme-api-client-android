@@ -5,7 +5,7 @@ import com.thundermaps.apilib.android.api.responses.models.Result
 
 interface ReportCommentsResource {
     suspend fun getReportComments(
-        reportId: String? = null,
+        reportUuid: String? = null,
         teamId: String? = null,
         userId: String? = null,
         updatedAfter: String? = null
