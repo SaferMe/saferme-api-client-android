@@ -1,10 +1,12 @@
 package com.thundermaps.apilib.android.impl.resources
 
+import com.thundermaps.apilib.android.api.requests.models.CommentRequest
 import com.thundermaps.apilib.android.api.resources.ReportCommentsResource
 import com.thundermaps.apilib.android.api.responses.models.ReportComment
 import com.thundermaps.apilib.android.api.responses.models.Result
 import com.thundermaps.apilib.android.impl.AndroidClient
 import com.thundermaps.apilib.android.impl.apiRequest
+import io.ktor.http.HttpMethod
 import javax.inject.Inject
 
 class ReportCommentsResourceImpl @Inject constructor(
@@ -40,6 +42,12 @@ class ReportCommentsResourceImpl @Inject constructor(
             parameters,
             PATH
         )
+        return client.apiRequest(requestBuilder)
+    }
+
+    override suspend fun createComment(reportId: String, comment: CommentRequest): Result<ReportComment> {
+        val path = PATH
+        val (client, requestBuilder) = androidClient.buildRequest(null, path, HttpMethod.Post, comment)
         return client.apiRequest(requestBuilder)
     }
 
