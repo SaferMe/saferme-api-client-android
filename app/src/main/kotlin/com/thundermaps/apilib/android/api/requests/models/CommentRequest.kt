@@ -4,13 +4,25 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class ReportCommentRequest(
-    @SerializedName("uuid") @Expose val uuid: String? = null,
-    @SerializedName("content") @Expose val content: String? = null,
-    @SerializedName("is_anonymous") @Expose val isAnonymous: Boolean? = null,
-    @SerializedName("user_id") @Expose val userId: Int? = null,
-    @SerializedName("report_uuid") @Expose val reportUuid: String? = null
-)
+    @SerializedName(UUID) @Expose val uuid: String,
+    @SerializedName(CONTENT) @Expose val content: String,
+    @SerializedName(IS_ANONYMOUS) @Expose val isAnonymous: Boolean,
+    @SerializedName(USER_ID) @Expose val userId: Int,
+    @SerializedName(REPORT_UUID) @Expose val reportUuid: String
+) {
+    companion object {
+        const val UUID = "uuid"
+        const val CONTENT = "content"
+        const val IS_ANONYMOUS = "is_anonymous"
+        const val USER_ID = "user_id"
+        const val REPORT_UUID = "report_uuid"
+    }
+}
 
 data class CommentRequest(
-    @SerializedName("report_comment") @Expose val reportComment: ReportCommentRequest? = null
-)
+    @SerializedName(REPORT_COMMENT) @Expose val reportComment: ReportCommentRequest? = null
+) {
+    companion object {
+        const val REPORT_COMMENT = "report_comment"
+    }
+}
