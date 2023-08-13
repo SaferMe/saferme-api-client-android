@@ -20,7 +20,7 @@ data class ReportCommentRequest(
 }
 
 data class CommentRequest(
-    @SerializedName(REPORT_COMMENT) @Expose val reportComment: ReportCommentRequest? = null
+    @SerializedName(REPORT_COMMENT) @Expose val reportComment: ReportCommentRequest
 ) {
     companion object {
         const val REPORT_COMMENT = "report_comment"
